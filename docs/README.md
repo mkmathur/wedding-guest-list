@@ -1,1 +1,0 @@
-# Wedding Guest List App
