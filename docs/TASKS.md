@@ -1,26 +1,48 @@
 # Wedding Guest List App - Development Tasks
 
 ## Phase 1: Project Setup and Basic Structure
-- [ ] Initialize React + TypeScript project using Vite
-- [ ] Set up Tailwind CSS
-- [ ] Create basic project structure
-- [ ] Set up local storage utilities
-- [ ] Define TypeScript interfaces for data models
-  - [ ] Tier interface
-  - [ ] Category interface
-  - [ ] Household interface (with guest count)
+- [x] Initialize React + TypeScript project using Vite
+- [x] ~~Set up Tailwind CSS~~ (Switched to CSS Modules)
+- [x] Create basic project structure
+  - [x] `/src/components/` for React components
+  - [x] `/src/hooks/` for custom hooks
+  - [x] `/src/utils/` for utilities
+  - [x] `/src/types/` for TypeScript interfaces
+- [x] Define TypeScript interfaces for data models
+  - [x] Tier interface
+  - [x] Category interface
+  - [x] Household interface
+  - [x] Scenario interface (with category-tier selections)
+- [x] Set up local storage utilities
+  - [x] Basic CRUD operations
+  - [x] Type safety
+  - [x] Error handling
+  - [x] Data integrity validation
+- [x] Implement Category Management
+  - [x] Create/edit/delete categories
+  - [x] Category list view
+  - [x] Form validation
+  - [x] Local storage persistence
+- [ ] Set up Testing Infrastructure
+  - [ ] Install and configure Vitest
+  - [ ] Set up React Testing Library
+  - [ ] Write unit tests for category validation
+  - [ ] Write unit tests for localStorage operations
+  - [ ] Write component tests for CategoryManager
+- [ ] Document manual testing results
+
+## Next Immediate Tasks:
+1. Set up testing infrastructure
+2. Write automated tests for existing functionality
+3. Document manual testing results
+4. Begin Phase 2 implementation
 
 ## Phase 2: Core Features - Data Management
 - [ ] Implement Tier Management
   - [ ] Create/edit/delete tiers
   - [ ] Set tier names (e.g., "Must Invite", "Want to Invite", "If Space Permits")
   - [ ] Set tier order/priority
-  - [ ] Local storage persistence for tiers
-
-- [ ] Implement Category Management
-  - [ ] Create/edit/delete categories
-  - [ ] Category list view
-  - [ ] Local storage persistence for categories
+  - [ ] Local storage persistence
 
 - [ ] Implement Household Management
   - [ ] Add/edit/delete households
