@@ -1,7 +1,6 @@
 export interface Tier {
   id: string;
   name: string;
-  order: number;
 }
 
 export interface Category {
@@ -22,8 +21,8 @@ export interface CategoryTierSelection {
   selectedTierIds: string[];  // Allows selecting multiple tiers for a category
 }
 
-export interface Scenario {
+export interface Event {
   id: string;
   name: string;
-  selections: CategoryTierSelection[];  // Each category can have its own tier selections
+  selections: CategoryTierSelection[];
 } 

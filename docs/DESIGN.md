@@ -1,7 +1,7 @@
 # Wedding Guest List App - Technical Design
 
 ## Overview
-A simple, client-side web application for managing a wedding guest list. The app allows users to organize guests by categories and tiers, create invitation scenarios, and export data to CSV format.
+A simple, client-side web application for managing a wedding guest list. The app allows users to organize guests by categories and tiers, create guest lists for wedding events, and export data to CSV format.
 
 ## Tech Stack
 
@@ -50,10 +50,10 @@ A simple, client-side web application for managing a wedding guest list. The app
    - Properties: name, guest count, category, tier
    - Example: "Smith Family (4 guests)"
 
-4. **Scenarios**
-   - Combinations of categories and tiers
-   - Used to calculate different guest list possibilities
-   - Properties: included categories, included tiers
+4. **Events**
+   - Create and save different event configurations
+   - Compare guest counts between events
+   - Export specific events to CSV
 
 ## Application Flow
 
@@ -63,12 +63,18 @@ A simple, client-side web application for managing a wedding guest list. The app
    - Changes automatically saved to localStorage
    - Optional CSV export for backup
 
-2. **Scenario Planning**
-   - User selects combinations of categories and tiers
-   - App calculates total guest count
-   - Multiple scenarios can be saved and compared
+2. **Event Planning**
+   - Create and save multiple events
+   - Compare guest counts between events
+   - Export specific events to CSV
 
-3. **Data Export**
+3. **Event Builder**
+   - Create new events
+   - Select categories and tiers
+   - Event comparison
+   - Save/load events
+
+4. **Data Export**
    - Export complete guest list to CSV
    - Import from previously exported CSV
    - Easy sharing and backup
@@ -86,10 +92,11 @@ A simple, client-side web application for managing a wedding guest list. The app
    - Add/edit household form
    - Bulk update capabilities
 
-3. **Scenario Builder**
-   - Category and tier selection
-   - Real-time guest count updates
-   - Scenario comparison
+3. **Event Builder**
+   - Create new events
+   - Select categories and tiers
+   - Event comparison
+   - Save/load events
 
 ### Design Principles
 - Mobile-first responsive design
@@ -119,4 +126,4 @@ A simple, client-side web application for managing a wedding guest list. The app
 3. **Data Visualization**
    - Charts and graphs
    - Guest list breakdown views
-   - Scenario comparisons 
+   - Event comparisons 

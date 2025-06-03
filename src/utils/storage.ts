@@ -1,10 +1,10 @@
-import type { Tier, Category, Household, Scenario } from '../types';
+import type { Tier, Category, Household, Event, CategoryTierSelection } from '../types';
 
 const STORAGE_KEYS = {
   TIERS: 'wedding-guest-list:tiers',
   CATEGORIES: 'wedding-guest-list:categories',
   HOUSEHOLDS: 'wedding-guest-list:households',
-  SCENARIOS: 'wedding-guest-list:scenarios',
+  EVENTS: 'wedding-guest-list:events',
 } as const;
 
 type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];
@@ -65,15 +65,15 @@ export const storage = {
     safelyStoreJSON(STORAGE_KEYS.HOUSEHOLDS, households);
   },
 
-  getScenarios: (): Scenario[] => {
-    return safelyParseJSON<Scenario[]>(
-      localStorage.getItem(STORAGE_KEYS.SCENARIOS),
+  getEvents: (): Event[] => {
+    return safelyParseJSON<Event[]>(
+      localStorage.getItem(STORAGE_KEYS.EVENTS),
       []
     );
   },
 
-  setScenarios: (scenarios: Scenario[]): void => {
-    safelyStoreJSON(STORAGE_KEYS.SCENARIOS, scenarios);
+  setEvents: (events: Event[]): void => {
+    safelyStoreJSON(STORAGE_KEYS.EVENTS, events);
   },
 
   clearAll: (): void => {
@@ -83,34 +83,33 @@ export const storage = {
   },
 
   // Utility function to validate data integrity
-  validateDataIntegrity: () => {
+  validateData: () => {
     const tiers = storage.getTiers();
     const categories = storage.getCategories();
     const households = storage.getHouseholds();
-    const scenarios = storage.getScenarios();
+    const events = storage.getEvents();
 
-    // Check for orphaned households (referencing non-existent categories or tiers)
-    const orphanedHouseholds = households.filter(
-      household =>
-        !categories.some(category => category.id === household.categoryId) ||
-        !tiers.some(tier => tier.id === household.tierId)
+    // Check for households referencing non-existent categories or tiers
+    const invalidHouseholds = households.filter(household =>
+      !categories.find(cat => cat.id === household.categoryId) ||
+      !tiers.find(tier => tier.id === household.tierId)
     );
 
-    // Check for scenarios referencing non-existent categories or tiers
-    const invalidScenarios = scenarios.filter(scenario =>
-      scenario.selections.some(selection =>
-        !categories.some(category => category.id === selection.categoryId) ||
-        selection.selectedTierIds.some(tierId =>
-          !tiers.some(tier => tier.id === tierId)
+    // Check for events referencing non-existent categories or tiers
+    const invalidEvents = events.filter(event =>
+      event.selections.some(selection =>
+        !categories.find(cat => cat.id === selection.categoryId) ||
+        !selection.selectedTierIds.every(tierId =>
+          tiers.find(tier => tier.id === tierId)
         )
       )
     );
 
     return {
-      hasOrphanedHouseholds: orphanedHouseholds.length > 0,
-      orphanedHouseholds,
-      hasInvalidScenarios: invalidScenarios.length > 0,
-      invalidScenarios,
+      hasInvalidHouseholds: invalidHouseholds.length > 0,
+      invalidHouseholds,
+      hasInvalidEvents: invalidEvents.length > 0,
+      invalidEvents,
     };
   },
 }; 
