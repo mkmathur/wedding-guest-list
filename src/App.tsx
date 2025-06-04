@@ -1,8 +1,28 @@
+import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import { CategoryManager } from './components/CategoryManager/CategoryManager'
 import { TierManager } from './components/TierManager/TierManager'
+import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
+import { storage } from './utils/storage'
 
 function App() {
+  const [totalGuests, setTotalGuests] = useState(0);
+
+  useEffect(() => {
+    // Update total guests whenever households change
+    const updateTotalGuests = () => {
+      const households = storage.getHouseholds();
+      setTotalGuests(households.reduce((sum, h) => sum + h.guestCount, 0));
+    };
+
+    // Initial count
+    updateTotalGuests();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateTotalGuests);
+    return () => window.removeEventListener('storage', updateTotalGuests);
+  }, []);
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -24,7 +44,7 @@ function App() {
             </button>
           </div>
           <div>
-            Total Guests: 0
+            Total Guests: {totalGuests}
           </div>
         </div>
       </div>
@@ -47,7 +67,7 @@ function App() {
           {/* Middle Panel - Household List */}
           <div className={styles.middlePanel}>
             <h2 className={styles.panelTitle}>Households</h2>
-            {/* Content will be added in next phase */}
+            <HouseholdManager />
           </div>
 
           {/* Right Panel - Scenarios */}
