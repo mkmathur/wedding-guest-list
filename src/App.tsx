@@ -1,5 +1,6 @@
 import styles from './App.module.css'
 import { CategoryManager } from './components/CategoryManager/CategoryManager'
+import { TierManager } from './components/TierManager/TierManager'
 
 function App() {
   return (
@@ -33,8 +34,14 @@ function App() {
         <div className={styles.panels}>
           {/* Left Panel - Categories & Tiers */}
           <div className={styles.leftPanel}>
-            <h2 className={styles.panelTitle}>Categories</h2>
-            <CategoryManager />
+            <section>
+              <h2 className={styles.panelTitle}>Categories</h2>
+              <CategoryManager />
+            </section>
+            <section>
+              <h2 className={styles.panelTitle}>Tiers</h2>
+              <TierManager />
+            </section>
           </div>
 
           {/* Middle Panel - Household List */}
