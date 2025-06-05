@@ -1,17 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Category } from '../../types';
-import { storage } from '../../utils/storage';
 import styles from './CategoryManager.module.css';
 
-export function CategoryManager() {
-  const [categories, setCategories] = useState<Category[]>([]);
+interface CategoryManagerProps {
+  categories: Category[];
+  onAdd: (name: string) => void;
+  onEdit: (categoryId: string, name: string) => void;
+  onDelete: (categoryId: string) => void;
+}
+
+export function CategoryManager({ categories, onAdd, onEdit, onDelete }: CategoryManagerProps) {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    setCategories(storage.getCategories());
-  }, []);
 
   const validateCategoryName = (name: string) => {
     if (!name.trim()) {
@@ -33,32 +34,12 @@ export function CategoryManager() {
     if (!validateCategoryName(name)) return;
 
     if (editingCategory) {
-      // Update existing category
-      const updatedCategories = categories.map(cat =>
-        cat.id === editingCategory.id ? editingCategory : cat
-      );
-      setCategories(updatedCategories);
-      storage.setCategories(updatedCategories);
+      onEdit(editingCategory.id, name.trim());
       setEditingCategory(null);
     } else {
-      // Add new category
-      const newCategory: Category = {
-        id: crypto.randomUUID(),
-        name: newCategoryName.trim()
-      };
-      const updatedCategories = [...categories, newCategory];
-      setCategories(updatedCategories);
-      storage.setCategories(updatedCategories);
+      onAdd(newCategoryName.trim());
       setNewCategoryName('');
     }
-  };
-
-  const handleDelete = (categoryId: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
-    
-    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
-    setCategories(updatedCategories);
-    storage.setCategories(updatedCategories);
   };
 
   const startEditing = (category: Category) => {
@@ -118,7 +99,11 @@ export function CategoryManager() {
               </button>
               <button
                 className={styles.deleteButton}
-                onClick={() => handleDelete(category.id)}
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this category?')) {
+                    onDelete(category.id);
+                  }
+                }}
               >
                 Delete
               </button>

@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Household, Category, Tier } from '../../types';
-import { storage } from '../../utils/storage';
 import styles from './HouseholdManager.module.css';
 
 interface HouseholdFormData {
@@ -10,6 +9,15 @@ interface HouseholdFormData {
   tierId: string;
 }
 
+interface HouseholdManagerProps {
+  households: Household[];
+  categories: Category[];
+  tiers: Tier[];
+  onAdd: (household: Omit<Household, 'id'>) => void;
+  onEdit: (householdId: string, updates: Partial<Household>) => void;
+  onDelete: (householdId: string) => void;
+}
+
 const initialFormData: HouseholdFormData = {
   name: '',
   guestCount: 1,
@@ -17,33 +25,28 @@ const initialFormData: HouseholdFormData = {
   tierId: '',
 };
 
-export function HouseholdManager() {
-  const [households, setHouseholds] = useState<Household[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tiers, setTiers] = useState<Tier[]>([]);
+export function HouseholdManager({ 
+  households,
+  categories,
+  tiers,
+  onAdd,
+  onEdit,
+  onDelete
+}: HouseholdManagerProps) {
   const [formData, setFormData] = useState<HouseholdFormData>(initialFormData);
   const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [error, setError] = useState('');
 
-  // Load data on component mount
-  useEffect(() => {
-    const loadedHouseholds = storage.getHouseholds();
-    const loadedCategories = storage.getCategories();
-    const loadedTiers = storage.getTiers();
-    
-    setHouseholds(loadedHouseholds);
-    setCategories(loadedCategories);
-    setTiers(loadedTiers.sort((a, b) => a.order - b.order));
-
-    // If there are categories and tiers, set initial form values
-    if (loadedCategories.length > 0 && loadedTiers.length > 0) {
+  // Set initial form values if there are categories and tiers
+  useState(() => {
+    if (categories.length > 0 && tiers.length > 0) {
       setFormData(prev => ({
         ...prev,
-        categoryId: loadedCategories[0].id,
-        tierId: loadedTiers[0].id,
+        categoryId: categories[0].id,
+        tierId: tiers[0].id,
       }));
     }
-  }, []);
+  });
 
   const validateForm = () => {
     if (!formData.name.trim()) {
@@ -83,36 +86,14 @@ export function HouseholdManager() {
     if (!validateForm()) return;
 
     if (editingHousehold) {
-      // Update existing household
-      const updatedHouseholds = households.map(household =>
-        household.id === editingHousehold.id
-          ? { ...editingHousehold, ...formData }
-          : household
-      );
-      setHouseholds(updatedHouseholds);
-      storage.setHouseholds(updatedHouseholds);
+      onEdit(editingHousehold.id, formData);
       setEditingHousehold(null);
     } else {
-      // Add new household
-      const newHousehold: Household = {
-        id: crypto.randomUUID(),
-        ...formData,
-      };
-      const updatedHouseholds = [...households, newHousehold];
-      setHouseholds(updatedHouseholds);
-      storage.setHouseholds(updatedHouseholds);
+      onAdd(formData);
     }
 
     // Reset form
     setFormData(initialFormData);
-  };
-
-  const handleDelete = (householdId: string) => {
-    if (!confirm('Are you sure you want to delete this household?')) return;
-    
-    const updatedHouseholds = households.filter(h => h.id !== householdId);
-    setHouseholds(updatedHouseholds);
-    storage.setHouseholds(updatedHouseholds);
   };
 
   const startEdit = (household: Household) => {
@@ -136,9 +117,6 @@ export function HouseholdManager() {
     category,
     households: households.filter(h => h.categoryId === category.id),
   }));
-
-  // Calculate total guests
-  const totalGuests = households.reduce((sum, h) => sum + h.guestCount, 0);
 
   return (
     <div>
@@ -200,57 +178,57 @@ export function HouseholdManager() {
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
-
         <div className={styles.buttonGroup}>
-          <button type="submit" className={styles.submitButton}>
+          <button type="submit" className={styles.actionButton}>
             {editingHousehold ? 'Update Household' : 'Add Household'}
           </button>
           {editingHousehold && (
-            <button type="button" onClick={cancelEdit} className={styles.cancelButton}>
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={cancelEdit}
+            >
               Cancel
             </button>
           )}
         </div>
       </form>
 
-      <div className={styles.totalGuests}>
-        Total Guests: {totalGuests}
-      </div>
-
       <div className={styles.householdList}>
-        {householdsByCategory.map(({ category, households }) => (
+        {householdsByCategory.map(({ category, households: categoryHouseholds }) => (
           <div key={category.id} className={styles.categoryGroup}>
-            <h3 className={styles.categoryTitle}>
-              {category.name} ({households.reduce((sum, h) => sum + h.guestCount, 0)} guests)
-            </h3>
-            {households.map(household => {
-              const tier = tiers.find(t => t.id === household.tierId);
-              return (
-                <div key={household.id} className={styles.household}>
-                  <div className={styles.householdInfo}>
-                    <span className={styles.householdName}>{household.name}</span>
-                    <span className={styles.guestCount}>
-                      ({household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'})
-                    </span>
-                    {tier && <span className={styles.tier}>[{tier.name}]</span>}
-                  </div>
-                  <div className={styles.actions}>
-                    <button
-                      onClick={() => startEdit(household)}
-                      className={styles.editButton}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(household.id)}
-                      className={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
-                  </div>
+            <h3 className={styles.categoryTitle}>{category.name}</h3>
+            {categoryHouseholds.map(household => (
+              <div key={household.id} className={styles.household}>
+                <div className={styles.householdInfo}>
+                  <span className={styles.householdName}>{household.name}</span>
+                  <span className={styles.guestCount}>
+                    {household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'}
+                  </span>
+                  <span className={styles.tierLabel}>
+                    {tiers.find(t => t.id === household.tierId)?.name}
+                  </span>
                 </div>
-              );
-            })}
+                <div className={styles.actions}>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => startEdit(household)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => {
+                      if (confirm('Are you sure you want to delete this household?')) {
+                        onDelete(household.id);
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>

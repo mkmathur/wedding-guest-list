@@ -1,19 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Tier } from '../../types';
-import { storage } from '../../utils/storage';
 import styles from './TierManager.module.css';
 
-export function TierManager() {
-  const [tiers, setTiers] = useState<Tier[]>([]);
+interface TierManagerProps {
+  tiers: Tier[];
+  onAdd: (name: string, order: number) => void;
+  onEdit: (tierId: string, name: string, order: number) => void;
+  onDelete: (tierId: string) => void;
+}
+
+export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps) {
   const [newTierName, setNewTierName] = useState('');
   const [editingTier, setEditingTier] = useState<Tier | null>(null);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const loadedTiers = storage.getTiers();
-    // Sort tiers by order when loading
-    setTiers(loadedTiers.sort((a, b) => a.order - b.order));
-  }, []);
 
   const validateTierName = (name: string) => {
     if (!name.trim()) {
@@ -40,73 +39,32 @@ export function TierManager() {
     if (!validateTierName(name)) return;
 
     if (editingTier) {
-      // Update existing tier
-      const updatedTiers = tiers.map(tier =>
-        tier.id === editingTier.id ? editingTier : tier
-      );
-      setTiers(updatedTiers);
-      storage.setTiers(updatedTiers);
+      onEdit(editingTier.id, name.trim(), editingTier.order);
       setEditingTier(null);
     } else {
-      // Add new tier
-      const newTier: Tier = {
-        id: crypto.randomUUID(),
-        name: newTierName.trim(),
-        order: getNextOrder(),
-      };
-      const updatedTiers = [...tiers, newTier];
-      setTiers(updatedTiers);
-      storage.setTiers(updatedTiers);
+      onAdd(newTierName.trim(), getNextOrder());
       setNewTierName('');
     }
-  };
-
-  const handleDelete = (tierId: string) => {
-    if (!confirm('Are you sure you want to delete this tier?')) return;
-    
-    const updatedTiers = tiers.filter(tier => tier.id !== tierId);
-    setTiers(updatedTiers);
-    storage.setTiers(updatedTiers);
   };
 
   const handleMoveUp = (index: number) => {
     if (index <= 0) return;
     
-    const updatedTiers = [...tiers];
-    const currentTier = updatedTiers[index];
-    const prevTier = updatedTiers[index - 1];
+    const currentTier = tiers[index];
+    const prevTier = tiers[index - 1];
     
-    // Swap orders
-    const tempOrder = currentTier.order;
-    currentTier.order = prevTier.order;
-    prevTier.order = tempOrder;
-    
-    // Swap positions in array
-    updatedTiers[index] = prevTier;
-    updatedTiers[index - 1] = currentTier;
-    
-    setTiers(updatedTiers);
-    storage.setTiers(updatedTiers);
+    onEdit(currentTier.id, currentTier.name, prevTier.order);
+    onEdit(prevTier.id, prevTier.name, currentTier.order);
   };
 
   const handleMoveDown = (index: number) => {
     if (index >= tiers.length - 1) return;
     
-    const updatedTiers = [...tiers];
-    const currentTier = updatedTiers[index];
-    const nextTier = updatedTiers[index + 1];
+    const currentTier = tiers[index];
+    const nextTier = tiers[index + 1];
     
-    // Swap orders
-    const tempOrder = currentTier.order;
-    currentTier.order = nextTier.order;
-    nextTier.order = tempOrder;
-    
-    // Swap positions in array
-    updatedTiers[index] = nextTier;
-    updatedTiers[index + 1] = currentTier;
-    
-    setTiers(updatedTiers);
-    storage.setTiers(updatedTiers);
+    onEdit(currentTier.id, currentTier.name, nextTier.order);
+    onEdit(nextTier.id, nextTier.name, currentTier.order);
   };
 
   return (
@@ -171,7 +129,11 @@ export function TierManager() {
               </button>
               <button
                 className={styles.deleteButton}
-                onClick={() => handleDelete(tier.id)}
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this tier?')) {
+                    onDelete(tier.id);
+                  }
+                }}
               >
                 Delete
               </button>
