@@ -67,6 +67,61 @@ describe('CategoryManager', () => {
     expect(mockOnAdd).not.toHaveBeenCalled()
   })
 
+  it('validates duplicate category name with whitespace', () => {
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
+
+    renderComponent(existingCategories)
+    
+    // Try to add a category with leading/trailing whitespace
+    const input = screen.getByPlaceholderText('Enter category name')
+    fireEvent.change(input, { target: { value: '  Family  ' } })
+    fireEvent.click(screen.getByText('Add Category'))
+
+    // Should detect as duplicate and prevent adding
+    expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
+    expect(mockOnAdd).not.toHaveBeenCalled()
+
+    // Try with different whitespace patterns
+    fireEvent.change(input, { target: { value: 'Family ' } })
+    expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
+    expect(mockOnAdd).not.toHaveBeenCalled()
+
+    // Should allow different name with whitespace
+    fireEvent.change(input, { target: { value: '  New Family  ' } })
+    fireEvent.click(screen.getByText('Add Category'))
+    expect(mockOnAdd).toHaveBeenCalledWith('New Family')
+  })
+
+  it('properly handles error message visibility', () => {
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
+
+    renderComponent(existingCategories)
+    
+    const input = screen.getByPlaceholderText('Enter category name')
+    
+    // First trigger a duplicate name error
+    fireEvent.change(input, { target: { value: 'Family' } })
+    fireEvent.click(screen.getByText('Add Category'))
+    expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
+
+    // Error should clear immediately when typing a non-duplicate name
+    fireEvent.change(input, { target: { value: 'Friends' } })
+    expect(screen.queryByText('Category name must be unique')).not.toBeInTheDocument()
+
+    // Test empty name error
+    fireEvent.change(input, { target: { value: '' } })
+    fireEvent.click(screen.getByText('Add Category'))
+    expect(screen.getByText('Category name cannot be empty')).toBeInTheDocument()
+
+    // Error should clear immediately when typing any non-empty value
+    fireEvent.change(input, { target: { value: 'a' } })
+    expect(screen.queryByText('Category name cannot be empty')).not.toBeInTheDocument()
+  })
+
   it('edits an existing category', () => {
     const existingCategories = [
       { id: '1', name: 'Family' }
