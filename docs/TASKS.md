@@ -34,16 +34,31 @@
 
 ## Next Immediate Tasks:
 1. Complete manual testing of existing features
+   - [x] Category management testing
+   - [ ] Tier management testing
+     - [x] Basic edit functionality (name changes)
+     - [x] Order changes
+     - [ ] Form validation
+     - [ ] Household list/form updates
+     - [ ] Delete functionality
+   - [ ] Household management testing
 2. Fix any issues found during manual testing
+   - [x] Fix tier editing real-time update issue
+   - [x] Fix tier name whitespace handling
 3. Continue with remaining Phase 2 features
 
 ## Phase 2: Core Features - Data Management
-- [x] Implement Tier Management
+- [ ] Implement Tier Management
   - [x] Create/edit/delete tiers
   - [x] Set tier names (e.g., "Must Invite", "Want to Invite", "If Space Permits")
   - [x] Set tier order/priority
   - [x] Local storage persistence
   - [x] Write tests for tier management
+  - [x] Fix tier editing UX issues
+  - [ ] Complete manual testing of tier features
+    - [ ] Form validation
+    - [ ] Household integration
+    - [ ] Delete functionality
 
 - [x] Implement Household Management
   - [x] Add/edit/delete households

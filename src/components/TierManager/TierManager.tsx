@@ -21,6 +21,7 @@ export function TierManager({
 }: TierManagerProps) {
   const [newTierName, setNewTierName] = useState('');
   const [editingTierId, setEditingTierId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
   const [error, setError] = useState('');
 
   const validateTierName = (name: string) => {
@@ -41,19 +42,29 @@ export function TierManager({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const name = editingTierId 
-      ? tiers.find(t => t.id === editingTierId)?.name || ''
-      : newTierName;
-
-    if (!validateTierName(name)) return;
-
+    
     if (editingTierId) {
-      onEdit(editingTierId, name.trim());
+      if (!validateTierName(editingName)) return;
+      onEdit(editingTierId, editingName);
       setEditingTierId(null);
+      setEditingName('');
     } else {
-      onAdd(name.trim());
+      if (!validateTierName(newTierName)) return;
+      onAdd(newTierName);
       setNewTierName('');
     }
+  };
+
+  const startEditing = (tier: Tier) => {
+    setEditingTierId(tier.id);
+    setEditingName(tier.name);
+    setError('');
+  };
+
+  const cancelEditing = () => {
+    setEditingTierId(null);
+    setEditingName('');
+    setError('');
   };
 
   return (
@@ -63,16 +74,10 @@ export function TierManager({
           type="text"
           className={styles.input}
           placeholder="Enter tier name"
-          value={editingTierId 
-            ? tiers.find(t => t.id === editingTierId)?.name || ''
-            : newTierName
-          }
+          value={editingTierId ? editingName : newTierName}
           onChange={(e) => {
             if (editingTierId) {
-              const tier = tiers.find(t => t.id === editingTierId);
-              if (tier) {
-                onEdit(editingTierId, e.target.value);
-              }
+              setEditingName(e.target.value);
             } else {
               setNewTierName(e.target.value);
             }
@@ -87,7 +92,7 @@ export function TierManager({
             <button
               type="button"
               className={styles.actionButton}
-              onClick={() => setEditingTierId(null)}
+              onClick={cancelEditing}
             >
               Cancel
             </button>
@@ -118,7 +123,7 @@ export function TierManager({
               </button>
               <button
                 className={styles.actionButton}
-                onClick={() => setEditingTierId(tier.id)}
+                onClick={() => startEditing(tier)}
               >
                 Edit
               </button>

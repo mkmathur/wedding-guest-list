@@ -67,10 +67,13 @@ npm test
   * Verify it appears as an option in household form
 
 - [ ] Edit a tier:
-  * Change tier name
-  * Change tier order
-  * Verify changes reflect in household list
-  * Verify changes reflect in household form
+  * [x] Change tier name (basic functionality)
+  * [x] Change tier order
+  * [ ] Form validation for editing
+    * [ ] Empty name
+    * [ ] Duplicate name
+  * [ ] Verify changes reflect in household list
+  * [ ] Verify changes reflect in household form
 
 - [ ] Delete a tier:
   * Delete a tier with no households
@@ -80,7 +83,7 @@ npm test
 - [ ] Form Validation:
   * Try submitting without a name
   * Try submitting with a duplicate name
-  * Try submitting with invalid order
+  * ~~Try submitting with invalid order~~ (Removed - using array position)
   * Verify error messages are clear and visible
 
 ### Household Management
