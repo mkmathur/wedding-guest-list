@@ -11,8 +11,8 @@ const mockCategories: Category[] = [
 ];
 
 const mockTiers: Tier[] = [
-  { id: 'tier1', name: 'Must Invite', order: 0 },
-  { id: 'tier2', name: 'Want to Invite', order: 1 },
+  { id: 'tier1', name: 'Must Invite' },
+  { id: 'tier2', name: 'Want to Invite' },
 ];
 
 const mockHouseholds: Household[] = [
@@ -237,5 +237,24 @@ describe('HouseholdManager', () => {
     // Verify we can select the new category
     fireEvent.change(categorySelect, { target: { value: 'cat3' } });
     expect(categorySelect.value).toBe('cat3');
+  });
+
+  it('uses first category and tier when adding a new household', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+    
+    // Fill out just the name (category and tier should be pre-selected)
+    await user.type(screen.getByLabelText(/household name/i), 'New Family');
+    
+    // Submit the form
+    await user.click(screen.getByText('Add Household'));
+    
+    // Verify onAdd was called with first category and tier
+    expect(mockOnAdd).toHaveBeenCalledWith({
+      name: 'New Family',
+      guestCount: 1,
+      categoryId: 'cat1',  // First category from mockCategories
+      tierId: 'tier1',     // First tier from mockTiers
+    });
   });
 }); 
