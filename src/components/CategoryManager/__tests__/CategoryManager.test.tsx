@@ -1,79 +1,78 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '../../../test/utils'
 import { CategoryManager } from '../CategoryManager'
-import { storage } from '../../../utils/storage'
-
-// Mock the storage utility
-vi.mock('../../../utils/storage', () => ({
-  storage: {
-    getCategories: vi.fn(),
-    setCategories: vi.fn(),
-  },
-}))
-
-// Mock crypto.randomUUID
-const mockUUID = '123e4567-e89b-12d3-a456-426614174000'
-vi.stubGlobal('crypto', {
-  randomUUID: () => mockUUID,
-})
+import type { Category } from '../../../types'
 
 describe('CategoryManager', () => {
+  const mockCategories: Category[] = []
+  const mockOnAdd = vi.fn()
+  const mockOnEdit = vi.fn()
+  const mockOnDelete = vi.fn()
+
+  const renderComponent = (categories = mockCategories) => {
+    return render(
+      <CategoryManager
+        categories={categories}
+        onAdd={mockOnAdd}
+        onEdit={mockOnEdit}
+        onDelete={mockOnDelete}
+      />
+    )
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
-    // Start with empty categories
-    vi.mocked(storage.getCategories).mockReturnValue([])
   })
 
   it('renders the add category form', () => {
-    render(<CategoryManager />)
+    renderComponent()
     
     expect(screen.getByPlaceholderText('Enter category name')).toBeInTheDocument()
     expect(screen.getByText('Add Category')).toBeInTheDocument()
   })
 
   it('adds a new category', () => {
-    render(<CategoryManager />)
+    renderComponent()
     
     const input = screen.getByPlaceholderText('Enter category name')
     fireEvent.change(input, { target: { value: 'Family' } })
     fireEvent.click(screen.getByText('Add Category'))
 
-    expect(storage.setCategories).toHaveBeenCalledWith([
-      { id: mockUUID, name: 'Family' }
-    ])
+    expect(mockOnAdd).toHaveBeenCalledWith('Family')
   })
 
   it('validates empty category name', () => {
-    render(<CategoryManager />)
+    renderComponent()
     
     const input = screen.getByPlaceholderText('Enter category name')
     fireEvent.change(input, { target: { value: '   ' } })
     fireEvent.click(screen.getByText('Add Category'))
 
     expect(screen.getByText('Category name cannot be empty')).toBeInTheDocument()
-    expect(storage.setCategories).not.toHaveBeenCalled()
+    expect(mockOnAdd).not.toHaveBeenCalled()
   })
 
   it('validates duplicate category name', () => {
-    vi.mocked(storage.getCategories).mockReturnValue([
+    const existingCategories = [
       { id: '1', name: 'Family' }
-    ])
+    ]
 
-    render(<CategoryManager />)
+    renderComponent(existingCategories)
     
     const input = screen.getByPlaceholderText('Enter category name')
     fireEvent.change(input, { target: { value: 'Family' } })
     fireEvent.click(screen.getByText('Add Category'))
 
     expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
-    expect(storage.setCategories).not.toHaveBeenCalled()
+    expect(mockOnAdd).not.toHaveBeenCalled()
   })
 
   it('edits an existing category', () => {
-    const existingCategory = { id: '1', name: 'Family' }
-    vi.mocked(storage.getCategories).mockReturnValue([existingCategory])
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
 
-    render(<CategoryManager />)
+    renderComponent(existingCategories)
     
     // Start editing
     fireEvent.click(screen.getByText('Edit'))
@@ -82,38 +81,55 @@ describe('CategoryManager', () => {
     fireEvent.change(input, { target: { value: 'Close Family' } })
     fireEvent.click(screen.getByText('Update Category'))
 
-    expect(storage.setCategories).toHaveBeenCalledWith([
-      { id: '1', name: 'Close Family' }
-    ])
+    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Close Family')
   })
 
   it('deletes a category after confirmation', () => {
     const mockConfirm = vi.fn(() => true)
     vi.stubGlobal('confirm', mockConfirm)
 
-    const existingCategory = { id: '1', name: 'Family' }
-    vi.mocked(storage.getCategories).mockReturnValue([existingCategory])
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
 
-    render(<CategoryManager />)
+    renderComponent(existingCategories)
     
     fireEvent.click(screen.getByText('Delete'))
 
     expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this category?')
-    expect(storage.setCategories).toHaveBeenCalledWith([])
+    expect(mockOnDelete).toHaveBeenCalledWith('1')
   })
 
   it('cancels category deletion when not confirmed', () => {
     const mockConfirm = vi.fn(() => false)
     vi.stubGlobal('confirm', mockConfirm)
 
-    const existingCategory = { id: '1', name: 'Family' }
-    vi.mocked(storage.getCategories).mockReturnValue([existingCategory])
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
 
-    render(<CategoryManager />)
+    renderComponent(existingCategories)
     
     fireEvent.click(screen.getByText('Delete'))
 
     expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this category?')
-    expect(storage.setCategories).not.toHaveBeenCalled()
+    expect(mockOnDelete).not.toHaveBeenCalled()
+  })
+
+  it('cancels editing when cancel button is clicked', () => {
+    const existingCategories = [
+      { id: '1', name: 'Family' }
+    ]
+
+    renderComponent(existingCategories)
+    
+    // Start editing
+    fireEvent.click(screen.getByText('Edit'))
+    expect(screen.getByText('Update Category')).toBeInTheDocument()
+    
+    // Cancel editing
+    fireEvent.click(screen.getByText('Cancel'))
+    expect(screen.getByText('Add Category')).toBeInTheDocument()
+    expect(mockOnEdit).not.toHaveBeenCalled()
   })
 }) 

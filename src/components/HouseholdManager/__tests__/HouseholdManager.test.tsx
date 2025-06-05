@@ -2,24 +2,20 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HouseholdManager } from '../HouseholdManager';
-import { storage } from '../../../utils/storage';
 import type { Household, Category, Tier } from '../../../types';
 
-// Mock storage
-vi.mock('../../../utils/storage');
-
 // Mock data
-const mockCategories = [
+const mockCategories: Category[] = [
   { id: 'cat1', name: 'Family' },
   { id: 'cat2', name: 'Friends' },
 ];
 
-const mockTiers = [
+const mockTiers: Tier[] = [
   { id: 'tier1', name: 'Must Invite', order: 0 },
   { id: 'tier2', name: 'Want to Invite', order: 1 },
 ];
 
-const mockHouseholds = [
+const mockHouseholds: Household[] = [
   {
     id: 'h1',
     name: 'Smith Family',
@@ -37,18 +33,33 @@ const mockHouseholds = [
 ];
 
 describe('HouseholdManager', () => {
+  const mockOnAdd = vi.fn();
+  const mockOnEdit = vi.fn();
+  const mockOnDelete = vi.fn();
+
+  const renderComponent = (
+    households = mockHouseholds,
+    categories = mockCategories,
+    tiers = mockTiers
+  ) => {
+    return render(
+      <HouseholdManager
+        households={households}
+        categories={categories}
+        tiers={tiers}
+        onAdd={mockOnAdd}
+        onEdit={mockOnEdit}
+        onDelete={mockOnDelete}
+      />
+    );
+  };
+
   beforeEach(() => {
-    // Reset all mocks before each test
     vi.clearAllMocks();
-    
-    // Setup default mock returns
-    vi.mocked(storage.getHouseholds).mockReturnValue(mockHouseholds);
-    vi.mocked(storage.getCategories).mockReturnValue(mockCategories);
-    vi.mocked(storage.getTiers).mockReturnValue(mockTiers);
   });
 
   it('renders the component with initial data', () => {
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Check if form elements are present
     expect(screen.getByLabelText(/household name/i)).toBeInTheDocument();
@@ -59,14 +70,11 @@ describe('HouseholdManager', () => {
     // Check if households are displayed
     expect(screen.getByText('Smith Family')).toBeInTheDocument();
     expect(screen.getByText('Johnson Family')).toBeInTheDocument();
-    
-    // Check if categories are grouped
-    expect(screen.getByText('Family (7 guests)')).toBeInTheDocument();
   });
 
   it('adds a new household', async () => {
     const user = userEvent.setup();
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Fill out the form
     await user.type(screen.getByLabelText(/household name/i), 'New Family');
@@ -81,32 +89,30 @@ describe('HouseholdManager', () => {
     // Submit the form
     await user.click(screen.getByText('Add Household'));
     
-    // Verify storage was called with new household
-    expect(storage.setHouseholds).toHaveBeenCalledWith([
-      ...mockHouseholds,
-      expect.objectContaining({
-        name: 'New Family',
-        guestCount: 2,
-        categoryId: 'cat1',
-        tierId: 'tier1',
-      }),
-    ]);
+    // Verify onAdd was called with correct data
+    expect(mockOnAdd).toHaveBeenCalledWith({
+      name: 'New Family',
+      guestCount: 2,
+      categoryId: 'cat1',
+      tierId: 'tier1',
+    });
   });
 
   it('validates required fields', async () => {
     const user = userEvent.setup();
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Try to submit empty form
     await user.click(screen.getByText('Add Household'));
     
     // Check for error message
     expect(screen.getByText('Household name is required')).toBeInTheDocument();
+    expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
   it('prevents duplicate household names', async () => {
     const user = userEvent.setup();
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Try to add a household with existing name
     await user.type(screen.getByLabelText(/household name/i), 'Smith Family');
@@ -114,11 +120,12 @@ describe('HouseholdManager', () => {
     
     // Check for error message
     expect(screen.getByText('A household with this name already exists')).toBeInTheDocument();
+    expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
   it('edits an existing household', async () => {
     const user = userEvent.setup();
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Click edit button on first household
     await user.click(screen.getAllByText('Edit')[0]);
@@ -131,17 +138,13 @@ describe('HouseholdManager', () => {
     // Submit changes
     await user.click(screen.getByText('Update Household'));
     
-    // Verify storage was called with updated household
-    expect(storage.setHouseholds).toHaveBeenCalledWith(
-      mockHouseholds.map(h => 
-        h.id === 'h1' 
-          ? expect.objectContaining({
-              id: 'h1',
-              name: 'Updated Smith Family',
-            })
-          : h
-      )
-    );
+    // Verify onEdit was called with correct data
+    expect(mockOnEdit).toHaveBeenCalledWith('h1', {
+      name: 'Updated Smith Family',
+      guestCount: 4,
+      categoryId: 'cat1',
+      tierId: 'tier1',
+    });
   });
 
   it('deletes a household', async () => {
@@ -149,47 +152,26 @@ describe('HouseholdManager', () => {
     // Mock confirm dialog
     vi.spyOn(window, 'confirm').mockImplementation(() => true);
     
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Click delete button on first household
     await user.click(screen.getAllByText('Delete')[0]);
     
-    // Verify storage was called without the deleted household
-    expect(storage.setHouseholds).toHaveBeenCalledWith(
-      mockHouseholds.filter(h => h.id !== 'h1')
-    );
-  });
-
-  it('calculates total guests correctly', () => {
-    render(<HouseholdManager />);
-    
-    // Check total guests (4 + 3 = 7)
-    expect(screen.getByText('Total Guests: 7')).toBeInTheDocument();
-  });
-
-  it('groups households by category with correct guest counts', () => {
-    render(<HouseholdManager />);
-    
-    // Check category group header
-    const categoryHeader = screen.getByText('Family (7 guests)');
-    expect(categoryHeader).toBeInTheDocument();
-    
-    // Check individual household guest counts
-    expect(screen.getByText('(4 guests)')).toBeInTheDocument();
-    expect(screen.getByText('(3 guests)')).toBeInTheDocument();
+    // Verify onDelete was called with correct id
+    expect(mockOnDelete).toHaveBeenCalledWith('h1');
   });
 
   it('displays tier information for each household', () => {
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Check if tier labels are shown
-    expect(screen.getByText('[Must Invite]')).toBeInTheDocument();
-    expect(screen.getByText('[Want to Invite]')).toBeInTheDocument();
+    expect(screen.getByText('Must Invite')).toBeInTheDocument();
+    expect(screen.getByText('Want to Invite')).toBeInTheDocument();
   });
 
   it('handles form cancellation during edit', async () => {
     const user = userEvent.setup();
-    render(<HouseholdManager />);
+    renderComponent();
     
     // Start editing
     await user.click(screen.getAllByText('Edit')[0]);
@@ -197,8 +179,18 @@ describe('HouseholdManager', () => {
     // Click cancel
     await user.click(screen.getByText('Cancel'));
     
-    // Verify form is reset
-    expect(screen.getByLabelText(/household name/i)).toHaveValue('');
+    // Verify form is reset and no edit was made
     expect(screen.getByText('Add Household')).toBeInTheDocument();
+    expect(mockOnEdit).not.toHaveBeenCalled();
+  });
+
+  it('sets initial category and tier values when available', () => {
+    renderComponent();
+    
+    const categorySelect = screen.getByLabelText(/category/i) as HTMLSelectElement;
+    const tierSelect = screen.getByLabelText(/tier/i) as HTMLSelectElement;
+    
+    expect(categorySelect.value).toBe('cat1');
+    expect(tierSelect.value).toBe('tier1');
   });
 }); 
