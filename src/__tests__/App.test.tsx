@@ -140,4 +140,61 @@ describe('App', () => {
     // Verify storage wasn't updated
     expect(storage.setCategories).not.toHaveBeenCalled();
   });
+
+  it('maintains correct tier order when moving tiers', async () => {
+    const user = userEvent.setup()
+    
+    // Mock initial tiers
+    vi.mocked(storage.getTiers).mockReturnValue([
+      { id: '1', name: 'Tier 1', order: 0 },
+      { id: '2', name: 'Tier 2', order: 1 },
+      { id: '3', name: 'Tier 3', order: 2 }
+    ])
+
+    render(<App />)
+
+    // Get the tiers section
+    const tiersSection = screen.getByText('Tiers').closest('section')
+    expect(tiersSection).not.toBeNull()
+
+    // Verify initial order
+    const initialTiers = within(tiersSection!).getAllByText(/Tier \d/)
+    expect(initialTiers[0]).toHaveTextContent('Tier 1')
+    expect(initialTiers[1]).toHaveTextContent('Tier 2')
+    expect(initialTiers[2]).toHaveTextContent('Tier 3')
+
+    // Move Tier 2 up
+    const moveUpButtons = within(tiersSection!).getAllByTitle('Move Up')
+    await user.click(moveUpButtons[1])
+
+    // Verify order after moving up
+    const tiersAfterUp = within(tiersSection!).getAllByText(/Tier \d/)
+    expect(tiersAfterUp[0]).toHaveTextContent('Tier 2')
+    expect(tiersAfterUp[1]).toHaveTextContent('Tier 1')
+    expect(tiersAfterUp[2]).toHaveTextContent('Tier 3')
+
+    // Verify storage was updated with correct order
+    expect(storage.setTiers).toHaveBeenCalledWith([
+      expect.objectContaining({ id: '2', name: 'Tier 2', order: 0 }),
+      expect.objectContaining({ id: '1', name: 'Tier 1', order: 1 }),
+      expect.objectContaining({ id: '3', name: 'Tier 3', order: 2 })
+    ])
+
+    // Move Tier 2 back down
+    const moveDownButtons = within(tiersSection!).getAllByTitle('Move Down')
+    await user.click(moveDownButtons[0])
+
+    // Verify order after moving down
+    const tiersAfterDown = within(tiersSection!).getAllByText(/Tier \d/)
+    expect(tiersAfterDown[0]).toHaveTextContent('Tier 1')
+    expect(tiersAfterDown[1]).toHaveTextContent('Tier 2')
+    expect(tiersAfterDown[2]).toHaveTextContent('Tier 3')
+
+    // Verify storage was updated with correct order
+    expect(storage.setTiers).toHaveBeenCalledWith([
+      expect.objectContaining({ id: '1', name: 'Tier 1', order: 0 }),
+      expect.objectContaining({ id: '2', name: 'Tier 2', order: 1 }),
+      expect.objectContaining({ id: '3', name: 'Tier 3', order: 2 })
+    ])
+  })
 }); 
