@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HouseholdManager } from '../HouseholdManager';
 import type { Household, Category, Tier } from '../../../types';
@@ -164,9 +164,17 @@ describe('HouseholdManager', () => {
   it('displays tier information for each household', () => {
     renderComponent();
     
-    // Check if tier labels are shown
-    expect(screen.getByText('Must Invite')).toBeInTheDocument();
-    expect(screen.getByText('Want to Invite')).toBeInTheDocument();
+    // Get all tier labels and verify they appear in the correct order
+    const tierLabels = screen.getAllByText(/Must Invite|Want to Invite/);
+    expect(tierLabels.length).toBeGreaterThan(0);
+    
+    // Verify both tiers are displayed in the households list
+    const householdList = document.querySelector('._householdList_42f9a5') as HTMLElement;
+    expect(householdList).not.toBeNull();
+    const tierInList = within(householdList).getAllByText(/Must Invite|Want to Invite/);
+    expect(tierInList).toHaveLength(2);
+    expect(tierInList[0]).toHaveTextContent('Must Invite');
+    expect(tierInList[1]).toHaveTextContent('Want to Invite');
   });
 
   it('handles form cancellation during edit', async () => {
@@ -192,5 +200,42 @@ describe('HouseholdManager', () => {
     
     expect(categorySelect.value).toBe('cat1');
     expect(tierSelect.value).toBe('tier1');
+  });
+
+  it('updates category dropdown when categories prop changes', () => {
+    // Initial render with original categories
+    const { rerender } = renderComponent();
+    
+    // Verify initial categories are present
+    const categorySelect = screen.getByLabelText(/category/i) as HTMLSelectElement;
+    expect(categorySelect).toHaveLength(2);
+    expect(screen.getByRole('option', { name: 'Family' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Friends' })).toBeInTheDocument();
+
+    // Add a new category
+    const updatedCategories = [
+      ...mockCategories,
+      { id: 'cat3', name: 'Colleagues' }
+    ];
+
+    // Re-render with updated categories
+    rerender(
+      <HouseholdManager
+        households={mockHouseholds}
+        categories={updatedCategories}
+        tiers={mockTiers}
+        onAdd={mockOnAdd}
+        onEdit={mockOnEdit}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    // Verify new category appears in dropdown
+    expect(categorySelect).toHaveLength(3);
+    expect(screen.getByRole('option', { name: 'Colleagues' })).toBeInTheDocument();
+
+    // Verify we can select the new category
+    fireEvent.change(categorySelect, { target: { value: 'cat3' } });
+    expect(categorySelect.value).toBe('cat3');
   });
 }); 
