@@ -19,7 +19,10 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
       setError('Category name cannot be empty');
       return false;
     }
-    if (categories.some(cat => cat.name.toLowerCase() === name.toLowerCase() && cat.id !== editingCategory?.id)) {
+    if (categories.some(cat => 
+      cat.name.trim().toLowerCase() === name.trim().toLowerCase() && 
+      cat.id !== editingCategory?.id
+    )) {
       setError('Category name must be unique');
       return false;
     }
@@ -62,10 +65,15 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
           placeholder="Enter category name"
           value={editingCategory ? editingCategory.name : newCategoryName}
           onChange={(e) => {
+            const value = e.target.value;
             if (editingCategory) {
-              setEditingCategory({ ...editingCategory, name: e.target.value });
+              setEditingCategory({ ...editingCategory, name: value });
             } else {
-              setNewCategoryName(e.target.value);
+              setNewCategoryName(value);
+            }
+            // Clear error when input changes
+            if (error) {
+              validateCategoryName(value);
             }
           }}
         />
