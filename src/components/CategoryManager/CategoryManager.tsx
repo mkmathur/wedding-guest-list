@@ -86,7 +86,7 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
         </div>
       </form>
 
-      <div className={styles.list}>
+      <div className={styles.list} data-testid="categories-list">
         {categories.map(category => (
           <div key={category.id} className={styles.category}>
             <span className={styles.categoryName}>{category.name}</span>
