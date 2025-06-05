@@ -2,6 +2,33 @@
 
 This document outlines the testing strategy for the Wedding Guest List application.
 
+## Testing Process
+
+### Manual Testing Workflow
+1. Follow the checklist items in order, focusing on one component at a time:
+   - Category Management
+   - Tier Management
+   - Household Management
+   - Cross-component interactions
+   - UI/UX features
+
+2. For each checklist item:
+   - Test the specific functionality
+   - Report any bugs found
+   - For each bug:
+     a. Add/update unit tests to catch the bug
+     b. Run tests to confirm they fail (showing they catch the bug)
+     c. Fix the code
+     d. Run tests again to verify the fix
+     e. Manually verify the fix
+   - Mark the item as complete once verified
+   - Document any UX improvements or feature requests identified
+
+3. Track status in this document:
+   - Check off completed items
+   - Document bugs in "Known Issues" until fixed
+   - Add UX improvements to "Future Improvements"
+
 ## Automated Tests
 
 The application uses Vitest and React Testing Library for automated testing. Run the test suite with:
@@ -135,4 +162,14 @@ The application should be tested in the following environments:
 
 ## Known Issues
 
-(This section will be updated as issues are discovered and resolved) 
+(Active bugs will be listed here until resolved)
+
+## Future Improvements
+
+(UX improvements and feature requests identified during testing)
+
+### UX Improvements
+- [ ] [Add improvements here as they are identified]
+
+### Feature Requests
+- [ ] [Add feature requests here as they are identified] 
