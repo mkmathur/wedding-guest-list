@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Household, Category, Tier } from '../../types';
 import styles from './HouseholdManager.module.css';
 
 interface HouseholdFormData {
   name: string;
-  guestCount: number;
+  guestCount: string;
   categoryId: string;
   tierId: string;
 }
@@ -18,13 +18,6 @@ interface HouseholdManagerProps {
   onDelete: (householdId: string) => void;
 }
 
-const initialFormData: HouseholdFormData = {
-  name: '',
-  guestCount: 1,
-  categoryId: '',
-  tierId: '',
-};
-
 export function HouseholdManager({ 
   households,
   categories,
@@ -33,27 +26,80 @@ export function HouseholdManager({
   onEdit,
   onDelete
 }: HouseholdManagerProps) {
-  const [formData, setFormData] = useState<HouseholdFormData>(initialFormData);
+  const [formData, setFormData] = useState<HouseholdFormData>({
+    name: '',
+    guestCount: '1',
+    categoryId: '',
+    tierId: '',
+  });
   const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [error, setError] = useState('');
 
-  // Set initial form values if there are categories and tiers
-  useState(() => {
+  useEffect(() => {
     if (categories.length > 0 && tiers.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        categoryId: categories[0].id,
-        tierId: tiers[0].id,
-      }));
+      if (editingHousehold) {
+        setFormData({
+          name: editingHousehold.name,
+          guestCount: editingHousehold.guestCount.toString(),
+          categoryId: editingHousehold.categoryId,
+          tierId: editingHousehold.tierId,
+        });
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          categoryId: categories[0].id,
+          tierId: tiers[0].id,
+        }));
+      }
     }
-  });
+  }, [categories, tiers, editingHousehold]);
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      guestCount: '1',
+      categoryId: categories[0]?.id || '',
+      tierId: tiers[0]?.id || '',
+    });
+    setError('');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    const householdData = {
+      ...formData,
+      guestCount: parseInt(formData.guestCount)
+    };
+
+    if (editingHousehold) {
+      onEdit(editingHousehold.id, householdData);
+      setEditingHousehold(null);
+    } else {
+      onAdd(householdData);
+    }
+
+    resetForm();
+  };
+
+  const startEdit = (household: Household) => {
+    setEditingHousehold(household);
+  };
+
+  const cancelEdit = () => {
+    setEditingHousehold(null);
+    resetForm();
+  };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
       setError('Household name is required');
       return false;
     }
-    if (formData.guestCount < 1) {
+    const guestCount = parseInt(formData.guestCount);
+    if (isNaN(guestCount) || guestCount < 1) {
       setError('Guest count must be at least 1');
       return false;
     }
@@ -78,38 +124,6 @@ export function HouseholdManager({
 
     setError('');
     return true;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    if (editingHousehold) {
-      onEdit(editingHousehold.id, formData);
-      setEditingHousehold(null);
-    } else {
-      onAdd(formData);
-    }
-
-    // Reset form
-    setFormData(initialFormData);
-  };
-
-  const startEdit = (household: Household) => {
-    setEditingHousehold(household);
-    setFormData({
-      name: household.name,
-      guestCount: household.guestCount,
-      categoryId: household.categoryId,
-      tierId: household.tierId,
-    });
-  };
-
-  const cancelEdit = () => {
-    setEditingHousehold(null);
-    setFormData(initialFormData);
-    setError('');
   };
 
   // Group households by category
@@ -140,7 +154,7 @@ export function HouseholdManager({
             type="number"
             min="1"
             value={formData.guestCount}
-            onChange={e => setFormData(prev => ({ ...prev, guestCount: parseInt(e.target.value) || 1 }))}
+            onChange={e => setFormData(prev => ({ ...prev, guestCount: e.target.value }))}
             className={styles.input}
           />
         </div>
