@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import { CategoryManager } from './components/CategoryManager/CategoryManager'
-import { TierManager } from './components/TierManager/TierManager'
+import { TierManagerContainer } from './components/TierManager/TierManagerContainer'
 import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
 import { storage } from './utils/storage'
 import type { Category, Tier, Household } from './types'
@@ -45,7 +45,6 @@ function App() {
   };
 
   const handleDeleteCategory = (categoryId: string) => {
-    // Check if category has households
     if (households.some(h => h.categoryId === categoryId)) {
       alert('Cannot delete category that has households assigned to it');
       return;
@@ -56,32 +55,45 @@ function App() {
   };
 
   // Tier handlers
-  const handleAddTier = (name: string, order: number) => {
+  const handleAddTier = (name: string) => {
     const newTier: Tier = {
       id: crypto.randomUUID(),
-      name: name.trim(),
-      order
+      name: name.trim()
     };
-    const updatedTiers = [...tiers, newTier].sort((a, b) => a.order - b.order);
+    const updatedTiers = [...tiers, newTier];
     setTiers(updatedTiers);
     storage.setTiers(updatedTiers);
   };
 
-  const handleEditTier = (tierId: string, name: string, order: number) => {
+  const handleEditTier = (tierId: string, name: string) => {
     const updatedTiers = tiers.map(tier =>
-      tier.id === tierId ? { ...tier, name: name.trim(), order } : tier
-    ).sort((a, b) => a.order - b.order);
+      tier.id === tierId ? { ...tier, name: name.trim() } : tier
+    );
     setTiers(updatedTiers);
     storage.setTiers(updatedTiers);
   };
 
   const handleDeleteTier = (tierId: string) => {
-    // Check if tier has households
     if (households.some(h => h.tierId === tierId)) {
       alert('Cannot delete tier that has households assigned to it');
       return;
     }
     const updatedTiers = tiers.filter(tier => tier.id !== tierId);
+    setTiers(updatedTiers);
+    storage.setTiers(updatedTiers);
+  };
+
+  const handleMoveTier = (tierId: string, direction: 'up' | 'down') => {
+    const currentIndex = tiers.findIndex(t => t.id === tierId);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= tiers.length) return;
+
+    const updatedTiers = [...tiers];
+    [updatedTiers[currentIndex], updatedTiers[newIndex]] = 
+      [updatedTiers[newIndex], updatedTiers[currentIndex]];
+
     setTiers(updatedTiers);
     storage.setTiers(updatedTiers);
   };
@@ -153,11 +165,12 @@ function App() {
             </section>
             <section>
               <h2 className={styles.panelTitle}>Tiers</h2>
-              <TierManager
+              <TierManagerContainer
                 tiers={tiers}
                 onAdd={handleAddTier}
                 onEdit={handleEditTier}
                 onDelete={handleDeleteTier}
+                onMove={handleMoveTier}
               />
             </section>
           </div>

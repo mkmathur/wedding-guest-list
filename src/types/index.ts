@@ -1,7 +1,6 @@
 export interface Tier {
   id: string;
   name: string;
-  order: number;
 }
 
 export interface Category {

@@ -1,17 +1,26 @@
-import { useState } from 'react';
 import type { Tier } from '../../types';
 import styles from './TierManager.module.css';
+import { useState } from 'react';
 
 interface TierManagerProps {
   tiers: Tier[];
-  onAdd: (name: string, order: number) => void;
-  onEdit: (tierId: string, name: string, order: number) => void;
+  onAdd: (name: string) => void;
+  onEdit: (tierId: string, name: string) => void;
   onDelete: (tierId: string) => void;
+  onMoveUp: (tierId: string) => void;
+  onMoveDown: (tierId: string) => void;
 }
 
-export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps) {
+export function TierManager({
+  tiers,
+  onAdd,
+  onEdit,
+  onDelete,
+  onMoveUp,
+  onMoveDown
+}: TierManagerProps) {
   const [newTierName, setNewTierName] = useState('');
-  const [editingTier, setEditingTier] = useState<Tier | null>(null);
+  const [editingTierId, setEditingTierId] = useState<string | null>(null);
   const [error, setError] = useState('');
 
   const validateTierName = (name: string) => {
@@ -19,7 +28,10 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
       setError('Tier name cannot be empty');
       return false;
     }
-    if (tiers.some(tier => tier.name.toLowerCase() === name.toLowerCase() && tier.id !== editingTier?.id)) {
+    if (tiers.some(tier => 
+      tier.name.toLowerCase() === name.toLowerCase() && 
+      tier.id !== editingTierId
+    )) {
       setError('Tier name must be unique');
       return false;
     }
@@ -27,44 +39,21 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
     return true;
   };
 
-  const getNextOrder = () => {
-    if (tiers.length === 0) return 0;
-    return Math.max(...tiers.map(tier => tier.order)) + 1;
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const name = editingTier ? editingTier.name : newTierName;
-    
+    const name = editingTierId 
+      ? tiers.find(t => t.id === editingTierId)?.name || ''
+      : newTierName;
+
     if (!validateTierName(name)) return;
 
-    if (editingTier) {
-      onEdit(editingTier.id, name.trim(), editingTier.order);
-      setEditingTier(null);
+    if (editingTierId) {
+      onEdit(editingTierId, name.trim());
+      setEditingTierId(null);
     } else {
-      onAdd(newTierName.trim(), getNextOrder());
+      onAdd(name.trim());
       setNewTierName('');
     }
-  };
-
-  const handleMoveUp = (index: number) => {
-    if (index <= 0) return;
-    
-    const currentTier = tiers[index];
-    const prevTier = tiers[index - 1];
-    
-    onEdit(currentTier.id, currentTier.name, prevTier.order);
-    onEdit(prevTier.id, prevTier.name, currentTier.order);
-  };
-
-  const handleMoveDown = (index: number) => {
-    if (index >= tiers.length - 1) return;
-    
-    const currentTier = tiers[index];
-    const nextTier = tiers[index + 1];
-    
-    onEdit(currentTier.id, currentTier.name, nextTier.order);
-    onEdit(nextTier.id, nextTier.name, currentTier.order);
   };
 
   return (
@@ -74,10 +63,16 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
           type="text"
           className={styles.input}
           placeholder="Enter tier name"
-          value={editingTier ? editingTier.name : newTierName}
+          value={editingTierId 
+            ? tiers.find(t => t.id === editingTierId)?.name || ''
+            : newTierName
+          }
           onChange={(e) => {
-            if (editingTier) {
-              setEditingTier({ ...editingTier, name: e.target.value });
+            if (editingTierId) {
+              const tier = tiers.find(t => t.id === editingTierId);
+              if (tier) {
+                onEdit(editingTierId, e.target.value);
+              }
             } else {
               setNewTierName(e.target.value);
             }
@@ -86,13 +81,13 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
         {error && <div className={styles.error}>{error}</div>}
         <div className={styles.buttonGroup}>
           <button type="submit" className={styles.actionButton}>
-            {editingTier ? 'Update Tier' : 'Add Tier'}
+            {editingTierId ? 'Update Tier' : 'Add Tier'}
           </button>
-          {editingTier && (
+          {editingTierId && (
             <button
               type="button"
               className={styles.actionButton}
-              onClick={() => setEditingTier(null)}
+              onClick={() => setEditingTierId(null)}
             >
               Cancel
             </button>
@@ -107,7 +102,7 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
             <div className={styles.actions}>
               <button
                 className={styles.orderButton}
-                onClick={() => handleMoveUp(index)}
+                onClick={() => onMoveUp(tier.id)}
                 disabled={index === 0}
                 title="Move Up"
               >
@@ -115,7 +110,7 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
               </button>
               <button
                 className={styles.orderButton}
-                onClick={() => handleMoveDown(index)}
+                onClick={() => onMoveDown(tier.id)}
                 disabled={index === tiers.length - 1}
                 title="Move Down"
               >
@@ -123,7 +118,7 @@ export function TierManager({ tiers, onAdd, onEdit, onDelete }: TierManagerProps
               </button>
               <button
                 className={styles.actionButton}
-                onClick={() => setEditingTier(tier)}
+                onClick={() => setEditingTierId(tier.id)}
               >
                 Edit
               </button>
