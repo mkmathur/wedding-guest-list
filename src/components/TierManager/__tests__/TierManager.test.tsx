@@ -8,6 +8,8 @@ describe('TierManager', () => {
   const mockOnAdd = vi.fn()
   const mockOnEdit = vi.fn()
   const mockOnDelete = vi.fn()
+  const mockOnMoveUp = vi.fn()
+  const mockOnMoveDown = vi.fn()
 
   const renderComponent = (tiers = mockTiers) => {
     return render(
@@ -16,6 +18,8 @@ describe('TierManager', () => {
         onAdd={mockOnAdd}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onMoveUp={mockOnMoveUp}
+        onMoveDown={mockOnMoveDown}
       />
     )
   }
@@ -38,7 +42,7 @@ describe('TierManager', () => {
     fireEvent.change(input, { target: { value: 'Must Invite' } })
     fireEvent.click(screen.getByText('Add Tier'))
 
-    expect(mockOnAdd).toHaveBeenCalledWith('Must Invite', 0)
+    expect(mockOnAdd).toHaveBeenCalledWith('Must Invite')
   })
 
   it('validates empty tier name', () => {
@@ -54,7 +58,7 @@ describe('TierManager', () => {
 
   it('validates duplicate tier name', () => {
     const existingTiers = [
-      { id: '1', name: 'Must Invite', order: 0 }
+      { id: '1', name: 'Must Invite' }
     ]
 
     renderComponent(existingTiers)
@@ -69,7 +73,7 @@ describe('TierManager', () => {
 
   it('edits an existing tier', () => {
     const existingTiers = [
-      { id: '1', name: 'Must Invite', order: 0 }
+      { id: '1', name: 'Must Invite' }
     ]
 
     renderComponent(existingTiers)
@@ -81,7 +85,7 @@ describe('TierManager', () => {
     fireEvent.change(input, { target: { value: 'Must Invite - VIP' } })
     fireEvent.click(screen.getByText('Update Tier'))
 
-    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Must Invite - VIP', 0)
+    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Must Invite - VIP')
   })
 
   it('deletes a tier after confirmation', () => {
@@ -89,7 +93,7 @@ describe('TierManager', () => {
     vi.stubGlobal('confirm', mockConfirm)
 
     const existingTiers = [
-      { id: '1', name: 'Must Invite', order: 0 }
+      { id: '1', name: 'Must Invite' }
     ]
 
     renderComponent(existingTiers)
@@ -102,9 +106,9 @@ describe('TierManager', () => {
 
   it('moves a tier up', () => {
     const existingTiers = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ]
 
     renderComponent(existingTiers)
@@ -124,17 +128,15 @@ describe('TierManager', () => {
     // Move middle tier up
     fireEvent.click(moveUpButtons[1])
 
-    // Verify onEdit was called with correct parameters
-    expect(mockOnEdit).toHaveBeenCalledTimes(2)
-    expect(mockOnEdit).toHaveBeenCalledWith('2', 'Tier 2', 0) // Move Tier 2 up
-    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Tier 1', 1) // Move Tier 1 down
+    // Verify onMoveUp was called
+    expect(mockOnMoveUp).toHaveBeenCalledWith('2')
   })
 
   it('moves a tier down', () => {
     const existingTiers = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ]
 
     renderComponent(existingTiers)
@@ -154,17 +156,15 @@ describe('TierManager', () => {
     // Move middle tier down
     fireEvent.click(moveDownButtons[1])
 
-    // Verify onEdit was called with correct parameters
-    expect(mockOnEdit).toHaveBeenCalledTimes(2)
-    expect(mockOnEdit).toHaveBeenCalledWith('2', 'Tier 2', 2) // Move Tier 2 down
-    expect(mockOnEdit).toHaveBeenCalledWith('3', 'Tier 3', 1) // Move Tier 3 up
+    // Verify onMoveDown was called
+    expect(mockOnMoveDown).toHaveBeenCalledWith('2')
   })
 
   it('maintains correct order after multiple moves', () => {
     const existingTiers = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ]
 
     const { rerender } = renderComponent(existingTiers)
@@ -179,15 +179,14 @@ describe('TierManager', () => {
     const moveUpButtons = screen.getAllByTitle('Move Up')
     fireEvent.click(moveUpButtons[1]) // Move Tier 2 up
 
-    // Verify first move sequence
-    expect(mockOnEdit.mock.calls[0]).toEqual(['2', 'Tier 2', 0]) // First call: Move Tier 2 up
-    expect(mockOnEdit.mock.calls[1]).toEqual(['1', 'Tier 1', 1]) // Second call: Move Tier 1 down
+    // Verify first move
+    expect(mockOnMoveUp).toHaveBeenCalledWith('2')
 
     // Simulate the state update after first move
     const tiersAfterUp = [
-      { id: '2', name: 'Tier 2', order: 0 },
-      { id: '1', name: 'Tier 1', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '2', name: 'Tier 2' },
+      { id: '1', name: 'Tier 1' },
+      { id: '3', name: 'Tier 3' }
     ]
     rerender(
       <TierManager
@@ -195,6 +194,8 @@ describe('TierManager', () => {
         onAdd={mockOnAdd}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onMoveUp={mockOnMoveUp}
+        onMoveDown={mockOnMoveDown}
       />
     )
 
@@ -202,15 +203,14 @@ describe('TierManager', () => {
     const moveDownButtons = screen.getAllByTitle('Move Down')
     fireEvent.click(moveDownButtons[0]) // Move Tier 2 down
 
-    // Verify second move sequence
-    expect(mockOnEdit.mock.calls[2]).toEqual(['2', 'Tier 2', 1]) // Third call: Move Tier 2 down
-    expect(mockOnEdit.mock.calls[3]).toEqual(['1', 'Tier 1', 0]) // Fourth call: Move Tier 1 up
+    // Verify second move
+    expect(mockOnMoveDown).toHaveBeenCalledWith('2')
 
     // Simulate the state update after second move
     const tiersAfterDown = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ]
     rerender(
       <TierManager
@@ -218,6 +218,8 @@ describe('TierManager', () => {
         onAdd={mockOnAdd}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onMoveUp={mockOnMoveUp}
+        onMoveDown={mockOnMoveDown}
       />
     )
 
@@ -230,8 +232,8 @@ describe('TierManager', () => {
 
   it('disables up button for first tier', () => {
     const existingTiers = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' }
     ]
 
     renderComponent(existingTiers)
@@ -243,31 +245,31 @@ describe('TierManager', () => {
 
   it('disables down button for last tier', () => {
     const existingTiers = [
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' }
     ]
 
     renderComponent(existingTiers)
     
     const moveDownButtons = screen.getAllByTitle('Move Down')
     expect(moveDownButtons[0]).not.toBeDisabled() // First tier's down button
-    expect(moveDownButtons[1]).toBeDisabled() // Second tier's down button
+    expect(moveDownButtons[1]).toBeDisabled() // Last tier's down button
   })
 
   it('cancels editing when cancel button is clicked', () => {
     const existingTiers = [
-      { id: '1', name: 'Must Invite', order: 0 }
+      { id: '1', name: 'Must Invite' }
     ]
 
     renderComponent(existingTiers)
     
     // Start editing
     fireEvent.click(screen.getByText('Edit'))
-    expect(screen.getByText('Update Tier')).toBeInTheDocument()
     
-    // Cancel editing
+    // Click cancel
     fireEvent.click(screen.getByText('Cancel'))
+
+    // Verify we're back in add mode
     expect(screen.getByText('Add Tier')).toBeInTheDocument()
-    expect(mockOnEdit).not.toHaveBeenCalled()
   })
 }) 

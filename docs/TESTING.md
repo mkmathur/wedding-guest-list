@@ -40,28 +40,28 @@ npm test
 ## Manual Testing Checklist
 
 ### Category Management
-- [ ] Add a new category:
+- [x] Add a new category:
   * Add category with a unique name
   * Verify it appears in the category list
   * Verify it appears as an option in household form
 
-- [ ] Edit a category:
+- [x] Edit a category:
   * Change category name
   * Verify change reflects in household list
   * Verify change reflects in household form options
 
-- [ ] Delete a category:
+- [x] Delete a category:
   * Delete a category with no households
   * Try to delete a category with households
   * Verify proper warning/error messages
 
-- [ ] Form Validation:
+- [x] Form Validation:
   * Try submitting without a name
   * Try submitting with a duplicate name
   * Verify error messages are clear and visible
 
 ### Tier Management
-- [ ] Add a new tier:
+- [x] Add a new tier:
   * Add tier with name and order
   * Verify it appears in tier list
   * Verify it appears as an option in household form

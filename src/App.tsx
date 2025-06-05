@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import { CategoryManager } from './components/CategoryManager/CategoryManager'
-import { TierManagerContainer } from './components/TierManager/TierManagerContainer'
+import { TierManager } from './components/TierManager/TierManager'
 import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
 import { storage } from './utils/storage'
 import type { Category, Tier, Household } from './types'
@@ -165,12 +165,13 @@ function App() {
             </section>
             <section>
               <h2 className={styles.panelTitle}>Tiers</h2>
-              <TierManagerContainer
+              <TierManager
                 tiers={tiers}
                 onAdd={handleAddTier}
                 onEdit={handleEditTier}
                 onDelete={handleDeleteTier}
-                onMove={handleMoveTier}
+                onMoveUp={(tierId) => handleMoveTier(tierId, 'up')}
+                onMoveDown={(tierId) => handleMoveTier(tierId, 'down')}
               />
             </section>
           </div>
