@@ -111,7 +111,7 @@ describe('App', () => {
     vi.mocked(storage.getCategories).mockReturnValue([mockCategory]);
     vi.mocked(storage.getHouseholds).mockReturnValue([mockHousehold]);
     vi.mocked(storage.getTiers).mockReturnValue([
-      { id: 'tier1', name: 'Must Invite', order: 0 }
+      { id: 'tier1', name: 'Must Invite' }
     ]);
 
     // Mock window.confirm and window.alert
@@ -144,11 +144,11 @@ describe('App', () => {
   it('maintains correct tier order when moving tiers', async () => {
     const user = userEvent.setup()
     
-    // Mock initial tiers
+    // Mock initial tiers - order is determined by array position
     vi.mocked(storage.getTiers).mockReturnValue([
-      { id: '1', name: 'Tier 1', order: 0 },
-      { id: '2', name: 'Tier 2', order: 1 },
-      { id: '3', name: 'Tier 3', order: 2 }
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ])
 
     render(<App />)
@@ -167,34 +167,34 @@ describe('App', () => {
     const moveUpButtons = within(tiersSection!).getAllByTitle('Move Up')
     await user.click(moveUpButtons[1])
 
-    // Verify order after moving up
-    const tiersAfterUp = within(tiersSection!).getAllByText(/Tier \d/)
+    // Wait for the UI to update and verify order
+    const tiersAfterUp = await within(tiersSection!).findAllByText(/Tier \d/)
     expect(tiersAfterUp[0]).toHaveTextContent('Tier 2')
     expect(tiersAfterUp[1]).toHaveTextContent('Tier 1')
     expect(tiersAfterUp[2]).toHaveTextContent('Tier 3')
 
-    // Verify storage was updated with correct order
+    // Verify storage was updated with correct order (array position determines order)
     expect(storage.setTiers).toHaveBeenCalledWith([
-      expect.objectContaining({ id: '2', name: 'Tier 2', order: 0 }),
-      expect.objectContaining({ id: '1', name: 'Tier 1', order: 1 }),
-      expect.objectContaining({ id: '3', name: 'Tier 3', order: 2 })
+      { id: '2', name: 'Tier 2' },
+      { id: '1', name: 'Tier 1' },
+      { id: '3', name: 'Tier 3' }
     ])
 
     // Move Tier 2 back down
     const moveDownButtons = within(tiersSection!).getAllByTitle('Move Down')
     await user.click(moveDownButtons[0])
 
-    // Verify order after moving down
-    const tiersAfterDown = within(tiersSection!).getAllByText(/Tier \d/)
+    // Wait for the UI to update and verify order
+    const tiersAfterDown = await within(tiersSection!).findAllByText(/Tier \d/)
     expect(tiersAfterDown[0]).toHaveTextContent('Tier 1')
     expect(tiersAfterDown[1]).toHaveTextContent('Tier 2')
     expect(tiersAfterDown[2]).toHaveTextContent('Tier 3')
 
-    // Verify storage was updated with correct order
+    // Verify storage was updated with correct order (array position determines order)
     expect(storage.setTiers).toHaveBeenCalledWith([
-      expect.objectContaining({ id: '1', name: 'Tier 1', order: 0 }),
-      expect.objectContaining({ id: '2', name: 'Tier 2', order: 1 }),
-      expect.objectContaining({ id: '3', name: 'Tier 3', order: 2 })
+      { id: '1', name: 'Tier 1' },
+      { id: '2', name: 'Tier 2' },
+      { id: '3', name: 'Tier 3' }
     ])
   })
 }); 
