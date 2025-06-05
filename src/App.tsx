@@ -189,10 +189,10 @@ function App() {
             />
           </div>
 
-          {/* Right Panel - Scenarios */}
+          {/* Right Panel - Events */}
           <div className={styles.rightPanel}>
-            <h2 className={styles.panelTitle}>Scenarios</h2>
-            {/* Content will be added in next phase */}
+            <h2 className={styles.panelTitle}>Events</h2>
+            {/* Events content will go here */}
           </div>
         </div>
       </main>

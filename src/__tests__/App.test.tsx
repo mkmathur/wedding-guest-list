@@ -28,7 +28,7 @@ describe('App', () => {
     expect(screen.getByText('Categories')).toBeInTheDocument();
     expect(screen.getByText('Tiers')).toBeInTheDocument();
     expect(screen.getByText('Households')).toBeInTheDocument();
-    expect(screen.getByText('Scenarios')).toBeInTheDocument();
+    expect(screen.getByText('Events')).toBeInTheDocument();
   });
 
   it('updates household form when new category is added', async () => {

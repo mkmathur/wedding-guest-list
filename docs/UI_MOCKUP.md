@@ -7,10 +7,10 @@
 | + New Household    🔍 Search    Export ⬇️    Total Guests: 142                   |
 +--------------------------------------------------------------------------------+
 |                  |                                            |                  |
-| CATEGORIES & TIERS|              HOUSEHOLD LIST               |    SCENARIOS     |
-| ⚡Quick Filters   |                                            | + New Scenario   |
+| CATEGORIES & TIERS|              HOUSEHOLD LIST               |     EVENTS      |
+| ⚡Quick Filters   |                                            | + New Event     |
 |------------------|  📋 My Family (45 guests)                   |------------------|
-| Categories       |  ┣━ Smith Family (4) [Must Invite]         | Saved Scenarios |
+| Categories       |  ┣━ Smith Family (4) [Must Invite]         | Saved Events    |
 | ⭕ My Family     |  ┣━ Johnson Family (3) [Must Invite]       |                  |
 | ⭕ Partner Family |  ┗━ Williams (2) [Want to Invite]         | ▶️ Just Family   |
 | ⭕ College Friends|                                            |   125 guests    |
@@ -24,7 +24,7 @@
 |------------------|  ┣━ Taylor Group (4) [Want to Invite]      |                  |
 | Drag categories  |  ┗━ Chris & Pat (2) [If Space]            |------------------|
 | or tiers here   |                                            | Compare         |
-| to filter list  |                                            | Scenarios       |
+| to filter list  |                                            | Events          |
 |                  |                                            |                  |
 +------------------+--------------------------------------------+------------------+
 ```
@@ -48,10 +48,10 @@
 - Hierarchical view with expand/collapse (┣━ ┗━)
 - Running totals per category
 
-### Right Panel: Scenarios
-- Narrow sidebar for scenario management
-- Shows saved scenarios with guest counts
-- Quick play button (▶️) to apply scenario
+### Right Panel: Events
+- Narrow sidebar for event management
+- Shows saved events with guest counts
+- Quick play button (▶️) to apply event
 - Compare feature at bottom
 - Collapsible for more space when needed
 
@@ -73,10 +73,10 @@
    - Quick actions on hover
    - Drag between categories
 
-3. **Scenarios:**
-   - Click to load a scenario
-   - Quick comparison view
-   - Save current filters as new scenario
+3. **Events:**
+   - Click to load an event
+   - Apply event to current view
+   - Save current filters as new event
 
 ## Mobile Adaptation
 
@@ -88,7 +88,7 @@ On mobile devices, this layout transforms into:
 +--------------------------------+
 | 🔍 Search       Total: 142    + |
 +--------------------------------+
-| [Categories] [Households] [Scenarios]
+| [Categories] [Households] [Events]
 +--------------------------------+
 |                                |
 |        Household List          |
@@ -103,7 +103,7 @@ On mobile devices, this layout transforms into:
 - Bottom navigation for quick access
 - Floating action button (+) for new items
 - Modal dialogs for detailed views
-- Collapsible filters and scenarios
+- Collapsible filters and events
 
 Would you like me to:
 1. Add more interaction details?

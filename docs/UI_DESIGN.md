@@ -29,7 +29,7 @@
 +----------------------------------+
 |     Header + Total Count         |
 +----------------------------------+
-| [Categories][Households][Scenarios]
+| [Categories][Households][Events]
 +----------------------------------+
 |                                  |
 |          Content Area            |
@@ -139,7 +139,7 @@ I recommend the Split View approach for the following reasons:
 +----------------------------------+
 |        Quick Actions Bar         |
 +----------------------------------+
-|    [Categories] [Tiers] [Scenarios]
+|    [Categories] [Tiers] [Events]
 +----------------------------------+
 |                                  |
 |         Household List           |
@@ -176,11 +176,10 @@ On mobile:
 - Quick edit actions
 - Sort/filter controls
 
-### 4. Scenarios Panel
-- Collapsible/expandable
-- Quick scenario creation
-- Comparison view
-- Save/load functions
+### 4. Events Panel
+- Quick event creation
+- List of saved events
+- Event comparison view
 
 ## Visual Design Elements
 
@@ -208,7 +207,7 @@ On mobile:
 1. Basic list view with categories
 2. Add tier management
 3. Implement drag and drop
-4. Add scenarios panel
+4. Add events panel
 5. Polish mobile experience
 6. Add advanced features
 

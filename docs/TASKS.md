@@ -12,7 +12,7 @@
   - [x] Tier interface
   - [x] Category interface
   - [x] Household interface
-  - [x] Scenario interface (with category-tier selections)
+  - [x] Event interface (with category-tier selections)
 - [x] Set up local storage utilities
   - [x] Basic CRUD operations
   - [x] Type safety
@@ -71,14 +71,11 @@
   - [ ] Complete manual testing of household features
   - [ ] Implement bulk edit capabilities for quick updates
 
-## Phase 3: Scenario Planning Features
-- [ ] Create Scenario Builder Interface
-  - [ ] UI for selecting categories and tiers
-  - [ ] Support multiple tier combinations
-  - [ ] Real-time total guest count calculations
-  - [ ] Save/load scenarios
-  - [ ] Display detailed breakdown by category and tier
-  - [ ] Show number of households and total guests per category/tier
+## Phase 3: Event Planning Features
+- [ ] Create Event Builder Interface
+- [ ] Select categories and tiers for events
+- [ ] Save/load events
+- [ ] Compare multiple events
 
 ## Phase 4: CSV Import/Export
 - [ ] Implement CSV Export
@@ -131,7 +128,9 @@
   - [x] Test tier management operations
   - [x] Verify guest count calculations
   - [ ] Test CSV import/export
-  - [ ] Test scenarios calculations
+  - [ ] Test events calculations
+  - [ ] Test events validation
+  - [ ] Test events comparison logic
 
 ## Phase 7: Documentation
 - [x] Create README

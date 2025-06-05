@@ -70,24 +70,24 @@ npm test
   * [x] Change tier name (basic functionality)
   * [x] Change tier order
   * [ ] Form validation for editing
-    * [ ] Empty name
-    * [ ] Duplicate name
-  * [ ] Verify changes reflect in household list
-  * [ ] Verify changes reflect in household form
+    * [x] Empty name
+    * [x] Duplicate name
+  * [x] Verify changes reflect in household list
+  * [x] Verify changes reflect in household form
 
-- [ ] Delete a tier:
+- [x] Delete a tier:
   * Delete a tier with no households
   * Try to delete a tier with households
   * Verify proper warning/error messages
 
-- [ ] Form Validation:
+- [x] Form Validation:
   * Try submitting without a name
   * Try submitting with a duplicate name
   * ~~Try submitting with invalid order~~ (Removed - using array position)
   * Verify error messages are clear and visible
 
 ### Household Management
-- [ ] Add a new household:
+- [x] Add a new household:
   * Fill out all fields (name, guest count, category, tier)
   * Verify it appears in the correct category group
   * Verify total guest count updates
