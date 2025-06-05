@@ -39,6 +39,50 @@ npm test
 
 ## Manual Testing Checklist
 
+### Category Management
+- [ ] Add a new category:
+  * Add category with a unique name
+  * Verify it appears in the category list
+  * Verify it appears as an option in household form
+
+- [ ] Edit a category:
+  * Change category name
+  * Verify change reflects in household list
+  * Verify change reflects in household form options
+
+- [ ] Delete a category:
+  * Delete a category with no households
+  * Try to delete a category with households
+  * Verify proper warning/error messages
+
+- [ ] Form Validation:
+  * Try submitting without a name
+  * Try submitting with a duplicate name
+  * Verify error messages are clear and visible
+
+### Tier Management
+- [ ] Add a new tier:
+  * Add tier with name and order
+  * Verify it appears in tier list
+  * Verify it appears as an option in household form
+
+- [ ] Edit a tier:
+  * Change tier name
+  * Change tier order
+  * Verify changes reflect in household list
+  * Verify changes reflect in household form
+
+- [ ] Delete a tier:
+  * Delete a tier with no households
+  * Try to delete a tier with households
+  * Verify proper warning/error messages
+
+- [ ] Form Validation:
+  * Try submitting without a name
+  * Try submitting with a duplicate name
+  * Try submitting with invalid order
+  * Verify error messages are clear and visible
+
 ### Household Management
 - [ ] Add a new household:
   * Fill out all fields (name, guest count, category, tier)
@@ -66,39 +110,6 @@ npm test
   * Try setting guest count to 0 or negative
   * Try setting guest count to non-numeric value
   * Test cancel button during edit mode
-
-### Category Management
-- [ ] Add a new category:
-  * Add category with a unique name
-  * Verify it appears in the category list
-  * Verify it appears as an option in household form
-
-- [ ] Edit a category:
-  * Change category name
-  * Verify change reflects in household list
-  * Verify change reflects in household form options
-
-- [ ] Delete a category:
-  * Delete a category with no households
-  * Try to delete a category with households
-  * Verify proper warning/error messages
-
-### Tier Management
-- [ ] Add a new tier:
-  * Add tier with name and order
-  * Verify it appears in tier list
-  * Verify it appears as an option in household form
-
-- [ ] Edit a tier:
-  * Change tier name
-  * Change tier order
-  * Verify changes reflect in household list
-  * Verify changes reflect in household form
-
-- [ ] Delete a tier:
-  * Delete a tier with no households
-  * Try to delete a tier with households
-  * Verify proper warning/error messages
 
 ### Data Persistence
 - [ ] Refresh the page:
