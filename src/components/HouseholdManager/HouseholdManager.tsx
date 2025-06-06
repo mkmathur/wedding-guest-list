@@ -26,13 +26,14 @@ export function HouseholdManager({
   onEdit,
   onDelete
 }: HouseholdManagerProps) {
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [formData, setFormData] = useState<HouseholdFormData>({
     name: '',
     guestCount: '1',
     categoryId: '',
     tierId: '',
   });
-  const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export function HouseholdManager({
       setEditingHousehold(null);
     } else {
       onAdd(householdData);
+      setIsCreating(false);
     }
 
     resetForm();
@@ -88,8 +90,9 @@ export function HouseholdManager({
     setEditingHousehold(household);
   };
 
-  const cancelEdit = () => {
+  const handleCancel = () => {
     setEditingHousehold(null);
+    setIsCreating(false);
     resetForm();
   };
 
@@ -133,86 +136,92 @@ export function HouseholdManager({
   }));
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formGroup}>
-          <label htmlFor="name">Household Name:</label>
-          <input
-            id="name"
-            type="text"
-            value={formData.name}
-            onChange={e => {
-              setFormData(prev => ({ ...prev, name: e.target.value }));
-              // Clear error when input changes
-              if (error) {
-                validateForm();
-              }
-            }}
-            className={styles.input}
-            placeholder="Enter household name"
-          />
-        </div>
+    <div className={styles.householdManager}>
+      {!isCreating && !editingHousehold && (
+        <button
+          className={styles.newHouseholdButton}
+          onClick={() => setIsCreating(true)}
+        >
+          + New Household
+        </button>
+      )}
 
-        <div className={styles.formGroup}>
-          <label htmlFor="guestCount">Number of Guests:</label>
-          <input
-            id="guestCount"
-            type="number"
-            min="1"
-            value={formData.guestCount}
-            onChange={e => setFormData(prev => ({ ...prev, guestCount: e.target.value }))}
-            className={styles.input}
-          />
-        </div>
+      {(isCreating || editingHousehold) && (
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="name">Household Name:</label>
+            <input
+              id="name"
+              type="text"
+              value={formData.name}
+              onChange={e => {
+                setFormData(prev => ({ ...prev, name: e.target.value }));
+                if (error) validateForm();
+              }}
+              className={styles.input}
+              placeholder="Enter household name"
+            />
+          </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="category">Category:</label>
-          <select
-            id="category"
-            value={formData.categoryId}
-            onChange={e => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
-            className={styles.select}
-          >
-            {categories.map(category => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="guestCount">Number of Guests:</label>
+            <input
+              id="guestCount"
+              type="number"
+              min="1"
+              value={formData.guestCount}
+              onChange={e => setFormData(prev => ({ ...prev, guestCount: e.target.value }))}
+              className={styles.input}
+            />
+          </div>
 
-        <div className={styles.formGroup}>
-          <label htmlFor="tier">Tier:</label>
-          <select
-            id="tier"
-            value={formData.tierId}
-            onChange={e => setFormData(prev => ({ ...prev, tierId: e.target.value }))}
-            className={styles.select}
-          >
-            {tiers.map(tier => (
-              <option key={tier.id} value={tier.id}>
-                {tier.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="category">Category:</label>
+            <select
+              id="category"
+              value={formData.categoryId}
+              onChange={e => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
+              className={styles.select}
+            >
+              {categories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {error && <div className={styles.error}>{error}</div>}
-        <div className={styles.buttonGroup}>
-          <button type="submit" className={styles.actionButton}>
-            {editingHousehold ? 'Update Household' : 'Add Household'}
-          </button>
-          {editingHousehold && (
+          <div className={styles.formGroup}>
+            <label htmlFor="tier">Tier:</label>
+            <select
+              id="tier"
+              value={formData.tierId}
+              onChange={e => setFormData(prev => ({ ...prev, tierId: e.target.value }))}
+              className={styles.select}
+            >
+              {tiers.map(tier => (
+                <option key={tier.id} value={tier.id}>
+                  {tier.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {error && <div className={styles.error}>{error}</div>}
+          <div className={styles.buttonGroup}>
+            <button type="submit" className={styles.submitButton}>
+              {editingHousehold ? 'Update Household' : 'Add Household'}
+            </button>
             <button
               type="button"
-              className={styles.actionButton}
-              onClick={cancelEdit}
+              className={styles.cancelButton}
+              onClick={handleCancel}
             >
               Cancel
             </button>
-          )}
-        </div>
-      </form>
+          </div>
+        </form>
+      )}
 
       <div className={styles.householdList}>
         {householdsByCategory.map(({ category, households: categoryHouseholds }) => (
@@ -231,7 +240,7 @@ export function HouseholdManager({
                 </div>
                 <div className={styles.actions}>
                   <button
-                    className={styles.actionButton}
+                    className={styles.editButton}
                     onClick={() => startEdit(household)}
                   >
                     Edit
