@@ -93,14 +93,14 @@ npm test
   * Verify total guest count updates
   * Verify tier label is displayed correctly
 
-- [ ] Edit a household:
+- [x] Edit a household:
   * Click edit button
   * Verify form is populated with correct data
   * Change each field and save
   * Verify changes are reflected in the list
   * Verify total guest count updates correctly
 
-- [ ] Delete a household:
+- [x] Delete a household:
   * Click delete button
   * Verify confirmation dialog appears
   * Confirm deletion
