@@ -1,4 +1,4 @@
-import type { Tier, Category, Household, Event } from '../types';
+import type { Tier, Category, Household, Event, CategoryTierSelection } from '../types';
 
 const STORAGE_KEYS = {
   TIERS: 'wedding-guest-list:tiers',
@@ -99,7 +99,9 @@ export const storage = {
     const invalidEvents = events.filter(event =>
       event.selections.some(selection =>
         !categories.find(cat => cat.id === selection.categoryId) ||
-        !tiers.find(tier => tier.id === selection.tierId)
+        !selection.selectedTierIds.every(tierId =>
+          tiers.find(tier => tier.id === tierId)
+        )
       )
     );
 

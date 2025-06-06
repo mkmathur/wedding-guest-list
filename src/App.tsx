@@ -3,14 +3,17 @@ import styles from './App.module.css'
 import { CategoryManager } from './components/CategoryManager/CategoryManager'
 import { TierManager } from './components/TierManager/TierManager'
 import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
+import { EventManager } from './components/EventManager/EventManager'
 import { storage } from './utils/storage'
 import type { Category, Tier, Household } from './types'
+import type { Event } from './types/event'
 
 function App() {
   // State
   const [categories, setCategories] = useState<Category[]>([]);
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [households, setHouseholds] = useState<Household[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [totalGuests, setTotalGuests] = useState(0);
 
   // Initial data load
@@ -18,6 +21,7 @@ function App() {
     setCategories(storage.getCategories());
     setTiers(storage.getTiers());
     setHouseholds(storage.getHouseholds());
+    setEvents(storage.getEvents());
   }, []);
 
   // Update total guests whenever households change
@@ -110,8 +114,8 @@ function App() {
   };
 
   const handleEditHousehold = (householdId: string, updates: Partial<Household>) => {
-    const updatedHouseholds = households.map(household =>
-      household.id === householdId ? { ...household, ...updates } : household
+    const updatedHouseholds = households.map(h =>
+      h.id === householdId ? { ...h, ...updates } : h
     );
     setHouseholds(updatedHouseholds);
     storage.setHouseholds(updatedHouseholds);
@@ -123,30 +127,40 @@ function App() {
     storage.setHouseholds(updatedHouseholds);
   };
 
+  // Event handlers
+  const handleAddEvent = (event: Omit<Event, 'id'>) => {
+    const newEvent: Event = {
+      id: crypto.randomUUID(),
+      ...event
+    };
+    const updatedEvents = [...events, newEvent];
+    setEvents(updatedEvents);
+    storage.setEvents(updatedEvents);
+  };
+
+  const handleEditEvent = (eventId: string, updates: Partial<Event>) => {
+    const updatedEvents = events.map(e =>
+      e.id === eventId ? { ...e, ...updates } : e
+    );
+    setEvents(updatedEvents);
+    storage.setEvents(updatedEvents);
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    const updatedEvents = events.filter(e => e.id !== eventId);
+    setEvents(updatedEvents);
+    storage.setEvents(updatedEvents);
+  };
+
   return (
-    <div className={styles.container}>
-      {/* Header */}
+    <div className={styles.app}>
       <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>Wedding Guest List</h1>
+        <h1>Wedding Guest List</h1>
+        <div className={styles.totalGuests}>
+          Total Guests: {totalGuests}
         </div>
       </header>
 
-      {/* Quick Actions Bar */}
-      <div className={styles.quickActions}>
-        <div className={styles.quickActionsContent}>
-          <div className={styles.buttonGroup}>
-            <button className={styles.secondaryButton}>
-              Export
-            </button>
-          </div>
-          <div>
-            Total Guests: {totalGuests}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
       <main className={styles.mainContent}>
         <div className={styles.panels}>
           {/* Left Panel - Categories & Tiers */}
@@ -189,7 +203,15 @@ function App() {
           {/* Right Panel - Events */}
           <div className={styles.rightPanel}>
             <h2 className={styles.panelTitle}>Events</h2>
-            {/* Events content will go here */}
+            <EventManager
+              events={events}
+              categories={categories}
+              tiers={tiers}
+              households={households}
+              onAdd={handleAddEvent}
+              onEdit={handleEditEvent}
+              onDelete={handleDeleteEvent}
+            />
           </div>
         </div>
       </main>

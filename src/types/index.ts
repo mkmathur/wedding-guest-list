@@ -24,8 +24,5 @@ export interface CategoryTierSelection {
 export interface Event {
   id: string;
   name: string;
-  selections: {
-    categoryId: string;
-    tierId: string;
-  }[];
+  selections: CategoryTierSelection[];
 } 
