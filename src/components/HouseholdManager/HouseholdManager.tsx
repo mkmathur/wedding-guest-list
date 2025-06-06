@@ -141,7 +141,13 @@ export function HouseholdManager({
             id="name"
             type="text"
             value={formData.name}
-            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            onChange={e => {
+              setFormData(prev => ({ ...prev, name: e.target.value }));
+              // Clear error when input changes
+              if (error) {
+                validateForm();
+              }
+            }}
             className={styles.input}
             placeholder="Enter household name"
           />
