@@ -107,7 +107,7 @@ npm test
   * Verify household is removed
   * Check that total guest count updates
 
-- [ ] Form Validation:
+- [x] Form Validation:
   * Try submitting without a name
   * Try submitting with a duplicate name
   * Try setting guest count to 0 or negative
@@ -115,7 +115,7 @@ npm test
   * Test cancel button during edit mode
 
 ### Data Persistence
-- [ ] Refresh the page:
+- [x] Refresh the page:
   * Add/edit some data
   * Refresh the page
   * Verify all changes persist
