@@ -136,9 +136,6 @@ function App() {
       <div className={styles.quickActions}>
         <div className={styles.quickActionsContent}>
           <div className={styles.buttonGroup}>
-            <button className={styles.primaryButton}>
-              + New Household
-            </button>
             <button className={styles.secondaryButton}>
               Export
             </button>
