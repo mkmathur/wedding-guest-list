@@ -114,7 +114,7 @@ export function HouseholdManager({
     
     // Check for duplicate names (excluding the current editing household)
     const isDuplicate = households.some(
-      h => h.name.toLowerCase().trim()=== formData.name.toLowerCase() && 
+      h => h.name.toLowerCase().trim() === formData.name.toLowerCase().trim() && 
           h.id !== editingHousehold?.id
     );
     if (isDuplicate) {
