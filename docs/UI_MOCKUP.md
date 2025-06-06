@@ -1,5 +1,8 @@
-# Split View Design - Detailed Mockup
+# Wedding Guest List App - UI Mockups
 
+## Overall Layout
+
+### Split View Layout
 ```
 +--------------------------------------------------------------------------------+
 |                              Wedding Guest List                                  |
@@ -29,16 +32,16 @@
 +------------------+--------------------------------------------+------------------+
 ```
 
-## Layout Explanation
+### Layout Components
 
-### Left Panel: Categories & Tiers
+#### Left Panel: Categories & Tiers
 - Fixed width sidebar showing all available filters
 - Categories shown with distinct colors (⭕)
 - Tiers shown with priority indicators (🔴🟡🔵)
 - Drag & drop area at bottom for quick filtering
 - Quick filters section for common combinations
 
-### Middle Panel: Household List (Main Content)
+#### Middle Panel: Household List
 - Takes up most of the screen width
 - Households grouped by category (📋)
 - Each household shows:
@@ -48,65 +51,166 @@
 - Hierarchical view with expand/collapse (┣━ ┗━)
 - Running totals per category
 
-### Right Panel: Events
+#### Right Panel: Events
 - Narrow sidebar for event management
 - Shows saved events with guest counts
 - Quick play button (▶️) to apply event
 - Compare feature at bottom
 - Collapsible for more space when needed
 
-### Top Bar
+#### Top Bar
 - Quick actions for common tasks
 - Search functionality
 - Export option
 - Total guest count always visible
 
-## Interactions
+## Event Builder Interface
 
-1. **Filtering:**
-   - Drag a category or tier to filter area
-   - Click category/tier to toggle visibility
-   - Multiple filters can be combined
+### Event List View
+```
++------------------+------------------+------------------+
+|   Categories     |   Households     |     Events      |
+|   & Tiers        |                  |                  |
+|                  |                  | + New Event      |
+|                  |                  |                  |
+|                  |                  | Saved Events:    |
+|                  |                  |                  |
+|                  |                  | Intimate Wedding |
+|                  |                  | 65 guests        |
+|                  |                  | [Edit] [Delete]  |
+|                  |                  |                  |
+|                  |                  | Full Reception   |
+|                  |                  | 120 guests       |
+|                  |                  | [Edit] [Delete]  |
+|                  |                  |                  |
+|                  |                  | Family Only      |
+|                  |                  | 45 guests        |
+|                  |                  | [Edit] [Delete]  |
++------------------+------------------+------------------+
+```
 
-2. **Household Management:**
-   - Click household to edit
-   - Quick actions on hover
-   - Drag between categories
+### Event Form View
+```
++------------------+------------------+------------------+
+|   Categories     |   Households     |     Events      |
+|   & Tiers        |                  |                  |
+|                  |                  | Event Name:      |
+|                  |                  | [Intimate Wed.]  |
+|                  |                  |                  |
+|                  |                  | Select Guests:   |
+|                  |                  |                  |
+|                  |                  | Family           |
+|                  |                  | [✓] Must Invite  |
+|                  |                  | [✓] Want Invite  |
+|                  |                  | [ ] If Space     |
+|                  |                  |                  |
+|                  |                  | Friends          |
+|                  |                  | [✓] Must Invite  |
+|                  |                  | [ ] Want Invite  |
+|                  |                  | [ ] If Space     |
+|                  |                  |                  |
+|                  |                  | Guest Count:     |
+|                  |                  | Family: 45       |
+|                  |                  | Friends: 20      |
+|                  |                  | Total: 65        |
+|                  |                  |                  |
+|                  |                  | [Save] [Cancel]  |
++------------------+------------------+------------------+
+```
 
-3. **Events:**
-   - Click to load an event
-   - Apply event to current view
-   - Save current filters as new event
+## Mobile Layouts
 
-## Mobile Adaptation
-
-On mobile devices, this layout transforms into:
-
+### Event List (Mobile)
 ```
 +--------------------------------+
 |        Wedding Guest List       |
 +--------------------------------+
-| 🔍 Search       Total: 142    + |
+| + New Event                    |
 +--------------------------------+
-| [Categories] [Households] [Events]
-+--------------------------------+
+| Saved Events:                  |
 |                                |
-|        Household List          |
+| Intimate Wedding               |
+| 65 guests                      |
+| [Edit] [Delete]                |
 |                                |
+| Full Reception                 |
+| 120 guests                     |
+| [Edit] [Delete]                |
 |                                |
-+--------------------------------+
-|  📱 Bottom Navigation Bar       |
+| Family Only                    |
+| 45 guests                      |
+| [Edit] [Delete]                |
 +--------------------------------+
 ```
 
-- Panels become swipeable views
-- Bottom navigation for quick access
-- Floating action button (+) for new items
-- Modal dialogs for detailed views
-- Collapsible filters and events
+### Event Form (Mobile)
+```
++--------------------------------+
+|        Wedding Guest List       |
++--------------------------------+
+| Event Name:                    |
+| [Intimate Wedding]             |
+|                                |
+| Select Guests:                 |
+|                                |
+| Family                         |
+| [✓] Must Invite                |
+| [✓] Want Invite                |
+| [ ] If Space                   |
+|                                |
+| Friends                        |
+| [✓] Must Invite                |
+| [ ] Want Invite                |
+| [ ] If Space                   |
+|                                |
+| Guest Count:                   |
+| Family: 45                     |
+| Friends: 20                    |
+| Total: 65                      |
+|                                |
+| [Save] [Cancel]                |
++--------------------------------+
+```
+
+## Component Details
+
+### Event List Components
+- New Event button (top)
+- Event cards with:
+  - Event name
+  - Guest count
+  - Edit/Delete actions
+- Clear visual separation between events
+
+### Event Form Components
+- Event name input field
+- Category sections with:
+  - Category name
+  - Tier checkboxes
+  - Visual grouping
+- Guest count section with:
+  - Per-category breakdown
+  - Total count
+- Action buttons:
+  - Save (primary)
+  - Cancel (secondary)
+
+## Interaction States
+
+### Event List
+- Hover state for event cards
+- Active state for buttons
+- Loading state for actions
+- Empty state when no events
+
+### Event Form
+- Input focus states
+- Checkbox selection states
+- Validation error states
+- Loading state during save
+- Disabled state for buttons
 
 Would you like me to:
-1. Add more interaction details?
-2. Show specific component mockups?
-3. Create examples of different states (filtering, editing, etc.)?
-4. Show more mobile views? 
+1. Show more component states?
+2. Add more mobile variations?
+3. Detail specific interactions? 

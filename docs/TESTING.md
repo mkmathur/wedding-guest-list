@@ -129,7 +129,6 @@ npm test
 
 - [ ] Quick Actions Bar:
   * Verify total guest count updates in real-time
-  * Test "New Household" button
   * Test "Export" button (if implemented)
 
 ### Edge Cases
@@ -157,6 +156,52 @@ npm test
   * Edit the tier
   * Delete the tier
   * Verify proper handling of relationships
+
+### Event Management
+- [ ] Create a new event:
+  * Enter event name
+  * Select tiers for each category
+  * Verify guest count updates
+  * Save event
+  * Verify it appears in event list
+
+- [ ] Edit an event:
+  * Click edit button
+  * Verify form is populated
+  * Change event name
+  * Modify tier selections
+  * Save changes
+  * Verify updates in list
+
+- [ ] Delete an event:
+  * Click delete button
+  * Verify confirmation dialog
+  * Confirm deletion
+  * Verify event is removed
+
+- [ ] Form Validation:
+  * Try submitting without a name
+  * Try submitting without any tier selections
+  * Verify error messages are clear
+  * Test cancel button
+
+- [ ] Guest Count Calculations:
+  * Select different tier combinations
+  * Verify per-category counts
+  * Verify total count
+  * Check counts update in real-time
+
+- [ ] Data Persistence:
+  * Create/edit events
+  * Refresh page
+  * Verify all changes persist
+  * Check guest counts remain accurate
+
+- [ ] Edge Cases:
+  * Create event with all tiers selected
+  * Create event with minimal selections
+  * Test with many categories/tiers
+  * Verify performance with large guest counts
 
 ## Bug Reporting
 

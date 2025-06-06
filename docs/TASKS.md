@@ -55,10 +55,10 @@
   - [x] Local storage persistence
   - [x] Write tests for tier management
   - [x] Fix tier editing UX issues
-  - [ ] Complete manual testing of tier features
-    - [ ] Form validation
-    - [ ] Household integration
-    - [ ] Delete functionality
+  - [x] Complete manual testing of tier features
+    - [x] Form validation
+    - [x] Household integration
+    - [x] Delete functionality
 
 - [x] Implement Household Management
   - [x] Add/edit/delete households
@@ -68,14 +68,45 @@
   - [x] Assign tier to household
   - [x] Local storage persistence for households
   - [x] Write tests for household management
-  - [ ] Complete manual testing of household features
-  - [ ] Implement bulk edit capabilities for quick updates
+  - [x] Complete manual testing of household features
 
 ## Phase 3: Event Planning Features
 - [ ] Create Event Builder Interface
-- [ ] Select categories and tiers for events
-- [ ] Save/load events
-- [ ] Compare multiple events
+  - [ ] Create Event interface
+    - [ ] Define event name
+    - [ ] Define category-tier selections structure
+    - [ ] Define guest count calculations
+  - [ ] Create EventManager component
+    - [ ] Basic layout structure
+    - [ ] Event list view
+    - [ ] New event button
+  - [ ] Create EventForm component
+    - [ ] Event name input
+    - [ ] Category-tier selection checkboxes
+    - [ ] Guest count display
+    - [ ] Save/Cancel buttons
+  - [ ] Implement event storage
+    - [ ] Add event CRUD operations to storage utils
+    - [ ] Add event validation
+    - [ ] Add event persistence
+  - [ ] Add event calculations
+    - [ ] Calculate per-category guest counts
+    - [ ] Calculate total guest count
+    - [ ] Update counts in real-time
+  - [ ] Implement form validation
+    - [ ] Required event name
+    - [ ] At least one tier selected
+    - [ ] Clear error messages
+  - [ ] Add event list functionality
+    - [ ] Display saved events
+    - [ ] Show guest counts
+    - [ ] Add delete functionality
+  - [ ] Write tests
+    - [ ] Unit tests for Event interface
+    - [ ] Unit tests for storage operations
+    - [ ] Component tests for EventManager
+    - [ ] Component tests for EventForm
+    - [ ] Integration tests for calculations
 
 ## Phase 4: CSV Import/Export
 - [ ] Implement CSV Export

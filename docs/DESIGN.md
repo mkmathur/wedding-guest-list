@@ -1,7 +1,7 @@
 # Wedding Guest List App - Technical Design
 
 ## Overview
-A simple, client-side web application for managing a wedding guest list. The app allows users to organize guests by categories and tiers, create invitation scenarios, and export data to CSV format.
+A simple, client-side web application for managing a wedding guest list. The app allows users to organize guests by categories and tiers, create guest lists for wedding events, and export data to CSV format.
 
 ## Tech Stack
 
@@ -126,6 +126,4 @@ A simple, client-side web application for managing a wedding guest list. The app
 3. **Data Visualization**
    - Charts and graphs
    - Guest list breakdown views
-   - Scenario comparisons
-
-- Event comparisons 
+   - Event comparisons 
