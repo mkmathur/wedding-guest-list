@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Household, Category, Tier } from '../../types';
-import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiUpload } from 'react-icons/fi';
+import { BulkImportModal } from './BulkImportModal';
 import styles from './HouseholdManager.module.css';
 
 interface HouseholdFormData {
@@ -15,8 +16,10 @@ interface HouseholdManagerProps {
   categories: Category[];
   tiers: Tier[];
   onAdd: (household: Omit<Household, 'id'>) => void;
-  onEdit: (householdId: string, updates: Partial<Household>) => void;
-  onDelete: (householdId: string) => void;
+  onEdit: (id: string, household: Omit<Household, 'id'>) => void;
+  onDelete: (id: string) => void;
+  onAddCategory: (name: string) => void;
+  onAddCategories: (names: string[]) => Promise<Category[]>;
 }
 
 export function HouseholdManager({ 
@@ -25,9 +28,12 @@ export function HouseholdManager({
   tiers,
   onAdd,
   onEdit,
-  onDelete
+  onDelete,
+  onAddCategory,
+  onAddCategories,
 }: HouseholdManagerProps) {
   const [isCreating, setIsCreating] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [formData, setFormData] = useState<HouseholdFormData>({
     name: '',
@@ -138,14 +144,26 @@ export function HouseholdManager({
 
   return (
     <div className={styles.householdManager}>
-      {!isCreating && !editingHousehold && (
-        <button
-          className={styles.newHouseholdButton}
-          onClick={() => setIsCreating(true)}
-        >
-          + New Household
-        </button>
-      )}
+      <div className={styles.buttonGroup}>
+        {!isCreating && !editingHousehold && (
+          <>
+            <button
+              className={styles.newHouseholdButton}
+              onClick={() => setIsCreating(true)}
+            >
+              + New Household
+            </button>
+            <button
+              className={styles.importButton}
+              onClick={() => setIsImporting(true)}
+              title="Bulk import households"
+            >
+              <FiUpload className={styles.buttonIcon} />
+              Bulk Import
+            </button>
+          </>
+        )}
+      </div>
 
       {(isCreating || editingHousehold) && (
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -266,6 +284,32 @@ export function HouseholdManager({
           </div>
         ))}
       </div>
+
+      <BulkImportModal
+        isOpen={isImporting}
+        onClose={() => setIsImporting(false)}
+        onImport={households => {
+          try {
+            households.forEach(household => {
+              // Validate required fields
+              if (!household.categoryId || !household.tierId) {
+                throw new Error(
+                  `Invalid household data: ${JSON.stringify(household)}`
+                );
+              }
+              onAdd(household);
+            });
+            setIsImporting(false);
+          } catch (err) {
+            console.error('Failed to import households:', err);
+            // You might want to show an error message to the user here
+          }
+        }}
+        existingCategories={categories}
+        existingTiers={tiers}
+        onAddCategory={onAddCategory}
+        onAddCategories={onAddCategories}
+      />
     </div>
   );
 } 

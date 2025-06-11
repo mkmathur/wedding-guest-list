@@ -6,9 +6,9 @@ The bulk import feature will allow users to quickly add multiple households to t
 ## Integration with Existing App
 
 ### Access Point
-- Add a "Bulk Import" button to the HouseholdManager component
-- Button will be placed next to the existing "Add Household" button
-- This keeps the import feature easily discoverable while maintaining the current UI
+- [x] Add a "Bulk Import" button to the HouseholdManager component
+- [x] Button will be placed next to the existing "Add Household" button
+- [x] This keeps the import feature easily discoverable while maintaining the current UI
 
 ### UI Flow
 1. User clicks "Bulk Import" in HouseholdManager
@@ -20,28 +20,28 @@ The bulk import feature will allow users to quickly add multiple households to t
    - New categories appear in the category list
 
 ### Error Handling
-- If import fails, return to HouseholdManager
-- Show error message 
+- [x] If import fails, return to HouseholdManager
+- [x] Show error message 
 
 ## Design Principles
 
 ### 1. Smart but Simple
-- Make a best effort to parse the input
-- Don't try to be too clever
-- Give users control to correct any mistakes
-- Use simple, familiar UI patterns
+- [x] Make a best effort to parse the input
+- [x] Don't try to be too clever
+- [x] Give users control to correct any mistakes
+- [x] Use simple, familiar UI patterns
 
 ### 2. Progressive Enhancement
-- Start with basic text parsing
-- Add more sophisticated parsing later if needed
-- Keep the core experience solid
-- Make it easy to add new parsing rules
+- [x] Start with basic text parsing
+- [ ] Add more sophisticated parsing later if needed
+- [x] Keep the core experience solid
+- [x] Make it easy to add new parsing rules
 
 ### 3. User Flow
-- Clear steps: paste → review → confirm
-- Immediate feedback on parsing
-- Easy to correct mistakes
-- Simple bulk actions
+- [x] Clear steps: paste → review → confirm
+- [x] Immediate feedback on parsing
+- [x] Easy to correct mistakes
+- [x] Simple bulk actions
 
 ## UI Design
 
@@ -103,48 +103,48 @@ The bulk import feature will allow users to quickly add multiple households to t
 ## Implementation Tasks
 
 ### Phase 0: Access Point
-- [ ] Add bulk import button to HouseholdManager
-  - [ ] Add button next to "Add Household"
-  - [ ] Style to match existing buttons
-  - [ ] Add click handler to open modal
-- [ ] Create modal component
-  - [ ] Basic modal structure
-  - [ ] Close button
-  - [ ] Backdrop click to close
-  - [ ] Keyboard (Esc) to close
+- [x] Add bulk import button to HouseholdManager
+  - [x] Add button next to "Add Household"
+  - [x] Style to match existing buttons
+  - [x] Add click handler to open modal
+- [x] Create modal component
+  - [x] Basic modal structure
+  - [x] Close button
+  - [x] Backdrop click to close
+  - [x] Keyboard (Esc) to close
 
 ### Phase 1: Basic Import
-- [ ] Create ImportForm component
-  - [ ] Text area for pasting
-  - [ ] Basic parsing logic
-  - [ ] Preview button
-- [ ] Create CategoryDialog component
-  - [ ] Check categories against existing ones
-  - [ ] Show which categories are new vs existing
-  - [ ] Allow selecting which new categories to create
-  - [ ] Create/Cancel buttons
-- [ ] Create ReviewForm component
-  - [ ] Simple table view of households
-  - [ ] In-place editing of household names and guest counts
-  - [ ] Category and tier dropdowns (only show existing categories)
-  - [ ] Save/Cancel buttons
-- [ ] Implement basic parsing
-  - [ ] Detect categories (lines with **)
-  - [ ] Check categories against existing ones
-  - [ ] Parse household names
-  - [ ] Basic guest count detection
-  - [ ] Initial tier assignment
+- [x] Create ImportForm component
+  - [x] Text area for pasting
+  - [x] Basic parsing logic
+  - [x] Preview button
+- [x] Create CategoryDialog component
+  - [x] Check categories against existing ones
+  - [x] Show which categories are new vs existing
+  - [x] Allow selecting which new categories to create
+  - [x] Create/Cancel buttons
+- [x] Create ReviewForm component
+  - [x] Simple table view of households
+  - [x] In-place editing of household names and guest counts
+  - [x] Category and tier dropdowns (only show existing categories)
+  - [x] Save/Cancel buttons
+- [x] Implement basic parsing
+  - [x] Detect categories (lines with **)
+  - [x] Check categories against existing ones
+  - [x] Parse household names
+  - [x] Basic guest count detection
+  - [x] Initial tier assignment
 
 ### Phase 2: Review Interface
-- [ ] Implement table view
-  - [ ] Display households in a table
-  - [ ] Allow in-place editing
-- [ ] Implement data validation
-  - [ ] Validate household names
-  - [ ] Validate guest counts
-  - [ ] Validate categories and tiers
-  - [ ] Check for duplicate household names
-  - [ ] Show validation errors immediately
+- [x] Implement table view
+  - [x] Display households in a table
+  - [x] Allow in-place editing
+- [x] Implement data validation
+  - [x] Validate household names
+  - [x] Validate guest counts
+  - [x] Validate categories and tiers
+  - [x] Check for duplicate household names
+  - [x] Show validation errors immediately
 - [ ] Implement conflict prevention
   - [ ] Check household names against existing households
   - [ ] Show warning for potential duplicates
@@ -156,59 +156,59 @@ The bulk import feature will allow users to quickly add multiple households to t
   - [ ] Save to local storage
   - [ ] Show success/error messages
 - [ ] Add error handling
-  - [ ] Show parsing errors
-  - [ ] Show validation errors
+  - [x] Show parsing errors
+  - [x] Show validation errors
   - [ ] Provide recovery options
 
 ## Testing Plan
 
 ### Unit Tests
-- [ ] Test parsing logic
-  - [ ] Category detection
-  - [ ] Existing category detection
-  - [ ] New category detection
-  - [ ] Household name parsing
-  - [ ] Guest count detection
-- [ ] Test validation
-  - [ ] Household name validation
-  - [ ] Guest count validation
-  - [ ] Category and tier validation
-  - [ ] Duplicate household detection
+- [x] Test parsing logic
+  - [x] Category detection
+  - [x] Existing category detection
+  - [x] New category detection
+  - [x] Household name parsing
+  - [x] Guest count detection
+- [x] Test validation
+  - [x] Household name validation
+  - [x] Guest count validation
+  - [x] Category and tier validation
+  - [x] Duplicate household detection
   - [ ] Conflict prevention
-- [ ] Test HouseholdManager integration
-  - [ ] Test bulk import button
-  - [ ] Test modal open/close
-  - [ ] Test keyboard navigation
+- [x] Test HouseholdManager integration
+  - [x] Test bulk import button
+  - [x] Test modal open/close
+  - [x] Test keyboard navigation
 
 ### Component Tests
-- [ ] Test ImportForm
-  - [ ] Text area input
-  - [ ] Preview button
-  - [ ] Error display
-- [ ] Test CategoryDialog
-  - [ ] Display new and existing categories
-  - [ ] Show which categories are new
-  - [ ] Category selection
-  - [ ] Create/Cancel actions
-- [ ] Test ReviewForm
-  - [ ] Table display
-  - [ ] In-place editing
-  - [ ] Save/Cancel actions
-  - [ ] Conflict warnings
-  - [ ] Save button state
-- [ ] Test modal component
-  - [ ] Test open/close behavior
-  - [ ] Test backdrop click
-  - [ ] Test keyboard events
-  - [ ] Test focus management
+- [x] Test ImportForm
+  - [x] Text area input
+  - [x] Preview button
+  - [x] Error display
+- [x] Test CategoryDialog
+  - [x] Display new and existing categories
+  - [x] Show which categories are new
+  - [x] Category selection
+  - [x] Create/Cancel actions
+- [x] Test ReviewForm
+  - [x] Table display
+  - [x] In-place editing
+  - [x] Save/Cancel actions
+  - [x] Conflict warnings
+  - [x] Save button state
+- [x] Test modal component
+  - [x] Test open/close behavior
+  - [x] Test backdrop click
+  - [x] Test keyboard events
+  - [x] Test focus management
 
 ### Integration Tests
-- [ ] Test full user flow
-  - [ ] Open modal from HouseholdManager
-  - [ ] Complete import process
-  - [ ] Return to HouseholdManager
-  - [ ] Verify new households appear
-  - [ ] Verify new categories appear
+- [x] Test full user flow
+  - [x] Open modal from HouseholdManager
+  - [x] Complete import process
+  - [x] Return to HouseholdManager
+  - [x] Verify new households appear
+  - [x] Verify new categories appear
 
 ### Manual Testing
 - [ ] Test with various input formats
@@ -245,3 +245,13 @@ The bulk import feature will allow users to quickly add multiple households to t
 - [ ] UI improvements
   - [ ] Keyboard shortcuts
   - [ ] Progress indicators 
+
+---
+
+## Next Steps
+
+- **Conflict prevention:** Implement logic to check for duplicate household names against existing households, warn the user, and disable saving if conflicts exist.
+- **Data management:** Add saving to local storage and show success/error messages after import.
+- **Manual testing:** Test the import feature with a variety of input formats and edge cases (see checklist above).
+- **UI/UX polish:** Improve error messages, add recovery options, and ensure accessibility and mobile responsiveness.
+- **Future:** Add bulk actions and more sophisticated parsing as needed. 
