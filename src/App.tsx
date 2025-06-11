@@ -40,6 +40,20 @@ function App() {
     storage.setCategories(updatedCategories);
   };
 
+  const handleAddCategories = (names: string[]): Promise<Category[]> => {
+    return new Promise((resolve) => {
+      const newCategories: Category[] = names.map(name => ({
+        id: crypto.randomUUID(),
+        name: name.trim()
+      }));
+      const updatedCategories = [...categories, ...newCategories];
+      setCategories(updatedCategories);
+      storage.setCategories(updatedCategories);
+      // Use setTimeout to ensure state updates are processed
+      setTimeout(() => resolve(newCategories), 0);
+    });
+  };
+
   const handleEditCategory = (categoryId: string, name: string) => {
     const updatedCategories = categories.map(cat =>
       cat.id === categoryId ? { ...cat, name: name.trim() } : cat
@@ -109,6 +123,17 @@ function App() {
       ...household
     };
     const updatedHouseholds = [...households, newHousehold];
+    setHouseholds(updatedHouseholds);
+    storage.setHouseholds(updatedHouseholds);
+  };
+
+  const handleAddMultipleHouseholds = (newHouseholds: Omit<Household, 'id'>[]) => {
+    const householdsWithIds = newHouseholds.map(household => ({
+      id: crypto.randomUUID(),
+      ...household
+    }));
+    
+    const updatedHouseholds = [...households, ...householdsWithIds];
     setHouseholds(updatedHouseholds);
     storage.setHouseholds(updatedHouseholds);
   };
@@ -195,8 +220,11 @@ function App() {
               categories={categories}
               tiers={tiers}
               onAdd={handleAddHousehold}
+              onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
               onDelete={handleDeleteHousehold}
+              onAddCategory={handleAddCategory}
+              onAddCategories={handleAddCategories}
             />
           </div>
 

@@ -4,7 +4,8 @@
   gap: 1rem;
 }
 
-.newHouseholdButton {
+.newHouseholdButton,
+.importButton {
   padding: 0.5rem 1rem;
   background-color: var(--color-primary);
   color: white;
@@ -13,12 +14,19 @@
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s;
-  width: fit-content;
-  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.newHouseholdButton:hover {
+.newHouseholdButton:hover,
+.importButton:hover {
   background-color: var(--color-primary-dark);
+}
+
+.buttonIcon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .form {
@@ -68,6 +76,7 @@
 .buttonGroup {
   display: flex;
   gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .submitButton,

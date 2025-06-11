@@ -82,35 +82,32 @@
 - Data persists correctly
 - Form validation works
 
-## Phase 3: Scenario Planning Features
+## Phase 3: Event Planning Features
 **Features:**
-- Create and save scenarios
-- Select categories and tiers for scenarios
-- View guest count for scenarios
-- Compare multiple scenarios
+- Create and save events
+- Select categories and tiers for events
+- View guest count for events
 
 **Automated Testing:**
 ```typescript
 // Unit Tests
-- Test scenario guest count calculations
-- Test scenario validation
-- Test scenario comparison logic
+- Test event guest count calculations
+- Test event validation
 
 // Component Tests
-- Test scenario builder interface
-- Test scenario saving/loading
+- Test event builder interface
+- Test event saving/loading
 ```
 
 **Expected Outcomes:**
-- Accurate guest counts per scenario
-- Scenarios save and load correctly
-- Clear comparison between scenarios
+- Accurate guest counts per event
+- event save and load correctly
 - Proper handling of edge cases
 
 ## Phase 4: CSV Import/Export
 **Features:**
 - Export complete guest list to CSV
-- Export specific scenarios to CSV
+- Export specific events to CSV
 - Import data from CSV
 - Data validation for imports
 
