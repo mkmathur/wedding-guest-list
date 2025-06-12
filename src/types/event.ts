@@ -1,4 +1,4 @@
-import type { Category, Tier } from './index';
+import type { Category, Household, Tier } from './index';
 
 export interface CategoryTierSelection {
   categoryId: string;
@@ -25,13 +25,7 @@ export interface EventManagerProps {
   events: Event[];
   categories: Category[];
   tiers: Tier[];
-  households: Array<{
-    id: string;
-    name: string;
-    guestCount: number;
-    categoryId: string;
-    tierId: string;
-  }>;
+  households: Household[];
   onAdd: (event: Omit<Event, 'id'>) => void;
   onEdit: (eventId: string, updates: Partial<Event>) => void;
   onDelete: (eventId: string) => void;

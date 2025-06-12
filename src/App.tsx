@@ -5,8 +5,7 @@ import { TierManager } from './components/TierManager/TierManager'
 import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
 import { EventManager } from './components/EventManager/EventManager'
 import { storage } from './utils/storage'
-import type { Category, Tier, Household } from './types'
-import type { Event } from './types/event'
+import type { Category, Tier, Household, Event } from './types'
 
 function App() {
   // State
