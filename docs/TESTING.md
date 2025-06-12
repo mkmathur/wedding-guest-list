@@ -5,12 +5,7 @@ This document outlines the testing strategy for the Wedding Guest List applicati
 ## Testing Process
 
 ### Manual Testing Workflow
-1. Follow the checklist items in order, focusing on one component at a time:
-   - Category Management
-   - Tier Management
-   - Household Management
-   - Cross-component interactions
-   - UI/UX features
+1. Follow the checklist items in order, focusing on one component at a time
 
 2. For each checklist item:
    - Test the specific functionality
@@ -34,7 +29,7 @@ This document outlines the testing strategy for the Wedding Guest List applicati
 The application uses Vitest and React Testing Library for automated testing. Run the test suite with:
 
 ```bash
-npm test
+npm test -- --run
 ```
 
 ## Manual Testing Checklist
@@ -121,36 +116,15 @@ npm test
   * Verify all changes persist
   * Check total guest count remains accurate
 
-### UI/UX
-- [ ] Responsive layout:
-  * Test on different screen sizes
-  * Verify forms are usable on mobile
-  * Check that lists are scrollable when needed
-
-- [ ] Quick Actions Bar:
-  * Verify total guest count updates in real-time
-  * Test "Export" button (if implemented)
-
-### Edge Cases
-- [ ] Special Characters:
-  * Try adding households/categories/tiers with special characters
-  * Try using emojis in names
-  * Try using very long names
-
-- [ ] Large Numbers:
-  * Add many households (20+)
-  * Test with large guest counts
-  * Verify performance remains good
-
 ### Cross-Component Interaction
-- [ ] Category-Household Relationship:
+- [x] Category-Household Relationship:
   * Create a new category
   * Add households to it
   * Edit the category
   * Delete the category
   * Verify proper handling of relationships
 
-- [ ] Tier-Household Relationship:
+- [x] Tier-Household Relationship:
   * Create a new tier
   * Add households to it
   * Edit the tier
@@ -185,50 +159,20 @@ npm test
   * Verify error messages are clear
   * Test cancel button
 
-- [ ] Guest Count Calculations:
+- [x] Guest Count Calculations:
   * Select different tier combinations
   * Verify per-category counts
   * Verify total count
   * Check counts update in real-time
 
-- [ ] Data Persistence:
+- [x] Data Persistence:
   * Create/edit events
   * Refresh page
   * Verify all changes persist
   * Check guest counts remain accurate
 
-- [ ] Edge Cases:
+- [x] Edge Cases:
   * Create event with all tiers selected
   * Create event with minimal selections
   * Test with many categories/tiers
   * Verify performance with large guest counts
-
-## Bug Reporting
-
-When reporting bugs, please include:
-1. Steps to reproduce
-2. Expected behavior
-3. Actual behavior
-4. Screenshots (if applicable)
-5. Browser and OS information
-
-## Test Environment Setup
-
-The application should be tested in the following environments:
-- Latest versions of Chrome, Firefox, and Safari
-- Mobile devices (iOS and Android)
-- Different screen sizes (desktop, tablet, mobile)
-
-## Known Issues
-
-(Active bugs will be listed here until resolved)
-
-## Future Improvements
-
-(UX improvements and feature requests identified during testing)
-
-### UX Improvements
-- [ ] [Add improvements here as they are identified]
-
-### Feature Requests
-- [ ] [Add feature requests here as they are identified] 

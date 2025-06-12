@@ -1,5 +1,7 @@
 # Wedding Guest List App - UI Mockups
 
+These are the UI mockups that we made when initially designing the app. They show the overall layout of the app. They are not intended to exactly match the actual UI.
+
 ## Overall Layout
 
 ### Split View Layout
@@ -171,46 +173,3 @@
 | [Save] [Cancel]                |
 +--------------------------------+
 ```
-
-## Component Details
-
-### Event List Components
-- New Event button (top)
-- Event cards with:
-  - Event name
-  - Guest count
-  - Edit/Delete actions
-- Clear visual separation between events
-
-### Event Form Components
-- Event name input field
-- Category sections with:
-  - Category name
-  - Tier checkboxes
-  - Visual grouping
-- Guest count section with:
-  - Per-category breakdown
-  - Total count
-- Action buttons:
-  - Save (primary)
-  - Cancel (secondary)
-
-## Interaction States
-
-### Event List
-- Hover state for event cards
-- Active state for buttons
-- Loading state for actions
-- Empty state when no events
-
-### Event Form
-- Input focus states
-- Checkbox selection states
-- Validation error states
-- Loading state during save
-- Disabled state for buttons
-
-Would you like me to:
-1. Show more component states?
-2. Add more mobile variations?
-3. Detail specific interactions? 
