@@ -32,6 +32,10 @@ The application uses Vitest and React Testing Library for automated testing. Run
 npm test -- --run
 ```
 
+Testing Strategy:
+For now, tests focus on user-visible behavior via UI integration tests.
+As the app grows, extract and test logic separately when it becomes complex or reused across features.
+
 ## Manual Testing Checklist
 
 ### Category Management
