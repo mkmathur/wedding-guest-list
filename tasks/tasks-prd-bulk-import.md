@@ -48,14 +48,15 @@
   - [ ] 1.6 Create TextInputStep component with large text area and format instructions (show expected format: category names on their own line, followed by household names indented or not, with guest info patterns like +1, &, commas, explicit numbers/words; see PRD for details)
   - [ ] 1.8 Style the modal components using CSS modules (make modal appropriately sized, clean layout, but don't overthink the design)
 
-- [x] 2.0 Implement Text Parsing Engine
-  - [x] 2.1 Create textParser utility. Use your best judgement to figure out what functions this should have and what the interface should be. Refer to prd-bulk-import.md to understand the requirements for text parsing.
-  - [x] 2.2 Implement category name extraction from first line of each text block
-  - [x] 2.3 Test category extraction: various formats, whitespace handling, empty categories
-  - [x] 2.4 Implement household name parsing from lines following category headers
-  - [x] 2.5 Test household parsing: indented/non-indented, empty lines, malformed input
-  - [x] 2.6 Create guest count inference logic for various formats (single names, +1, comma-separated, explicit numbers)
-  - [x] 2.7 Test guest count inference: comprehensive test suite for all mentioned patterns and edge cases
+- [ ] 2.0 Implement Text Parsing Engine
+  - [ ] 2.1 Create textParser utility with function to split text into category blocks
+  - [ ] 2.2 Test text splitting: handles blank lines, multiple categories, basic edge cases
+  - [ ] 2.3 Implement category name extraction from first line of each text block
+  - [ ] 2.4 Test category extraction: various formats, whitespace handling, empty categories
+  - [ ] 2.5 Implement household name parsing from lines following category headers
+  - [ ] 2.6 Test household parsing: indented/non-indented, empty lines, malformed input
+  - [ ] 2.7 Create guest count inference logic for various formats (single names, +1, comma-separated, explicit numbers)
+  - [ ] 2.8 Test guest count inference: comprehensive test suite for all mentioned patterns and edge cases
 
 - [ ] 3.0 Build New Categories Review Interface
   - [ ] 3.1 Create CategoryReviewStep component with checkbox list of new categories
