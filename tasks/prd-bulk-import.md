@@ -28,7 +28,7 @@ The goal is to reduce the time required to create an initial guest list by enabl
 ## Functional Requirements
 
 ### Core Import Functionality
-1. The system must provide a "Bulk Import" button next to the existing "New Household" button in the top bar
+1. The system must provide a "Bulk Import" button next to the existing "New Household" button
 2. The system must open a modal dialog when the bulk import button is clicked
 3. The system must provide a large text area for users to paste their guest list data
 4. The system must accept structured text input in the following format:
@@ -101,7 +101,6 @@ The goal is to reduce the time required to create an initial guest list by enabl
 - Use a full-screen modal on mobile devices and a centered modal on desktop
 - Include clear instructions and format examples above the text area
 - Use a three-step process: Input → New Categories Review → Household Review → Import
-- Show progress indicators for each step
 - Allow users to go back to previous steps if needed
 
 ### New Categories Review Step
