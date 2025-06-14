@@ -242,10 +242,10 @@ function parseImportText(text: string, existingCategories: Category[]): {
     );
     // Use existing category name if found, otherwise use the original name
     currentCategory = existingCategory ? existingCategory.name : normalizeCategoryName(rawCategory, false);
-    categories.add(currentCategory);
     i++;
 
     // Process all subsequent non-empty lines as households until we hit another group
+    let householdsInCategory = 0;
     while (i < lines.length) {
       // If we hit an empty line, this group is done
       if (!lines[i]) {
@@ -262,8 +262,14 @@ function parseImportText(text: string, existingCategories: Category[]): {
           categoryName: currentCategory,
           tierId: '', // Will be set to default tier in ReviewForm
         });
+        householdsInCategory++;
       }
       i++;
+    }
+
+    // Only add category if it has households
+    if (householdsInCategory > 0) {
+      categories.add(currentCategory);
     }
   }
 
