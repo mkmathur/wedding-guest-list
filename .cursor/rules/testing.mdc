@@ -1,0 +1,92 @@
+---
+description: 
+globs: *.test.tsx
+alwaysApply: false
+---
+# Purpose  
+Guidelines for writing unit tests that are **user-focused**, **behavior-driven**, and **maintainable**.  
+This project uses **React**, **TypeScript**, **Vitest**, and **Testing Library**.
+
+---
+
+## Test Philosophy
+
+- Focus on **what the user sees and does**, not how the code works internally.
+- Each test should describe a clear, realistic user scenario.
+- Keep tests resilient, readable, and accessible.
+
+---
+
+## Simulate Real User Behavior
+
+- Use `@testing-library/user-event` to simulate real interactions:
+  ```ts
+  await user.type(input, "example");
+  await user.click(button);
+  ```
+- Avoid low-level events (`fireEvent`) unless strictly needed.
+
+---
+
+## Use Accessible Queries (Priority Order)
+
+1. `getByRole`
+2. `getByLabelText`
+3. `getByText`
+4. `getByPlaceholderText`
+5. `getByTestId` (only if nothing else works)
+
+Avoid querying by tag, class, or position.
+
+---
+
+## Avoid Implementation Details
+
+Don’t:
+- Assert whether internal functions (like `handleSubmit`) or stores were called
+- Check component internals like hook values or local state
+- Test visual styling unless it directly affects UX (e.g., focus ring, visibility toggle)
+
+Do:
+- Assert UI results that users can see or interact with
+
+---
+
+## Keep Tests Maintainable
+
+- Use helper functions like `renderComponent()` to reduce repetition
+- Group tests by **behavior**, not component structure
+- Use `describe` blocks for related interactions or flows
+
+---
+
+## Example Test
+
+```ts
+import { render, screen } from "@testing-library/react";
+import user from "@testing-library/user-event";
+import { MyForm } from "./MyForm";
+
+test("shows a thank you message after form submission", async () => {
+  render(<MyForm />);
+  
+  await user.type(screen.getByLabelText(/name/i), "Mallika");
+  await user.click(screen.getByRole("button", { name: /submit/i }));
+  
+  expect(await screen.findByText(/thank you/i)).toBeInTheDocument();
+});
+```
+
+---
+
+## Vitest Tips
+
+- Use `vi.fn()` to mock external dependencies (like APIs), not internal logic
+- Place reusable mocks in `__mocks__` or helpers
+
+---
+
+## Reminder
+
+Test like a user.  
+If a user wouldn’t know or care how it works, the test shouldn’t either.
