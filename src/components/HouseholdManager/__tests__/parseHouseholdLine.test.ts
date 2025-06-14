@@ -42,6 +42,44 @@ describe('parseHouseholdLine', () => {
         guestCount: 1, // 1 base + 0 additional
       });
     });
+
+    it('should parse "name + spouse" pattern correctly', () => {
+      const result = parseHouseholdLine('Neville + wife');
+      expect(result).toEqual({
+        name: 'Neville',
+        guestCount: 2,
+      });
+    });
+
+    it('should parse "name + name" pattern correctly', () => {
+      const result = parseHouseholdLine('Percy + Audrey');
+      expect(result).toEqual({
+        name: 'Percy, Audrey',
+        guestCount: 2,
+      });
+    });
+
+    it('should handle different relationship words', () => {
+      const testCases = [
+        { input: 'John + wife', expected: { name: 'John', guestCount: 2 } },
+        { input: 'Mary + husband', expected: { name: 'Mary', guestCount: 2 } },
+        { input: 'Alex + spouse', expected: { name: 'Alex', guestCount: 2 } },
+        { input: 'Sam + partner', expected: { name: 'Sam', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle mixed case relationship words', () => {
+      const result = parseHouseholdLine('David + WIFE');
+      expect(result).toEqual({
+        name: 'David',
+        guestCount: 2,
+      });
+    });
   });
 
   describe('Kids pattern matching', () => {
@@ -279,6 +317,29 @@ describe('parseHouseholdLine', () => {
         { input: 'Uncle Bob +1', expected: { name: 'Uncle Bob', guestCount: 2 } },
         { input: 'Grandparents 2', expected: { name: 'Grandparents', guestCount: 2 } },
         { input: 'Dr. Elizabeth Warren-Johnson + 0', expected: { name: 'Dr. Elizabeth Warren-Johnson', guestCount: 1 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle comma-separated names without explicit counts', () => {
+      const testCases = [
+        { input: 'Harry, Ginny', expected: { name: 'Harry, Ginny', guestCount: 2 } },
+        { input: 'Ron, Hermione, Rose, Hugo', expected: { name: 'Ron, Hermione, Rose, Hugo', guestCount: 4 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle descriptive guest counts', () => {
+      const testCases = [
+        { input: 'Draco, wife and two kids', expected: { name: 'Draco', guestCount: 4 } },
       ];
 
       testCases.forEach(({ input, expected }) => {
