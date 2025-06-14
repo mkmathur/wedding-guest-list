@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Household, Category, Tier } from '../../types';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import styles from './HouseholdManager.module.css';
+import { BulkImportModal } from '../BulkImportModal/BulkImportModal';
 
 interface HouseholdFormData {
   name: string;
@@ -36,6 +37,7 @@ export function HouseholdManager({
     tierId: '',
   });
   const [error, setError] = useState('');
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
   useEffect(() => {
     if (categories.length > 0 && tiers.length > 0) {
@@ -43,8 +45,8 @@ export function HouseholdManager({
         setFormData({
           name: editingHousehold.name,
           guestCount: editingHousehold.guestCount.toString(),
-          categoryId: editingHousehold.categoryId,
-          tierId: editingHousehold.tierId,
+          categoryId: editingHousehold.categoryId || '',
+          tierId: editingHousehold.tierId || '',
         });
       } else {
         setFormData(prev => ({
@@ -139,13 +141,22 @@ export function HouseholdManager({
   return (
     <div className={styles.householdManager}>
       {!isCreating && !editingHousehold && (
-        <button
-          className={styles.newHouseholdButton}
-          onClick={() => setIsCreating(true)}
-        >
-          + New Household
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            className={styles.newHouseholdButton}
+            onClick={() => setIsCreating(true)}
+          >
+            + New Household
+          </button>
+          <button
+            className={styles.newHouseholdButton}
+            onClick={() => setIsBulkImportOpen(true)}
+          >
+            Bulk Import
+          </button>
+        </div>
       )}
+      <BulkImportModal isOpen={isBulkImportOpen} onClose={() => setIsBulkImportOpen(false)} />
 
       {(isCreating || editingHousehold) && (
         <form onSubmit={handleSubmit} className={styles.form}>

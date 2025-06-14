@@ -40,13 +40,12 @@
 ## Tasks
 
 - [ ] 1.0 Create Types and Modal Structure
-  - [ ] 1.1 Create type definitions in `src/types/bulkImport.ts`: ParsedHousehold (name, category, guestCount, isDuplicate), NewCategory (name, selected), ImportStep enum
-  - [ ] 1.2 Create base BulkImportModal component with React state to manage current step and shared data between steps
-  - [ ] 1.3 Test BulkImportModal component: modal open/close, step navigation, state management
-  - [ ] 1.4 Add "Bulk Import" button to HouseholdManager component next to "New Household" button
-  - [ ] 1.5 Test HouseholdManager integration: button appears, clicking opens modal
-  - [ ] 1.6 Create TextInputStep component with large text area and format instructions (show expected format: "Category Name" followed by indented household names)
-  - [ ] 1.7 Test TextInputStep: user can type/paste text, format instructions visible
+  - [x] 1.1 Create type definitions in `src/types/bulkImport.ts`: ParsedHousehold (name, category, guestCount, isDuplicate), NewCategory (name, selected), ImportStep enum
+  - [x] 1.2 Create base BulkImportModal component with React state to manage current step and shared data between steps
+  - [x] 1.3 Test BulkImportModal component: modal open/close, step navigation, state management
+  - [x] 1.4 Add "Bulk Import" button to HouseholdManager component next to "New Household" button
+  - [x] 1.5 Test HouseholdManager integration: button appears, clicking opens modal
+  - [ ] 1.6 Create TextInputStep component with large text area and format instructions (show expected format: category names on their own line, followed by household names indented or not, with guest info patterns like +1, &, commas, explicit numbers/words; see PRD for details)
   - [ ] 1.8 Style the modal components using CSS modules (make modal appropriately sized, clean layout, but don't overthink the design)
 
 - [ ] 2.0 Implement Text Parsing Engine
