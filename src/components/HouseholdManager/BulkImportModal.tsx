@@ -3,6 +3,7 @@ import type { Household, Category, Tier } from '../../types';
 import { ImportForm } from './ImportForm';
 import { CategoryDialog } from './CategoryDialog';
 import { ReviewForm } from './ReviewForm';
+import { parseHouseholdLine } from './utils/parseHouseholdLine';
 import styles from './BulkImportModal.module.css';
 
 interface BulkImportModalProps {
@@ -281,58 +282,4 @@ function parseImportText(text: string, existingCategories: Category[]): {
   };
 }
 
-// Helper function to parse a single household line
-function parseHouseholdLine(line: string): { name: string; guestCount: number } {
-  // Try to match patterns like:
-  // "John Smith + 1"
-  // "Jane Doe, John Doe, 2 kids"
-  // "Smith Family (4)"
-  // "Bob Wilson +1"
-  // "Just a name 3"
-
-  // Remove any trailing numbers in parentheses
-  const withoutParens = line.replace(/\s*\(\d+\)$/, '');
-  
-  // Try to match "name + number" pattern
-  const plusMatch = withoutParens.match(/^(.+?)\s*\+\s*(\d+)$/);
-  if (plusMatch) {
-    return {
-      name: plusMatch[1].trim(),
-      guestCount: 1 + parseInt(plusMatch[2], 10), // Add 1 for the base guest
-    };
-  }
-
-  // Try to match "name, name, N kids" pattern
-  const kidsMatch = withoutParens.match(/^(.+?),\s*(\d+)\s*kids$/i);
-  if (kidsMatch) {
-    const nameCount = kidsMatch[1].split(',').length;
-    return {
-      name: kidsMatch[1].trim(),
-      guestCount: nameCount + parseInt(kidsMatch[2], 10),
-    };
-  }
-
-  // Try to match "name (number)" pattern
-  const parensMatch = line.match(/^(.+?)\s*\((\d+)\)$/);
-  if (parensMatch) {
-    return {
-      name: parensMatch[1].trim(),
-      guestCount: parseInt(parensMatch[2], 10),
-    };
-  }
-
-  // Try to match "name number" pattern
-  const numberMatch = line.match(/^(.+?)\s+(\d+)$/);
-  if (numberMatch) {
-    return {
-      name: numberMatch[1].trim(),
-      guestCount: parseInt(numberMatch[2], 10),
-    };
-  }
-
-  // If no patterns match, assume it's just a name with 1 guest
-  return {
-    name: line.trim(),
-    guestCount: 1,
-  };
-} 
+ 
