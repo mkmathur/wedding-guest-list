@@ -46,17 +46,29 @@
   - [x] 1.4 Add "Bulk Import" button to HouseholdManager component next to "New Household" button
   - [x] 1.5 Test HouseholdManager integration: button appears, clicking opens modal
   - [ ] 1.6 Create TextInputStep component with large text area and format instructions (show expected format: category names on their own line, followed by household names indented or not, with guest info patterns like +1, &, commas, explicit numbers/words; see PRD for details)
-  - [ ] 1.8 Style the modal components using CSS modules (make modal appropriately sized, clean layout, but don't overthink the design)
+  - [x] 1.8 Style the modal components using CSS modules (make modal appropriately sized, clean layout, but don't overthink the design)
 
 - [ ] 2.0 Implement Text Parsing Engine
-  - [ ] 2.1 Create textParser utility with function to split text into category blocks
-  - [ ] 2.2 Test text splitting: handles blank lines, multiple categories, basic edge cases
-  - [ ] 2.3 Implement category name extraction from first line of each text block
-  - [ ] 2.4 Test category extraction: various formats, whitespace handling, empty categories
-  - [ ] 2.5 Implement household name parsing from lines following category headers
-  - [ ] 2.6 Test household parsing: indented/non-indented, empty lines, malformed input
-  - [ ] 2.7 Create guest count inference logic for various formats (single names, +1, comma-separated, explicit numbers)
-  - [ ] 2.8 Test guest count inference: comprehensive test suite for all mentioned patterns and edge cases
+  - [ ] 2.1 Define textParser interfaces in `src/utils/textParser.ts`. Create these TypeScript interfaces: 
+    ```typescript
+    interface ParsedHousehold {
+      name: string;
+      guestCount: number;
+    }
+    
+    interface ParsedCategory {  
+      categoryName: string;
+      households: ParsedHousehold[];
+    }
+    
+    interface ParseResult {
+      categories: ParsedCategory[];
+    }
+    ```
+    And the main parsing function: `function parseImportText(text: string): ParseResult`
+  - [ ] 2.2 Implement basic text parsing: split text into category blocks (separated by blank lines), extract category names from first line of each block, parse household lines that follow. MVP scope: handle simple category headers and basic household name patterns, don't worry about complex edge cases
+  - [ ] 2.3 Implement guest count inference for common patterns: single names default to 1, "+1", "+2" patterns, "+" and "and" for couples, comma-separated names, simple number words like "Mom, Dad, 2 kids". Return reasonable defaults for unclear cases rather than failing
+  - [ ] 2.4 Create comprehensive tests for textParser: test category detection, household parsing, guest count inference. Test edge cases like empty categories, malformed input, but focus on common success cases
 
 - [ ] 3.0 Build New Categories Review Interface
   - [ ] 3.1 Create CategoryReviewStep component with checkbox list of new categories
