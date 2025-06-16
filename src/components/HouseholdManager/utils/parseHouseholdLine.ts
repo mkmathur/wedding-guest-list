@@ -1,3 +1,39 @@
+// Helper function to normalize capitalization of names
+function normalizeCapitalization(name: string): string {
+  return name
+    .split(',')
+    .map(segment => {
+      return segment
+        .trim()
+        .split(/\s+/)
+        .map(word => {
+          if (word.length === 0) return word;
+          
+          // Handle words with apostrophes and hyphens
+          if (word.includes("'") || word.includes('-')) {
+            return word
+              .split(/(['-])/)
+              .map(part => {
+                if (part === "'" || part === '-' || part.length === 0) return part;
+                return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+              })
+              .join('');
+          }
+          
+          // Handle words with parentheses
+          if (word.includes('(') && word.includes(')')) {
+            return word.replace(/\(([^)]+)\)/g, (match, inner) => {
+              return `(${inner.charAt(0).toUpperCase() + inner.slice(1).toLowerCase()})`;
+            });
+          }
+          
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ');
+    })
+    .join(', ');
+}
+
 // Helper function to parse a single household line
 export function parseHouseholdLine(line: string): { name: string; guestCount: number } {
   // Try to match patterns like:
@@ -19,7 +55,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
   const plusNumberMatch = trimmedLine.match(/^(.+?)\s*\+\s*(\d+)$/);
   if (plusNumberMatch) {
     return {
-      name: plusNumberMatch[1].trim(),
+      name: normalizeCapitalization(plusNumberMatch[1].trim()),
       guestCount: 1 + parseInt(plusNumberMatch[2], 10), // Add 1 for the base guest
     };
   }
@@ -33,14 +69,14 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     // If it's a relationship word, just use the first name
     if (secondPart.match(/^(wife|husband|spouse|partner)$/i)) {
       return {
-        name: firstName,
+        name: normalizeCapitalization(firstName),
         guestCount: 2,
       };
     }
     
     // Otherwise, combine the names
     return {
-      name: `${firstName}, ${secondPart}`,
+      name: normalizeCapitalization(`${firstName}, ${secondPart}`),
       guestCount: 2,
     };
   }
@@ -70,7 +106,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     if (kidCount > 0 || numberPart === '0') {
       const nameCount = namesPart.split(',').length;
       return {
-        name: namesPart,
+        name: normalizeCapitalization(namesPart),
         guestCount: nameCount + kidCount,
       };
     }
@@ -84,13 +120,13 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     
     // First, check if it's a simple "person and person" pattern (like "mom and dad", "Dina and son")
     // Exclude patterns that have numbered children (like "wife and two kids")
-    if (description.match(/^.+\s+and\s+.+$/) && 
-        !description.match(/\d+\s+(child|children|kid|kids)/) &&
-        !description.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/)) {
+    if (description.match(/^.+\s+and\s+.+$/i) && 
+        !description.match(/\d+\s+(child|children|kid|kids)/i) &&
+        !description.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/i)) {
       // Split by "and" and count each part as one person
-      const parts = description.split(/\s+and\s+/).map(part => part.trim()).filter(part => part.length > 0);
+      const parts = description.split(/\s+and\s+/i).map(part => part.trim()).filter(part => part.length > 0);
       return {
-        name: name,
+        name: normalizeCapitalization(name),
         guestCount: 1 + parts.length, // 1 for the main name + count of people after "and"
       };
     }
@@ -123,7 +159,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     // If we found a descriptive pattern, return it
     if (count > 1) {
       return {
-        name,
+        name: normalizeCapitalization(name),
         guestCount: count,
       };
     }
@@ -133,7 +169,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
   const parensMatch = trimmedLine.match(/^(.+?)\s*\((\d+)\)$/);
   if (parensMatch) {
     return {
-      name: parensMatch[1].trim(),
+      name: normalizeCapitalization(parensMatch[1].trim()),
       guestCount: parseInt(parensMatch[2], 10),
     };
   }
@@ -142,20 +178,20 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
   const numberMatch = trimmedLine.match(/^(.+?)\s+(\d+)$/);
   if (numberMatch) {
     return {
-      name: numberMatch[1].trim(),
+      name: normalizeCapitalization(numberMatch[1].trim()),
       guestCount: parseInt(numberMatch[2], 10),
     };
   }
 
   // Try to match "person and person" patterns without a preceding name (like "mom and dad")
-  if (trimmedLine.match(/^.+\s+and\s+.+$/) && !trimmedLine.includes(',')) {
+  if (trimmedLine.match(/^.+\s+and\s+.+$/i) && !trimmedLine.includes(',')) {
     // Exclude patterns that have numbered children
-    if (!trimmedLine.match(/\d+\s+(child|children|kid|kids)/) &&
-        !trimmedLine.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/)) {
+    if (!trimmedLine.match(/\d+\s+(child|children|kid|kids)/i) &&
+        !trimmedLine.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/i)) {
       // Split by "and" and count each part as one person
-      const parts = trimmedLine.split(/\s+and\s+/).map(part => part.trim()).filter(part => part.length > 0);
+      const parts = trimmedLine.split(/\s+and\s+/i).map(part => part.trim()).filter(part => part.length > 0);
       return {
-        name: trimmedLine,
+        name: normalizeCapitalization(trimmedLine),
         guestCount: parts.length,
       };
     }
@@ -174,7 +210,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     
     if (allLookLikeNames && names.length > 1) {
       return {
-        name: trimmedLine,
+        name: normalizeCapitalization(trimmedLine),
         guestCount: names.length,
       };
     }
@@ -182,7 +218,7 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
 
   // If no patterns match, assume it's just a name with 1 guest
   return {
-    name: trimmedLine,
+    name: normalizeCapitalization(trimmedLine),
     guestCount: 1,
   };
 } 

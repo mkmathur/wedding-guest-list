@@ -261,7 +261,7 @@ describe('parseHouseholdLine', () => {
     it('should handle names with numbers that are not guest counts', () => {
       const result = parseHouseholdLine('John Smith III');
       expect(result).toEqual({
-        name: 'John Smith III',
+        name: 'John Smith Iii',
         guestCount: 1,
       });
     });
@@ -324,7 +324,7 @@ describe('parseHouseholdLine', () => {
   describe('Real-world examples', () => {
     it('should handle typical wedding guest list entries', () => {
       const testCases = [
-        { input: 'Mr. and Mrs. Johnson + 2', expected: { name: 'Mr. and Mrs. Johnson', guestCount: 3 } },
+        { input: 'Mr. and Mrs. Johnson + 2', expected: { name: 'Mr. And Mrs. Johnson', guestCount: 3 } },
         { input: 'The Smith Family (5)', expected: { name: 'The Smith Family', guestCount: 5 } },
         { input: 'Sarah Connor', expected: { name: 'Sarah Connor', guestCount: 1 } },
         { input: 'Mom, Dad, 3 kids', expected: { name: 'Mom, Dad', guestCount: 5 } },
@@ -367,7 +367,7 @@ describe('parseHouseholdLine', () => {
       const testCases = [
         { input: 'Abby, mom and dad', expected: { name: 'Abby', guestCount: 3 } },
         { input: 'Ellie, Dina and son', expected: { name: 'Ellie', guestCount: 3 } },
-        { input: 'tom, maria and baby', expected: { name: 'tom', guestCount: 3 } },
+        { input: 'tom, maria and baby', expected: { name: 'Tom', guestCount: 3 } },
         { input: 'John, wife and brother', expected: { name: 'John', guestCount: 3 } },
         { input: 'Sarah, husband and sister', expected: { name: 'Sarah', guestCount: 3 } },
       ];
@@ -380,10 +380,128 @@ describe('parseHouseholdLine', () => {
 
     it('should handle "person and person" patterns without preceding name', () => {
       const testCases = [
-        { input: 'mom and dad', expected: { name: 'mom and dad', guestCount: 2 } },
-        { input: 'husband and wife', expected: { name: 'husband and wife', guestCount: 2 } },
-        { input: 'brother and sister', expected: { name: 'brother and sister', guestCount: 2 } },
-        { input: 'Alice and Bob', expected: { name: 'Alice and Bob', guestCount: 2 } },
+        { input: 'mom and dad', expected: { name: 'Mom And Dad', guestCount: 2 } },
+        { input: 'husband and wife', expected: { name: 'Husband And Wife', guestCount: 2 } },
+        { input: 'brother and sister', expected: { name: 'Brother And Sister', guestCount: 2 } },
+        { input: 'Alice and Bob', expected: { name: 'Alice And Bob', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
+  describe('Capitalization normalization', () => {
+    it('should normalize basic name capitalization', () => {
+      const testCases = [
+        { input: 'anne', expected: { name: 'Anne', guestCount: 1 } },
+        { input: 'Anne', expected: { name: 'Anne', guestCount: 1 } },
+        { input: 'ANNE', expected: { name: 'Anne', guestCount: 1 } },
+        { input: 'aNnE', expected: { name: 'Anne', guestCount: 1 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize "mom and dad" patterns', () => {
+      const testCases = [
+        { input: 'Mom and Dad', expected: { name: 'Mom And Dad', guestCount: 2 } },
+        { input: 'mom and dad', expected: { name: 'Mom And Dad', guestCount: 2 } },
+        { input: 'MOM AND DAD', expected: { name: 'Mom And Dad', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize relationship terms with title case', () => {
+      const testCases = [
+        { input: 'Anne aunty, Bob uncle', expected: { name: 'Anne Aunty, Bob Uncle', guestCount: 2 } },
+        { input: 'anne aunty, bob uncle', expected: { name: 'Anne Aunty, Bob Uncle', guestCount: 2 } },
+        { input: 'ANNE AUNTY, BOB UNCLE', expected: { name: 'Anne Aunty, Bob Uncle', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle Indian relationship terms with title case', () => {
+      const testCases = [
+        { input: 'Julie jiji, Bob jijaji', expected: { name: 'Julie Jiji, Bob Jijaji', guestCount: 2 } },
+        { input: 'julie jiji, bob jijaji', expected: { name: 'Julie Jiji, Bob Jijaji', guestCount: 2 } },
+        { input: 'JULIE JIJI, BOB JIJAJI', expected: { name: 'Julie Jiji, Bob Jijaji', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize names in plus patterns', () => {
+      const testCases = [
+        { input: 'stephanie+1', expected: { name: 'Stephanie', guestCount: 2 } },
+        { input: 'STEPHANIE+1', expected: { name: 'Stephanie', guestCount: 2 } },
+        { input: 'bob + anne', expected: { name: 'Bob, Anne', guestCount: 2 } },
+        { input: 'BOB + ANNE', expected: { name: 'Bob, Anne', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize mixed case names with title case', () => {
+      const testCases = [
+        { input: 'bob uncle, anne', expected: { name: 'Bob Uncle, Anne', guestCount: 2 } },
+        { input: 'BOB UNCLE, ANNE', expected: { name: 'Bob Uncle, Anne', guestCount: 2 } },
+        { input: 'sarah mama, john papa', expected: { name: 'Sarah Mama, John Papa', guestCount: 2 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize names in kids patterns', () => {
+      const testCases = [
+        { input: 'john, mary, and two kids', expected: { name: 'John, Mary', guestCount: 4 } },
+        { input: 'JOHN, MARY, and two kids', expected: { name: 'John, Mary', guestCount: 4 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize names in parentheses patterns', () => {
+      const testCases = [
+        { input: 'smith family (4)', expected: { name: 'Smith Family', guestCount: 4 } },
+        { input: 'SMITH FAMILY (4)', expected: { name: 'Smith Family', guestCount: 4 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should normalize names in number suffix patterns', () => {
+      const testCases = [
+        { input: 'johnson family 3', expected: { name: 'Johnson Family', guestCount: 3 } },
+        { input: 'JOHNSON FAMILY 3', expected: { name: 'Johnson Family', guestCount: 3 } },
       ];
 
       testCases.forEach(({ input, expected }) => {
