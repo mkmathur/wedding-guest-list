@@ -21,6 +21,7 @@ interface ParsedHousehold {
   guestCount: number;
   categoryName: string;
   tierId: string;
+  originalInput: string;
 }
 
 interface ReviewHousehold {
@@ -28,6 +29,7 @@ interface ReviewHousehold {
   guestCount: number;
   categoryName: string;
   tierId: string;
+  originalInput: string;
 }
 
 export function BulkImportModal({
@@ -262,6 +264,7 @@ function parseImportText(text: string, existingCategories: Category[]): {
           guestCount,
           categoryName: currentCategory,
           tierId: '', // Will be set to default tier in ReviewForm
+          originalInput: lines[i], // Preserve the original input
         });
         householdsInCategory++;
       }

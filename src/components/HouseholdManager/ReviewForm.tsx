@@ -8,6 +8,7 @@ export interface ReviewFormProps {
     guestCount: number;
     categoryName: string;
     tierId: string;
+    originalInput: string;
   }>;
   categories: Category[];
   tiers: Tier[];
@@ -119,6 +120,7 @@ export function ReviewForm({
           <table className={styles.table}>
             <thead>
               <tr>
+                <th>Original Input</th>
                 <th>Household Name</th>
                 <th>Category</th>
                 <th>Tier</th>
@@ -128,6 +130,11 @@ export function ReviewForm({
             <tbody>
               {households.map((household, index) => (
                 <tr key={index}>
+                  <td>
+                    <div className={styles.originalInput}>
+                      {household.originalInput}
+                    </div>
+                  </td>
                   <td>
                     <div className={styles.inputGroup}>
                       <input

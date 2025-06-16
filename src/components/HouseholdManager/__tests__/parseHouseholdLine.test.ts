@@ -130,6 +130,20 @@ describe('parseHouseholdLine', () => {
         guestCount: 2, // 2 adults + 0 kids
       });
     });
+
+    it('should handle "and" before kids count', () => {
+      const testCases = [
+        { input: 'P, N, and 2 kids', expected: { name: 'P, N', guestCount: 4 } },
+        { input: 'Mom, Dad, and two kids', expected: { name: 'Mom, Dad', guestCount: 4 } },
+        { input: 'Parent A, Parent B, and 1 kid', expected: { name: 'Parent A, Parent B', guestCount: 3 } },
+        { input: 'John, Jane, and three children', expected: { name: 'John, Jane', guestCount: 5 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
   });
 
   describe('Parentheses pattern matching', () => {
@@ -340,6 +354,36 @@ describe('parseHouseholdLine', () => {
     it('should handle descriptive guest counts', () => {
       const testCases = [
         { input: 'Draco, wife and two kids', expected: { name: 'Draco', guestCount: 4 } },
+        { input: 'John, spouse and three children', expected: { name: 'John', guestCount: 5 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle "name and name" patterns', () => {
+      const testCases = [
+        { input: 'Abby, mom and dad', expected: { name: 'Abby', guestCount: 3 } },
+        { input: 'Ellie, Dina and son', expected: { name: 'Ellie', guestCount: 3 } },
+        { input: 'tom, maria and baby', expected: { name: 'tom', guestCount: 3 } },
+        { input: 'John, wife and brother', expected: { name: 'John', guestCount: 3 } },
+        { input: 'Sarah, husband and sister', expected: { name: 'Sarah', guestCount: 3 } },
+      ];
+
+      testCases.forEach(({ input, expected }) => {
+        const result = parseHouseholdLine(input);
+        expect(result).toEqual(expected);
+      });
+    });
+
+    it('should handle "person and person" patterns without preceding name', () => {
+      const testCases = [
+        { input: 'mom and dad', expected: { name: 'mom and dad', guestCount: 2 } },
+        { input: 'husband and wife', expected: { name: 'husband and wife', guestCount: 2 } },
+        { input: 'brother and sister', expected: { name: 'brother and sister', guestCount: 2 } },
+        { input: 'Alice and Bob', expected: { name: 'Alice and Bob', guestCount: 2 } },
       ];
 
       testCases.forEach(({ input, expected }) => {

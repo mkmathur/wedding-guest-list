@@ -3,11 +3,14 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
   // Try to match patterns like:
   // "John Smith + 1"
   // "Jane Doe, John Doe, 2 kids"
+  // "P, N, and two kids" (kids with "and")
   // "Smith Family (4)"
   // "Bob Wilson +1"
   // "Just a name 3"
   // "Harry, Ginny" (comma-separated names)
   // "Draco, wife and two kids" (descriptive counts)
+  // "Abby, mom and dad" (name and name patterns)
+  // "mom and dad" (person and person patterns)
 
   // Trim the input first
   const trimmedLine = line.trim();
@@ -42,23 +45,57 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
     };
   }
 
-  // Try to match "name, name, N kids/kid" pattern (support both singular and plural)
-  const kidsMatch = trimmedLine.match(/^(.+?),\s*(\d+)\s*kids?$/i);
+  // Try to match "name, name, N kids/kid/children/child" pattern (support both singular and plural)
+  // Handle both "P, N, 2 kids" and "P, N, and 2 kids" formats
+  // Also handle word numbers like "P, N, and two kids"
+  const kidsMatch = trimmedLine.match(/^(.+?),\s*(?:and\s+)?(\w+)\s*(kids?|children?)$/i);
   if (kidsMatch) {
-    const nameCount = kidsMatch[1].split(',').length;
-    return {
-      name: kidsMatch[1].trim(),
-      guestCount: nameCount + parseInt(kidsMatch[2], 10),
+    const namesPart = kidsMatch[1].trim();
+    const numberPart = kidsMatch[2];
+    
+    // Convert word numbers to digits
+    const numberMap: Record<string, number> = {
+      'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+      'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10
     };
+    
+    let kidCount = 0;
+    if (numberMap[numberPart.toLowerCase()]) {
+      kidCount = numberMap[numberPart.toLowerCase()];
+    } else if (/^\d+$/.test(numberPart)) {
+      kidCount = parseInt(numberPart, 10);
+    }
+    
+    // Only return if we successfully parsed a number
+    if (kidCount > 0 || numberPart === '0') {
+      const nameCount = namesPart.split(',').length;
+      return {
+        name: namesPart,
+        guestCount: nameCount + kidCount,
+      };
+    }
   }
 
-  // Try to match descriptive guest count patterns like "Draco, wife and two kids"
+  // Try to match descriptive guest count patterns like "Draco, wife and two kids" or "Abby, mom and dad"
   const descriptiveMatch = trimmedLine.match(/^([^,]+),\s*(.+)$/);
   if (descriptiveMatch) {
     const name = descriptiveMatch[1].trim();
     const description = descriptiveMatch[2].trim().toLowerCase();
     
-    // Count explicit numbers in the description
+    // First, check if it's a simple "person and person" pattern (like "mom and dad", "Dina and son")
+    // Exclude patterns that have numbered children (like "wife and two kids")
+    if (description.match(/^.+\s+and\s+.+$/) && 
+        !description.match(/\d+\s+(child|children|kid|kids)/) &&
+        !description.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/)) {
+      // Split by "and" and count each part as one person
+      const parts = description.split(/\s+and\s+/).map(part => part.trim()).filter(part => part.length > 0);
+      return {
+        name: name,
+        guestCount: 1 + parts.length, // 1 for the main name + count of people after "and"
+      };
+    }
+    
+    // Handle numbered children patterns like "wife and two kids"
     let count = 1; // Start with 1 for the named person
     
     // Look for "wife" or "husband" or "partner" or "spouse"
@@ -66,8 +103,8 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
       count += 1;
     }
     
-    // Look for numbered children/kids patterns
-    const childMatch = description.match(/(\w+)\s+(child|children|kid|kids)/i);
+    // Look for numbered children/kids patterns (handle "and two kids" format)
+    const childMatch = description.match(/(?:and\s+)?(\w+)\s+(child|children|kid|kids)/i);
     if (childMatch) {
       const numberWord = childMatch[1];
       // Convert word numbers to digits
@@ -108,6 +145,20 @@ export function parseHouseholdLine(line: string): { name: string; guestCount: nu
       name: numberMatch[1].trim(),
       guestCount: parseInt(numberMatch[2], 10),
     };
+  }
+
+  // Try to match "person and person" patterns without a preceding name (like "mom and dad")
+  if (trimmedLine.match(/^.+\s+and\s+.+$/) && !trimmedLine.includes(',')) {
+    // Exclude patterns that have numbered children
+    if (!trimmedLine.match(/\d+\s+(child|children|kid|kids)/) &&
+        !trimmedLine.match(/(one|two|three|four|five|six|seven|eight|nine|ten)\s+(child|children|kid|kids)/)) {
+      // Split by "and" and count each part as one person
+      const parts = trimmedLine.split(/\s+and\s+/).map(part => part.trim()).filter(part => part.length > 0);
+      return {
+        name: trimmedLine,
+        guestCount: parts.length,
+      };
+    }
   }
 
   // Try to match comma-separated names (like "Harry, Ginny")
