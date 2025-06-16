@@ -36,6 +36,20 @@
   grid-template-columns: 250px 1fr 300px;
   gap: 1rem;
   height: 100%;
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* Dynamic grid layouts based on collapsed state */
+.panels.leftCollapsed {
+  grid-template-columns: 40px 1fr 300px;
+}
+
+.panels.rightCollapsed {
+  grid-template-columns: 250px 1fr 40px;
+}
+
+.panels.leftCollapsed.rightCollapsed {
+  grid-template-columns: 40px 1fr 40px;
 }
 
 .leftPanel {
@@ -46,6 +60,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: relative;
 }
 
 .middlePanel {
@@ -62,6 +77,7 @@
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-y: auto;
+  position: relative;
 }
 
 .panelTitle {
@@ -71,8 +87,90 @@
   color: var(--color-text);
 }
 
+/* Panel header for toggle buttons */
+.panelHeader {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+}
+
+/* Collapse button styling */
+.collapseButton {
+  background: var(--color-background-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collapseButton:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+  border-color: var(--color-border-hover, var(--color-border));
+}
+
+/* Collapsed panel styling */
+.collapsedPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem 0.5rem;
+  gap: 1rem;
+  height: 100%;
+  min-height: 200px;
+}
+
+.expandButton {
+  background: var(--color-background-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expandButton:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+  border-color: var(--color-border-hover, var(--color-border));
+}
+
+.collapsedLabel {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-align: center;
+  user-select: none;
+}
+
 @media (max-width: 1024px) {
   .panels {
+    grid-template-columns: 1fr;
+  }
+
+  .panels.leftCollapsed,
+  .panels.rightCollapsed,
+  .panels.leftCollapsed.rightCollapsed {
     grid-template-columns: 1fr;
   }
 
@@ -80,5 +178,16 @@
   .middlePanel,
   .rightPanel {
     min-height: 300px;
+  }
+
+  .collapsedPanel {
+    min-height: 60px;
+    flex-direction: row;
+    padding: 0.5rem;
+  }
+
+  .collapsedLabel {
+    writing-mode: horizontal-tb;
+    text-orientation: initial;
   }
 } 

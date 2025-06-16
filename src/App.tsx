@@ -15,6 +15,10 @@ function App() {
   const [households, setHouseholds] = useState<Household[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [totalGuests, setTotalGuests] = useState(0);
+  
+  // Panel collapse state
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
+  const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false);
 
   // Initial data load
   useEffect(() => {
@@ -187,29 +191,55 @@ function App() {
       </header>
 
       <main className={styles.mainContent}>
-        <div className={styles.panels}>
+        <div className={`${styles.panels} ${isLeftPanelCollapsed ? styles.leftCollapsed : ''} ${isRightPanelCollapsed ? styles.rightCollapsed : ''}`}>
           {/* Left Panel - Categories & Tiers */}
           <div className={styles.leftPanel}>
-            <section>
-              <h2 className={styles.panelTitle}>Categories</h2>
-              <CategoryManager
-                categories={categories}
-                onAdd={handleAddCategory}
-                onEdit={handleEditCategory}
-                onDelete={handleDeleteCategory}
-              />
-            </section>
-            <section>
-              <h2 className={styles.panelTitle}>Tiers</h2>
-              <TierManager
-                tiers={tiers}
-                onAdd={handleAddTier}
-                onEdit={handleEditTier}
-                onDelete={handleDeleteTier}
-                onMoveUp={(tierId) => handleMoveTier(tierId, 'up')}
-                onMoveDown={(tierId) => handleMoveTier(tierId, 'down')}
-              />
-            </section>
+            {isLeftPanelCollapsed ? (
+              <div className={styles.collapsedPanel}>
+                <button 
+                  className={styles.expandButton}
+                  onClick={() => setIsLeftPanelCollapsed(false)}
+                  aria-label="Expand categories and tiers panel"
+                  title="Expand categories and tiers panel"
+                >
+                  ▶
+                </button>
+                <div className={styles.collapsedLabel}>Categories & Tiers</div>
+              </div>
+            ) : (
+              <>
+                <div className={styles.panelHeader}>
+                  <button 
+                    className={styles.collapseButton}
+                    onClick={() => setIsLeftPanelCollapsed(true)}
+                    aria-label="Collapse categories and tiers panel"
+                    title="Collapse panel"
+                  >
+                    ◀
+                  </button>
+                </div>
+                <section>
+                  <h2 className={styles.panelTitle}>Categories</h2>
+                  <CategoryManager
+                    categories={categories}
+                    onAdd={handleAddCategory}
+                    onEdit={handleEditCategory}
+                    onDelete={handleDeleteCategory}
+                  />
+                </section>
+                <section>
+                  <h2 className={styles.panelTitle}>Tiers</h2>
+                  <TierManager
+                    tiers={tiers}
+                    onAdd={handleAddTier}
+                    onEdit={handleEditTier}
+                    onDelete={handleDeleteTier}
+                    onMoveUp={(tierId) => handleMoveTier(tierId, 'up')}
+                    onMoveDown={(tierId) => handleMoveTier(tierId, 'down')}
+                  />
+                </section>
+              </>
+            )}
           </div>
 
           {/* Middle Panel - Household List */}
@@ -230,16 +260,42 @@ function App() {
 
           {/* Right Panel - Events */}
           <div className={styles.rightPanel}>
-            <h2 className={styles.panelTitle}>Events</h2>
-            <EventManager
-              events={events}
-              categories={categories}
-              tiers={tiers}
-              households={households}
-              onAdd={handleAddEvent}
-              onEdit={handleEditEvent}
-              onDelete={handleDeleteEvent}
-            />
+            {isRightPanelCollapsed ? (
+              <div className={styles.collapsedPanel}>
+                <button 
+                  className={styles.expandButton}
+                  onClick={() => setIsRightPanelCollapsed(false)}
+                  aria-label="Expand events panel"
+                  title="Expand events panel"
+                >
+                  ◀
+                </button>
+                <div className={styles.collapsedLabel}>Events</div>
+              </div>
+            ) : (
+              <>
+                <div className={styles.panelHeader}>
+                  <button 
+                    className={styles.collapseButton}
+                    onClick={() => setIsRightPanelCollapsed(true)}
+                    aria-label="Collapse events panel"
+                    title="Collapse panel"
+                  >
+                    ▶
+                  </button>
+                </div>
+                <h2 className={styles.panelTitle}>Events</h2>
+                <EventManager
+                  events={events}
+                  categories={categories}
+                  tiers={tiers}
+                  households={households}
+                  onAdd={handleAddEvent}
+                  onEdit={handleEditEvent}
+                  onDelete={handleDeleteEvent}
+                />
+              </>
+            )}
           </div>
         </div>
       </main>
