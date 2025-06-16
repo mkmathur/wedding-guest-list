@@ -174,22 +174,6 @@ describe('HouseholdManager', () => {
     expect(mockOnDelete).toHaveBeenCalledWith('h1');
   });
 
-  it('displays tier information for each household', () => {
-    renderComponent();
-    
-    // Get all tier labels and verify they appear in the correct order
-    const tierLabels = screen.getAllByText(/Must Invite|Want to Invite/);
-    expect(tierLabels.length).toBeGreaterThan(0);
-    
-    // Verify both tiers are displayed in the households list
-    const householdList = document.querySelector('._householdList_42f9a5') as HTMLElement;
-    expect(householdList).not.toBeNull();
-    const tierInList = within(householdList).getAllByText(/Must Invite|Want to Invite/);
-    expect(tierInList).toHaveLength(2);
-    expect(tierInList[0]).toHaveTextContent('Must Invite');
-    expect(tierInList[1]).toHaveTextContent('Want to Invite');
-  });
-
   it('handles form cancellation during edit', async () => {
     const user = userEvent.setup();
     renderComponent();

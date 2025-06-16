@@ -510,7 +510,7 @@ describe('BulkImportModal', () => {
     });
 
     // Set tiers for households
-    const tierSelects = await screen.getAllByRole('combobox', { name: /tier/i });
+    const tierSelects = screen.getAllByRole('combobox', { name: /tier/i });
     await user.selectOptions(tierSelects[0], 'tier1'); // John Smith
     await user.selectOptions(tierSelects[1], 'tier1'); // Jane Doe
     await user.selectOptions(tierSelects[2], 'tier2'); // Alice Brown

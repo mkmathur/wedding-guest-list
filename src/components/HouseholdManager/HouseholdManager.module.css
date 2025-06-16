@@ -140,6 +140,69 @@
   margin: 0;
 }
 
+/* Kanban Board Styles */
+.kanbanBoard {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.tierColumn {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.tierColumnHeader {
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-background-alt);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.tierColumnContent {
+  flex: 1;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 150px;
+}
+
+.householdCard {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.householdCard:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+
+.emptyColumnPlaceholder {
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-style: italic;
+  padding: 2rem 0;
+  opacity: 0.6;
+}
+
+/* Legacy household styles (kept for backwards compatibility) */
 .household {
   display: flex;
   justify-content: space-between;

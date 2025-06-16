@@ -138,11 +138,21 @@ export function HouseholdManager({
     return true;
   };
 
-  // Group households by category
-  const householdsByCategory = categories.map(category => ({
-    category,
-    households: households.filter(h => h.categoryId === category.id),
-  }));
+  // Group households by category, then by tier within each category
+  const householdsByCategory = categories.map(category => {
+    const categoryHouseholds = households.filter(h => h.categoryId === category.id);
+    
+    // Group households within this category by tier
+    const householdsByTier = tiers.map(tier => ({
+      tier,
+      households: categoryHouseholds.filter(h => h.tierId === tier.id),
+    }));
+
+    return {
+      category,
+      tierGroups: householdsByTier,
+    };
+  });
 
   return (
     <div className={styles.householdManager}>
@@ -245,44 +255,63 @@ export function HouseholdManager({
       )}
 
       <div className={styles.householdList}>
-        {householdsByCategory.map(({ category, households: categoryHouseholds }) => (
+        {householdsByCategory.map(({ category, tierGroups }) => (
           <div key={category.id} className={styles.categoryGroup}>
             <h3 className={styles.categoryTitle}>{category.name}</h3>
-            {categoryHouseholds.map(household => (
-              <div key={household.id} className={styles.household}>
-                <div className={styles.householdInfo}>
-                  <span className={styles.householdName}>{household.name}</span>
-                  <span className={styles.guestCount}>
-                    {household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'}
-                  </span>
-                  <span className={styles.tierLabel}>
-                    {tiers.find(t => t.id === household.tierId)?.name}
-                  </span>
+            <div className={styles.kanbanBoard} data-category-id={category.id}>
+              {tierGroups.map(({ tier, households: tierHouseholds }) => (
+                <div 
+                  key={tier.id} 
+                  className={styles.tierColumn}
+                  data-tier-id={tier.id}
+                  data-category-id={category.id}
+                >
+                  <h4 className={styles.tierColumnHeader}>{tier.name}</h4>
+                  <div className={styles.tierColumnContent}>
+                    {tierHouseholds.length > 0 ? (
+                      tierHouseholds.map(household => (
+                        <div 
+                          key={household.id} 
+                          className={styles.householdCard}
+                          data-household-id={household.id}
+                        >
+                          <div className={styles.householdInfo}>
+                            <span className={styles.householdName}>{household.name}</span>
+                            <span className={styles.guestCount}>
+                              {household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'}
+                            </span>
+                          </div>
+                          <div className={styles.actions}>
+                            <button
+                              className={styles.editButton}
+                              onClick={() => startEdit(household)}
+                              title="Edit household"
+                              aria-label="Edit household"
+                            >
+                              <FiEdit2 />
+                            </button>
+                            <button
+                              className={styles.deleteButton}
+                              onClick={() => {
+                                if (confirm('Are you sure you want to delete this household?')) {
+                                  onDelete(household.id);
+                                }
+                              }}
+                              title="Delete household"
+                              aria-label="Delete household"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className={styles.emptyColumnPlaceholder}>---</div>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.actions}>
-                  <button
-                    className={styles.editButton}
-                    onClick={() => startEdit(household)}
-                    title="Edit household"
-                    aria-label="Edit household"
-                  >
-                    <FiEdit2 />
-                  </button>
-                  <button
-                    className={styles.deleteButton}
-                    onClick={() => {
-                      if (confirm('Are you sure you want to delete this household?')) {
-                        onDelete(household.id);
-                      }
-                    }}
-                    title="Delete household"
-                    aria-label="Delete household"
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
       </div>
