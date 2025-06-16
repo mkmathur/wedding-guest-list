@@ -127,6 +127,17 @@ function App() {
     storage.setHouseholds(updatedHouseholds);
   };
 
+  const handleAddMultipleHouseholds = (newHouseholds: Omit<Household, 'id'>[]) => {
+    const householdsWithIds = newHouseholds.map(household => ({
+      id: crypto.randomUUID(),
+      ...household
+    }));
+    
+    const updatedHouseholds = [...households, ...householdsWithIds];
+    setHouseholds(updatedHouseholds);
+    storage.setHouseholds(updatedHouseholds);
+  };
+
   const handleEditHousehold = (householdId: string, updates: Partial<Household>) => {
     const updatedHouseholds = households.map(h =>
       h.id === householdId ? { ...h, ...updates } : h
@@ -209,6 +220,7 @@ function App() {
               categories={categories}
               tiers={tiers}
               onAdd={handleAddHousehold}
+              onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
               onDelete={handleDeleteHousehold}
               onAddCategory={handleAddCategory}

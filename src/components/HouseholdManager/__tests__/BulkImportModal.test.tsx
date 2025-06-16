@@ -18,7 +18,6 @@ const mockTiers: Tier[] = [
 describe('BulkImportModal', () => {
   const mockOnClose = vi.fn();
   const mockOnImport = vi.fn();
-  const mockOnAddCategory = vi.fn();
   const mockOnAddCategories = vi.fn().mockResolvedValue(undefined);
 
   const renderComponent = (isOpen = true) => {
@@ -29,7 +28,6 @@ describe('BulkImportModal', () => {
         onImport={mockOnImport}
         existingCategories={mockCategories}
         existingTiers={mockTiers}
-        onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
       />
     );
@@ -214,7 +212,6 @@ describe('BulkImportModal', () => {
         onImport={mockOnImport}
         existingCategories={mockExistingCategories}
         existingTiers={mockTiers}
-        onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
       />
     );
@@ -313,7 +310,6 @@ describe('BulkImportModal', () => {
         onImport={mockOnImport}
         existingCategories={mockExistingCategories}
         existingTiers={mockTiers}
-        onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
       />
     );
@@ -393,7 +389,6 @@ describe('BulkImportModal', () => {
         onImport={mockOnImport}
         existingCategories={mockExistingCategories}
         existingTiers={mockTiers}
-        onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
       />
     );
@@ -491,7 +486,6 @@ describe('BulkImportModal', () => {
         onImport={mockOnImport}
         existingCategories={mockExistingCategories}
         existingTiers={mockTiers}
-        onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
       />
     );
@@ -516,7 +510,7 @@ describe('BulkImportModal', () => {
     });
 
     // Set tiers for households
-    const tierSelects = screen.getAllByRole('combobox', { name: /tier/i });
+    const tierSelects = await screen.getAllByRole('combobox', { name: /tier/i });
     await user.selectOptions(tierSelects[0], 'tier1'); // John Smith
     await user.selectOptions(tierSelects[1], 'tier1'); // Jane Doe
     await user.selectOptions(tierSelects[2], 'tier2'); // Alice Brown

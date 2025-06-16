@@ -12,7 +12,6 @@ interface BulkImportModalProps {
   onImport: (households: Omit<Household, 'id'>[]) => void;
   existingCategories: Category[];
   existingTiers: Tier[];
-  onAddCategory: (name: string) => void;
   onAddCategories: (names: string[]) => Promise<Category[]>;
 }
 
@@ -38,7 +37,6 @@ export function BulkImportModal({
   onImport,
   existingCategories,
   existingTiers,
-  onAddCategory,
   onAddCategories,
 }: BulkImportModalProps) {
   const [step, setStep] = useState<'import' | 'categories' | 'review'>('import');

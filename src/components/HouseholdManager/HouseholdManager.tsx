@@ -16,6 +16,7 @@ interface HouseholdManagerProps {
   categories: Category[];
   tiers: Tier[];
   onAdd: (household: Omit<Household, 'id'>) => void;
+  onAddMultiple: (households: Omit<Household, 'id'>[]) => void;
   onEdit: (id: string, household: Omit<Household, 'id'>) => void;
   onDelete: (id: string) => void;
   onAddCategory: (name: string) => void;
@@ -27,6 +28,7 @@ export function HouseholdManager({
   categories,
   tiers,
   onAdd,
+  onAddMultiple,
   onEdit,
   onDelete,
   onAddCategory,
@@ -290,15 +292,16 @@ export function HouseholdManager({
         onClose={() => setIsImporting(false)}
         onImport={households => {
           try {
+            // Validate all households first
             households.forEach(household => {
-              // Validate required fields
               if (!household.categoryId || !household.tierId) {
                 throw new Error(
                   `Invalid household data: ${JSON.stringify(household)}`
                 );
               }
-              onAdd(household);
             });
+            
+            onAddMultiple(households);
             setIsImporting(false);
           } catch (err) {
             console.error('Failed to import households:', err);
@@ -307,7 +310,6 @@ export function HouseholdManager({
         }}
         existingCategories={categories}
         existingTiers={tiers}
-        onAddCategory={onAddCategory}
         onAddCategories={onAddCategories}
       />
     </div>
