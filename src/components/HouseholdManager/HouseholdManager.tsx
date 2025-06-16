@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Household, Category, Tier } from '../../types';
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiMenu } from 'react-icons/fi';
 import { BulkImportModal } from './BulkImportModal';
 import { HouseholdEditModal } from './HouseholdEditModal';
 import styles from './HouseholdManager.module.css';
@@ -276,7 +276,7 @@ export function HouseholdManager({
                             </div>
                           </div>
                           <div className={styles.dragHandle} aria-label="Drag handle">
-                            {/* Future drag handle icon will go here */}
+                            <FiMenu />
                           </div>
                         </div>
                       ))

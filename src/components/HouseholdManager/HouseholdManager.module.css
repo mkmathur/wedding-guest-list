@@ -260,7 +260,7 @@
   justify-content: center;
   cursor: grab;
   transition: background-color 0.2s;
-  position: relative;
+  color: var(--color-text-secondary);
 }
 
 .dragHandle:hover {
@@ -271,13 +271,8 @@
   cursor: grabbing;
 }
 
-/* Visual indicator for drag handle area - subtle dots pattern */
-.dragHandle::before {
-  content: '';
-  width: 4px;
+.dragHandle svg {
+  width: 16px;
   height: 16px;
-  background-image: radial-gradient(circle, var(--color-text-secondary) 1px, transparent 1px);
-  background-size: 4px 4px;
-  background-repeat: repeat-y;
-  opacity: 0.3;
+  opacity: 0.6;
 } 
