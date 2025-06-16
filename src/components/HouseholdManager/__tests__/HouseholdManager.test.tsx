@@ -34,6 +34,7 @@ const mockHouseholds: Household[] = [
 
 describe('HouseholdManager', () => {
   const mockOnAdd = vi.fn();
+  const mockOnAddMultiple = vi.fn();
   const mockOnEdit = vi.fn();
   const mockOnDelete = vi.fn();
   const mockOnAddCategory = vi.fn();
@@ -50,6 +51,7 @@ describe('HouseholdManager', () => {
         categories={categories}
         tiers={tiers}
         onAdd={mockOnAdd}
+        onAddMultiple={mockOnAddMultiple}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onAddCategory={mockOnAddCategory}
@@ -140,16 +142,16 @@ describe('HouseholdManager', () => {
     const user = userEvent.setup();
     renderComponent();
     
-    // Click edit button on first household using role and index
-    await user.click(screen.getAllByRole('button', { name: 'Edit household' })[0]);
+    // Click on first household card to open modal
+    await user.click(screen.getByRole('button', { name: 'Edit Smith Family household' }));
     
-    // Modify the name
+    // Modify the name in the modal
     const nameInput = screen.getByLabelText(/household name/i);
     await user.clear(nameInput);
     await user.type(nameInput, 'Updated Smith Family');
     
-    // Submit changes
-    await user.click(screen.getByText('Update Household'));
+    // Submit changes using the new button text
+    await user.click(screen.getByText('Save Changes'));
     
     // Verify onEdit was called with correct data
     expect(mockOnEdit).toHaveBeenCalledWith('h1', {
@@ -167,8 +169,11 @@ describe('HouseholdManager', () => {
     
     renderComponent();
     
-    // Click delete button on first household using role and index
-    await user.click(screen.getAllByRole('button', { name: 'Delete household' })[0]);
+    // Click on first household card to open modal
+    await user.click(screen.getByRole('button', { name: 'Edit Smith Family household' }));
+    
+    // Click delete button in the modal
+    await user.click(screen.getByRole('button', { name: /delete household/i }));
     
     // Verify onDelete was called with correct id
     expect(mockOnDelete).toHaveBeenCalledWith('h1');
@@ -178,16 +183,14 @@ describe('HouseholdManager', () => {
     const user = userEvent.setup();
     renderComponent();
     
-    // Start editing using role and index
-    await user.click(screen.getAllByRole('button', { name: 'Edit household' })[0]);
+    // Click on household card to open modal
+    await user.click(screen.getByRole('button', { name: 'Edit Smith Family household' }));
     
-    // Click cancel
+    // Click cancel in the modal
     await user.click(screen.getByText('Cancel'));
     
-    // Verify form is reset and no edit was made
-    // Click new household button to show the form again
-    await user.click(screen.getByText('+ New Household'));
-    expect(screen.getByText('Add Household')).toBeInTheDocument();
+    // Verify modal is closed and no edit was made
+    expect(screen.queryByText('Edit Household')).not.toBeInTheDocument();
     expect(mockOnEdit).not.toHaveBeenCalled();
   });
 
@@ -233,6 +236,7 @@ describe('HouseholdManager', () => {
         categories={updatedCategories}
         tiers={mockTiers}
         onAdd={mockOnAdd}
+        onAddMultiple={mockOnAddMultiple}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onAddCategory={mockOnAddCategory}
