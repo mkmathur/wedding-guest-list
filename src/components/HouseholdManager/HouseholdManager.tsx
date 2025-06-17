@@ -437,7 +437,7 @@ export function HouseholdManager({
           {householdsByCategory.map(({ category, tierGroups }) => (
             <div key={category.id} className={styles.categoryGroup}>
               <h3 className={styles.categoryTitle}>{category.name}</h3>
-              <div className={styles.kanbanBoard} data-category-id={category.id}>
+              <div className={`${styles.kanbanBoard} ${selectedEvent ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
                 {tierGroups.map(({ tier, households: tierHouseholds }) => (
                   <DroppableTierColumn
                     key={tier.id}
