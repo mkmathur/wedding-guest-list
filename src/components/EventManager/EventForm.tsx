@@ -16,6 +16,7 @@ interface EventFormProps {
   event?: Event;
   onSubmit: (formData: EventFormData) => void;
   onCancel: () => void;
+  onPreviewChange?: (selections: CategoryTierSelection[]) => void;
 }
 
 export function EventForm({
@@ -24,7 +25,8 @@ export function EventForm({
   households,
   event,
   onSubmit,
-  onCancel
+  onCancel,
+  onPreviewChange
 }: EventFormProps) {
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
@@ -50,6 +52,13 @@ export function EventForm({
       });
     }
   }, [event, categories]);
+
+  // Trigger preview updates whenever selections change
+  useEffect(() => {
+    if (onPreviewChange) {
+      onPreviewChange(formData.selections);
+    }
+  }, [formData.selections, onPreviewChange]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

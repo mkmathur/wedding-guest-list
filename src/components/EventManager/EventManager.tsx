@@ -13,7 +13,8 @@ export function EventManager({
   onAdd,
   onEdit,
   onDelete,
-  onSelect
+  onSelect,
+  onPreviewChange
 }: EventManagerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -37,11 +38,25 @@ export function EventManager({
       onAdd(formData);
       setIsCreating(false);
     }
+    // Clear preview when form is submitted
+    if (onPreviewChange) {
+      onPreviewChange(null);
+    }
   };
 
   const handleCancel = () => {
     setEditingEvent(null);
     setIsCreating(false);
+    // Clear preview when form is cancelled
+    if (onPreviewChange) {
+      onPreviewChange(null);
+    }
+  };
+
+  const handlePreviewChange = (selections: CategoryTierSelection[]) => {
+    if (onPreviewChange) {
+      onPreviewChange(selections);
+    }
   };
 
   return (
@@ -63,6 +78,7 @@ export function EventManager({
           event={editingEvent || undefined}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          onPreviewChange={handlePreviewChange}
         />
       ) : (
         <div className={styles.eventList}>

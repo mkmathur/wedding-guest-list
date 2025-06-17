@@ -29,6 +29,7 @@ interface HouseholdManagerProps {
   categories: Category[];
   tiers: Tier[];
   selectedEvent?: Event;
+  previewSelections?: Event['selections'] | null;
   onAdd: (household: Omit<Household, 'id'>) => void;
   onAddMultiple: (households: Omit<Household, 'id'>[]) => void;
   onEdit: (id: string, household: Omit<Household, 'id'>) => void;
@@ -158,6 +159,7 @@ export function HouseholdManager({
   categories,
   tiers,
   selectedEvent,
+  previewSelections,
   onAdd,
   onAddMultiple,
   onEdit,
@@ -177,11 +179,14 @@ export function HouseholdManager({
   });
   const [error, setError] = useState('');
 
-  // Helper function to check if a category/tier is included in the selected event
+  // Helper function to check if a category/tier is included in preview or selected event
   const isIncludedInEvent = (categoryId: string, tierId: string): boolean => {
-    if (!selectedEvent) return true; // If no event selected, show all normally
+    // Preview selections take precedence over selected event
+    const activeSelections = previewSelections || selectedEvent?.selections;
     
-    return selectedEvent.selections.some(selection => 
+    if (!activeSelections) return true; // If no event/preview active, show all normally
+    
+    return activeSelections.some(selection => 
       selection.categoryId === categoryId && 
       selection.selectedTierIds.includes(tierId)
     );
@@ -437,7 +442,7 @@ export function HouseholdManager({
           {householdsByCategory.map(({ category, tierGroups }) => (
             <div key={category.id} className={styles.categoryGroup}>
               <h3 className={styles.categoryTitle}>{category.name}</h3>
-              <div className={`${styles.kanbanBoard} ${selectedEvent ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
+              <div className={`${styles.kanbanBoard} ${(selectedEvent || previewSelections) ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
                 {tierGroups.map(({ tier, households: tierHouseholds }) => (
                   <DroppableTierColumn
                     key={tier.id}

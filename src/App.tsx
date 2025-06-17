@@ -18,6 +18,7 @@ function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [totalGuests, setTotalGuests] = useState(0);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [previewSelections, setPreviewSelections] = useState<Event['selections'] | null>(null);
   
   // Panel collapse state
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
@@ -195,6 +196,11 @@ function App() {
     setSelectedEventId(selectedEventId === eventId ? null : eventId);
   };
 
+  // Event preview handler
+  const handleEventPreviewChange = (selections: Event['selections'] | null) => {
+    setPreviewSelections(selections);
+  };
+
   // Backup import handler
   const handleImportComplete = (
     importedHouseholds: Household[],
@@ -290,6 +296,7 @@ function App() {
               categories={categories}
               tiers={tiers}
               selectedEvent={selectedEventId ? events.find(e => e.id === selectedEventId) : undefined}
+              previewSelections={previewSelections}
               onAdd={handleAddHousehold}
               onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
@@ -336,6 +343,7 @@ function App() {
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
                   onSelect={handleSelectEvent}
+                  onPreviewChange={handleEventPreviewChange}
                 />
               </>
             )}
