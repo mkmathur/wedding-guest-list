@@ -9,9 +9,11 @@ export function EventManager({
   categories,
   tiers,
   households,
+  selectedEventId,
   onAdd,
   onEdit,
-  onDelete
+  onDelete,
+  onSelect
 }: EventManagerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -65,7 +67,11 @@ export function EventManager({
       ) : (
         <div className={styles.eventList}>
           {events.map(event => (
-            <div key={event.id} className={styles.eventCard}>
+            <div 
+              key={event.id} 
+              className={`${styles.eventCard} ${selectedEventId === event.id ? styles.selected : ''}`}
+              onClick={() => onSelect(event.id)}
+            >
               <div className={styles.eventInfo}>
                 <h3 className={styles.eventName}>{event.name}</h3>
                 <span className={styles.guestCount}>

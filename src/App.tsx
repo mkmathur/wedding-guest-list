@@ -17,6 +17,7 @@ function App() {
   const [households, setHouseholds] = useState<Household[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [totalGuests, setTotalGuests] = useState(0);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   
   // Panel collapse state
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
@@ -181,6 +182,17 @@ function App() {
     const updatedEvents = events.filter(e => e.id !== eventId);
     setEvents(updatedEvents);
     storage.setEvents(updatedEvents);
+    
+    // Clear selection if deleting the selected event
+    if (selectedEventId === eventId) {
+      setSelectedEventId(null);
+    }
+  };
+
+  // Event selection handler
+  const handleSelectEvent = (eventId: string) => {
+    // Toggle selection: if same event is clicked, deselect it
+    setSelectedEventId(selectedEventId === eventId ? null : eventId);
   };
 
   // Backup import handler
@@ -277,6 +289,7 @@ function App() {
               households={households}
               categories={categories}
               tiers={tiers}
+              selectedEvent={selectedEventId ? events.find(e => e.id === selectedEventId) : undefined}
               onAdd={handleAddHousehold}
               onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
@@ -318,9 +331,11 @@ function App() {
                   categories={categories}
                   tiers={tiers}
                   households={households}
+                  selectedEventId={selectedEventId}
                   onAdd={handleAddEvent}
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
+                  onSelect={handleSelectEvent}
                 />
               </>
             )}

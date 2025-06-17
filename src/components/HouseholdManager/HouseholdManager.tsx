@@ -11,6 +11,7 @@ import {
 } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { Household, Category, Tier } from '../../types';
+import type { Event } from '../../types/event';
 import { FiUpload, FiMenu } from 'react-icons/fi';
 import { BulkImportModal } from './BulkImportModal';
 import { HouseholdEditModal } from './HouseholdEditModal';
@@ -27,6 +28,7 @@ interface HouseholdManagerProps {
   households: Household[];
   categories: Category[];
   tiers: Tier[];
+  selectedEvent?: Event;
   onAdd: (household: Omit<Household, 'id'>) => void;
   onAddMultiple: (households: Omit<Household, 'id'>[]) => void;
   onEdit: (id: string, household: Omit<Household, 'id'>) => void;
@@ -105,12 +107,14 @@ function DroppableTierColumn({
   tier, 
   categoryId, 
   households, 
-  onEditHousehold 
+  onEditHousehold,
+  isIncludedInSelectedEvent = true
 }: { 
   tier: Tier; 
   categoryId: string; 
   households: Household[]; 
   onEditHousehold: (household: Household) => void;
+  isIncludedInSelectedEvent?: boolean;
 }) {
   const {
     setNodeRef,
@@ -127,7 +131,7 @@ function DroppableTierColumn({
   return (
     <div 
       ref={setNodeRef}
-      className={`${styles.tierColumn} ${isOver ? styles.dropZoneActive : ''}`}
+      className={`${styles.tierColumn} ${isOver ? styles.dropZoneActive : ''} ${!isIncludedInSelectedEvent ? styles.dimmed : ''}`}
       data-tier-id={tier.id}
       data-category-id={categoryId}
     >
@@ -153,6 +157,7 @@ export function HouseholdManager({
   households,
   categories,
   tiers,
+  selectedEvent,
   onAdd,
   onAddMultiple,
   onEdit,
@@ -171,6 +176,16 @@ export function HouseholdManager({
     tierId: '',
   });
   const [error, setError] = useState('');
+
+  // Helper function to check if a category/tier is included in the selected event
+  const isIncludedInEvent = (categoryId: string, tierId: string): boolean => {
+    if (!selectedEvent) return true; // If no event selected, show all normally
+    
+    return selectedEvent.selections.some(selection => 
+      selection.categoryId === categoryId && 
+      selection.selectedTierIds.includes(tierId)
+    );
+  };
 
   // Configure sensors for drag activation
   const sensors = useSensors(
@@ -430,6 +445,7 @@ export function HouseholdManager({
                     categoryId={category.id}
                     households={tierHouseholds}
                     onEditHousehold={setEditingHousehold}
+                    isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
                   />
                 ))}
               </div>

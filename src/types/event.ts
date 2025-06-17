@@ -32,7 +32,9 @@ export interface EventManagerProps {
     categoryId: string;
     tierId: string;
   }>;
+  selectedEventId?: string | null;
   onAdd: (event: Omit<Event, 'id'>) => void;
   onEdit: (eventId: string, updates: Partial<Event>) => void;
   onDelete: (eventId: string) => void;
+  onSelect: (eventId: string) => void;
 } 
