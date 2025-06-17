@@ -1,0 +1,125 @@
+.summaryView {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: var(--color-background);
+}
+
+.gridHeader {
+  display: flex;
+  background-color: var(--color-background-alt);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.gridRow {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gridRow:last-child {
+  border-bottom: none;
+}
+
+.cornerCell {
+  min-width: 200px;
+  width: 200px;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background-alt);
+  border-right: 1px solid var(--color-border);
+}
+
+.headerCell {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-text);
+  border-right: 1px solid var(--color-border);
+  background-color: var(--color-background-alt);
+}
+
+.headerCell:last-child {
+  border-right: none;
+}
+
+.categoryCell {
+  min-width: 200px;
+  width: 200px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: var(--color-background-alt);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+}
+
+.countCell {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  transition: background-color 0.2s ease;
+}
+
+.countCell:last-child {
+  border-right: none;
+}
+
+.countCell:hover {
+  background-color: var(--color-background-alt);
+}
+
+/* Enhanced visual states for event filtering */
+.countCell {
+  transition: all 0.3s ease;
+}
+
+/* Dimmed state for cells not included in selected event */
+.countCell.dimmed {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #6b7280;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.countCell.dimmed:hover {
+  background-color: #f3f4f6;
+}
+
+/* Green highlight for included cells ONLY when event filtering is active */
+.eventFilterActive .countCell:not(.dimmed) {
+  background-color: #f0fdf4;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.eventFilterActive .countCell:not(.dimmed):hover {
+  background-color: #dcfce7;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+} 

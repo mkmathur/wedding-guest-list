@@ -24,6 +24,57 @@
   background-color: var(--color-primary-dark);
 }
 
+.viewSwitcher {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background-color: var(--color-background);
+}
+
+.switcherButton {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  position: relative;
+}
+
+.switcherButton:hover {
+  background-color: var(--color-background-alt);
+}
+
+.switcherButton.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.switcherButton.active:hover {
+  background-color: var(--color-primary-dark, var(--color-primary));
+}
+
+/* Add separator between buttons */
+.switcherButton:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background-color: var(--color-border);
+}
+
+.switcherButton.active:not(:last-child)::after {
+  background-color: transparent;
+}
+
 .buttonIcon {
   width: 1rem;
   height: 1rem;

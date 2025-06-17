@@ -23,6 +23,9 @@ function App() {
   // Panel collapse state
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
   const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false);
+  
+  // Summary mode state
+  const [isSummaryMode, setIsSummaryMode] = useState(false);
 
   // Initial data load
   useEffect(() => {
@@ -297,6 +300,8 @@ function App() {
               tiers={tiers}
               selectedEvent={selectedEventId ? events.find(e => e.id === selectedEventId) : undefined}
               previewSelections={previewSelections}
+              isSummaryMode={isSummaryMode}
+              onSummaryModeToggle={setIsSummaryMode}
               onAdd={handleAddHousehold}
               onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}

@@ -12,9 +12,10 @@ import {
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { Household, Category, Tier } from '../../types';
 import type { Event } from '../../types/event';
-import { FiUpload, FiMenu } from 'react-icons/fi';
+import { FiUpload, FiMenu, FiGrid, FiList } from 'react-icons/fi';
 import { BulkImportModal } from './BulkImportModal';
 import { HouseholdEditModal } from './HouseholdEditModal';
+import { SummaryView } from '../SummaryView/SummaryView';
 import styles from './HouseholdManager.module.css';
 
 interface HouseholdFormData {
@@ -30,6 +31,8 @@ interface HouseholdManagerProps {
   tiers: Tier[];
   selectedEvent?: Event;
   previewSelections?: Event['selections'] | null;
+  isSummaryMode: boolean;
+  onSummaryModeToggle: (mode: boolean) => void;
   onAdd: (household: Omit<Household, 'id'>) => void;
   onAddMultiple: (households: Omit<Household, 'id'>[]) => void;
   onEdit: (id: string, household: Omit<Household, 'id'>) => void;
@@ -160,6 +163,8 @@ export function HouseholdManager({
   tiers,
   selectedEvent,
   previewSelections,
+  isSummaryMode,
+  onSummaryModeToggle,
   onAdd,
   onAddMultiple,
   onEdit,
@@ -357,6 +362,24 @@ export function HouseholdManager({
                 <FiUpload className={styles.buttonIcon} />
                 Bulk Import
               </button>
+              <div className={styles.viewSwitcher}>
+                <button 
+                  className={`${styles.switcherButton} ${!isSummaryMode ? styles.active : ''}`}
+                  onClick={() => onSummaryModeToggle(false)}
+                  title="Switch to detailed view"
+                >
+                  <FiList className={styles.buttonIcon} />
+                  Detailed View
+                </button>
+                <button 
+                  className={`${styles.switcherButton} ${isSummaryMode ? styles.active : ''}`}
+                  onClick={() => onSummaryModeToggle(true)}
+                  title="Switch to summary view"
+                >
+                  <FiGrid className={styles.buttonIcon} />
+                  Summary View
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -438,25 +461,35 @@ export function HouseholdManager({
           </form>
         )}
 
-        <div className={styles.householdList}>
-          {householdsByCategory.map(({ category, tierGroups }) => (
-            <div key={category.id} className={styles.categoryGroup}>
-              <h3 className={styles.categoryTitle}>{category.name}</h3>
-              <div className={`${styles.kanbanBoard} ${(selectedEvent || previewSelections) ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
-                {tierGroups.map(({ tier, households: tierHouseholds }) => (
-                  <DroppableTierColumn
-                    key={tier.id}
-                    tier={tier}
-                    categoryId={category.id}
-                    households={tierHouseholds}
-                    onEditHousehold={setEditingHousehold}
-                    isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
-                  />
-                ))}
+        {isSummaryMode ? (
+          <SummaryView
+            households={households}
+            categories={categories}
+            tiers={tiers}
+            selectedEvent={selectedEvent}
+            previewSelections={previewSelections}
+          />
+        ) : (
+          <div className={styles.householdList}>
+            {householdsByCategory.map(({ category, tierGroups }) => (
+              <div key={category.id} className={styles.categoryGroup}>
+                <h3 className={styles.categoryTitle}>{category.name}</h3>
+                <div className={`${styles.kanbanBoard} ${(selectedEvent || previewSelections) ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
+                  {tierGroups.map(({ tier, households: tierHouseholds }) => (
+                    <DroppableTierColumn
+                      key={tier.id}
+                      tier={tier}
+                      categoryId={category.id}
+                      households={tierHouseholds}
+                      onEditHousehold={setEditingHousehold}
+                      isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Drag Overlay */}
         <DragOverlay>
