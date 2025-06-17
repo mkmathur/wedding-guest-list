@@ -19,10 +19,21 @@
   font-weight: 600;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .totalGuests {
   font-size: 1.125rem;
   font-weight: 500;
   color: var(--color-text-secondary);
+}
+
+.backupButtons {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .mainContent {

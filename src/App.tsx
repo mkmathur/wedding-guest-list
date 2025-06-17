@@ -4,6 +4,8 @@ import { CategoryManager } from './components/CategoryManager/CategoryManager'
 import { TierManager } from './components/TierManager/TierManager'
 import { HouseholdManager } from './components/HouseholdManager/HouseholdManager'
 import { EventManager } from './components/EventManager/EventManager'
+import { ExportBackupButton } from './components/ExportBackupButton/ExportBackupButton'
+import { ImportBackupButton } from './components/ImportBackupButton/ImportBackupButton'
 import { storage } from './utils/storage'
 import type { Category, Tier, Household } from './types'
 import type { Event } from './types/event'
@@ -181,12 +183,38 @@ function App() {
     storage.setEvents(updatedEvents);
   };
 
+  // Backup import handler
+  const handleImportComplete = (
+    importedHouseholds: Household[],
+    importedCategories: Category[],
+    importedTiers: Tier[],
+    importedEvents: Event[]
+  ) => {
+    setHouseholds(importedHouseholds);
+    setCategories(importedCategories);
+    setTiers(importedTiers);
+    setEvents(importedEvents);
+  };
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
         <h1>Wedding Guest List</h1>
-        <div className={styles.totalGuests}>
-          Total Guests: {totalGuests}
+        <div className={styles.headerActions}>
+          <div className={styles.totalGuests}>
+            Total Guests: {totalGuests}
+          </div>
+          <div className={styles.backupButtons}>
+            <ExportBackupButton
+              households={households}
+              categories={categories}
+              tiers={tiers}
+              events={events}
+            />
+            <ImportBackupButton
+              onImportComplete={handleImportComplete}
+            />
+          </div>
         </div>
       </header>
 
