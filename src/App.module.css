@@ -201,4 +201,14 @@
     writing-mode: horizontal-tb;
     text-orientation: initial;
   }
+}
+
+/* Sticky positioning for right panel on desktop */
+@media (min-width: 1025px) {
+  .rightPanel {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
 } 
