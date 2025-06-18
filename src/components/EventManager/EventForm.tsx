@@ -37,9 +37,21 @@ export function EventForm({
   // Initialize form data when editing an event
   useEffect(() => {
     if (event) {
+      // When editing an existing event, we need to ensure all current categories are included
+      // This handles the case where new categories were added after the event was created
+      const existingSelections = event.selections;
+      const allCategorySelections = categories.map(category => {
+        // Find existing selection for this category
+        const existingSelection = existingSelections.find(s => s.categoryId === category.id);
+        return existingSelection || {
+          categoryId: category.id,
+          selectedTierIds: []
+        };
+      });
+      
       setFormData({
         name: event.name,
-        selections: event.selections
+        selections: allCategorySelections
       });
     } else {
       // Initialize with empty selections for each category

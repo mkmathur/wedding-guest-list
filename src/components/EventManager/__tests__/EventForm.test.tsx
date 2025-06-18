@@ -107,11 +107,19 @@ describe('EventForm', () => {
     const nameInput = screen.getByLabelText(/event name/i) as HTMLInputElement;
     expect(nameInput.value).toBe('Intimate Wedding');
     
-    // Check if tier selection is pre-filled
-    const mustInviteCheckbox = screen.getByLabelText('Must Invite') as HTMLInputElement;
-    const wantInviteCheckbox = screen.getByLabelText('Want to Invite') as HTMLInputElement;
+    // Check if tier selection is pre-filled for Family category (cat1)
+    const familyGroup = screen.getByText('Family').closest('div._categoryGroup_7b232b') as HTMLElement;
+    const mustInviteCheckbox = within(familyGroup).getByLabelText('Must Invite') as HTMLInputElement;
+    const wantInviteCheckbox = within(familyGroup).getByLabelText('Want to Invite') as HTMLInputElement;
     expect(mustInviteCheckbox.checked).toBe(true);
     expect(wantInviteCheckbox.checked).toBe(false);
+    
+    // Check that Friends category has no tiers selected
+    const friendsGroup = screen.getByText('Friends').closest('div._categoryGroup_7b232b') as HTMLElement;
+    const friendsMustInvite = within(friendsGroup).getByLabelText('Must Invite') as HTMLInputElement;
+    const friendsWantInvite = within(friendsGroup).getByLabelText('Want to Invite') as HTMLInputElement;
+    expect(friendsMustInvite.checked).toBe(false);
+    expect(friendsWantInvite.checked).toBe(false);
   });
 
   it('validates required fields', async () => {
