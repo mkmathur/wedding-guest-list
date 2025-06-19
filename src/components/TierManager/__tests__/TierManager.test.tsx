@@ -28,19 +28,30 @@ describe('TierManager', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the add tier form', () => {
+  it('renders the new tier button initially', () => {
     renderComponent()
     
-    expect(screen.getByPlaceholderText('Enter tier name')).toBeInTheDocument()
-    expect(screen.getByText('Add Tier')).toBeInTheDocument()
+    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
+  })
+
+  it('shows tier form when new tier button is clicked', () => {
+    renderComponent()
+    
+    fireEvent.click(screen.getByText('+ New Tier'))
+    
+    expect(screen.getByText('Tier Name:')).toBeInTheDocument()
+    expect(screen.getByText('Create Tier')).toBeInTheDocument()
+    expect(screen.getByText('Cancel')).toBeInTheDocument()
   })
 
   it('adds a new tier', () => {
     renderComponent()
     
-    const input = screen.getByPlaceholderText('Enter tier name')
+    fireEvent.click(screen.getByText('+ New Tier'))
+    
+    const input = screen.getByLabelText('Tier Name:')
     fireEvent.change(input, { target: { value: 'Must Invite' } })
-    fireEvent.click(screen.getByText('Add Tier'))
+    fireEvent.click(screen.getByText('Create Tier'))
 
     expect(mockOnAdd).toHaveBeenCalledWith('Must Invite')
   })
@@ -48,9 +59,11 @@ describe('TierManager', () => {
   it('validates empty tier name', () => {
     renderComponent()
     
-    const input = screen.getByPlaceholderText('Enter tier name')
+    fireEvent.click(screen.getByText('+ New Tier'))
+    
+    const input = screen.getByLabelText('Tier Name:')
     fireEvent.change(input, { target: { value: '   ' } })
-    fireEvent.click(screen.getByText('Add Tier'))
+    fireEvent.click(screen.getByText('Create Tier'))
 
     expect(screen.getByText('Tier name cannot be empty')).toBeInTheDocument()
     expect(mockOnAdd).not.toHaveBeenCalled()
@@ -63,9 +76,11 @@ describe('TierManager', () => {
 
     renderComponent(existingTiers)
     
-    const input = screen.getByPlaceholderText('Enter tier name')
+    fireEvent.click(screen.getByText('+ New Tier'))
+    
+    const input = screen.getByLabelText('Tier Name:')
     fireEvent.change(input, { target: { value: 'Must Invite' } })
-    fireEvent.click(screen.getByText('Add Tier'))
+    fireEvent.click(screen.getByText('Create Tier'))
 
     expect(screen.getByText('Tier name must be unique')).toBeInTheDocument()
     expect(mockOnAdd).not.toHaveBeenCalled()
@@ -81,7 +96,7 @@ describe('TierManager', () => {
     // Start editing using role and index
     fireEvent.click(screen.getAllByRole('button', { name: 'Edit tier' })[0])
     
-    const input = screen.getByPlaceholderText('Enter tier name')
+    const input = screen.getByLabelText('Tier Name:')
     fireEvent.change(input, { target: { value: 'Must Invite - VIP' } })
     fireEvent.click(screen.getByText('Update Tier'))
 
@@ -270,7 +285,18 @@ describe('TierManager', () => {
     // Click cancel
     fireEvent.click(screen.getByText('Cancel'))
 
-    // Verify we're back in add mode
-    expect(screen.getByText('Add Tier')).toBeInTheDocument()
+    // Verify we're back in list mode
+    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
+  })
+
+  it('cancels form creation when cancel button is clicked', () => {
+    renderComponent()
+    
+    fireEvent.click(screen.getByText('+ New Tier'))
+    expect(screen.getByText('Create Tier')).toBeInTheDocument()
+    
+    fireEvent.click(screen.getByText('Cancel'))
+    expect(screen.queryByText('Create Tier')).not.toBeInTheDocument()
+    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
   })
 }) 

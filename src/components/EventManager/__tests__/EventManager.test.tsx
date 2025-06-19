@@ -59,12 +59,14 @@ describe('EventManager', () => {
   const mockOnAdd = vi.fn();
   const mockOnEdit = vi.fn();
   const mockOnDelete = vi.fn();
+  const mockOnSelect = vi.fn();
 
   const renderComponent = (
     events = mockEvents,
     categories = mockCategories,
     tiers = mockTiers,
-    households = mockHouseholds
+    households = mockHouseholds,
+    selectedEventId = null
   ) => {
     return render(
       <EventManager
@@ -72,9 +74,11 @@ describe('EventManager', () => {
         categories={categories}
         tiers={tiers}
         households={households}
+        selectedEventId={selectedEventId}
         onAdd={mockOnAdd}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onSelect={mockOnSelect}
       />
     );
   };

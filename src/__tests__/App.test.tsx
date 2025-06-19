@@ -37,10 +37,13 @@ describe('App', () => {
     const user = userEvent.setup();
     render(<App />);
 
+    // Click New Category button to show the form
+    await user.click(screen.getByText('+ New Category'));
+    
     // Add a new category
-    const categoryInput = screen.getByPlaceholderText(/enter category name/i);
+    const categoryInput = screen.getByLabelText('Category Name:');
     await user.type(categoryInput, 'Colleagues');
-    await user.click(screen.getByText('Add Category'));
+    await user.click(screen.getByText('Create Category'));
 
     // Verify category was added in the categories list
     const categoriesList = screen.getByTestId('categories-list');
@@ -76,7 +79,7 @@ describe('App', () => {
 
     // Edit the category
     await user.click(screen.getByRole('button', { name: /edit category/i }));
-    const editInput = screen.getByPlaceholderText(/enter category name/i);
+    const editInput = screen.getByLabelText('Category Name:');
     await user.clear(editInput);
     await user.type(editInput, 'Close Friends');
     await user.click(screen.getByText('Update Category'));

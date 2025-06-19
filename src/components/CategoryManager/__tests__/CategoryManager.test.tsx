@@ -24,21 +24,31 @@ describe('CategoryManager', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the add category form', () => {
+  it('renders the new category button initially', () => {
     renderComponent()
     
-    expect(screen.getByPlaceholderText('Enter category name')).toBeInTheDocument()
-    expect(screen.getByText('Add Category')).toBeInTheDocument()
+    expect(screen.getByText('+ New Category')).toBeInTheDocument()
+  })
+
+  it('shows category form when new category button is clicked', () => {
+    renderComponent()
+    
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    expect(screen.getByText('Category Name:')).toBeInTheDocument()
     expect(screen.getByText('Which side is this guest group from?')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('💗 Bride')).toBeInTheDocument() // Default selection
+    expect(screen.getByText('Create Category')).toBeInTheDocument()
+    expect(screen.getByText('Cancel')).toBeInTheDocument()
   })
 
   it('adds a new category with default side', () => {
     renderComponent()
     
-    const input = screen.getByPlaceholderText('Enter category name')
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    const input = screen.getByLabelText('Category Name:')
     fireEvent.change(input, { target: { value: 'Family' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
 
     expect(mockOnAdd).toHaveBeenCalledWith('Family', 'bride')
   })
@@ -46,12 +56,14 @@ describe('CategoryManager', () => {
   it('adds a new category with selected side', () => {
     renderComponent()
     
-    const input = screen.getByPlaceholderText('Enter category name')
-    const select = screen.getByDisplayValue('💗 Bride')
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    const input = screen.getByLabelText('Category Name:')
+    const select = screen.getByLabelText('Which side is this guest group from?')
     
     fireEvent.change(input, { target: { value: 'Family' } })
     fireEvent.change(select, { target: { value: 'groom' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
 
     expect(mockOnAdd).toHaveBeenCalledWith('Family', 'groom')
   })
@@ -59,9 +71,11 @@ describe('CategoryManager', () => {
   it('validates empty category name', () => {
     renderComponent()
     
-    const input = screen.getByPlaceholderText('Enter category name')
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    const input = screen.getByLabelText('Category Name:')
     fireEvent.change(input, { target: { value: '   ' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
 
     expect(screen.getByText('Category name cannot be empty')).toBeInTheDocument()
     expect(mockOnAdd).not.toHaveBeenCalled()
@@ -74,9 +88,11 @@ describe('CategoryManager', () => {
 
     renderComponent(existingCategories)
     
-    const input = screen.getByPlaceholderText('Enter category name')
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    const input = screen.getByLabelText('Category Name:')
     fireEvent.change(input, { target: { value: 'Family' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
 
     expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
     expect(mockOnAdd).not.toHaveBeenCalled()
@@ -89,10 +105,12 @@ describe('CategoryManager', () => {
 
     renderComponent(existingCategories)
     
+    fireEvent.click(screen.getByText('+ New Category'))
+    
     // Try to add a category with leading/trailing whitespace
-    const input = screen.getByPlaceholderText('Enter category name')
+    const input = screen.getByLabelText('Category Name:')
     fireEvent.change(input, { target: { value: '  Family  ' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
 
     // Should detect as duplicate and prevent adding
     expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
@@ -105,7 +123,7 @@ describe('CategoryManager', () => {
 
     // Should allow different name with whitespace
     fireEvent.change(input, { target: { value: '  New Family  ' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
     expect(mockOnAdd).toHaveBeenCalledWith('New Family', 'bride')
   })
 
@@ -116,11 +134,13 @@ describe('CategoryManager', () => {
 
     renderComponent(existingCategories)
     
-    const input = screen.getByPlaceholderText('Enter category name')
+    fireEvent.click(screen.getByText('+ New Category'))
+    
+    const input = screen.getByLabelText('Category Name:')
     
     // First trigger a duplicate name error
     fireEvent.change(input, { target: { value: 'Family' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
     expect(screen.getByText('Category name must be unique')).toBeInTheDocument()
 
     // Error should clear immediately when typing a non-duplicate name
@@ -129,7 +149,7 @@ describe('CategoryManager', () => {
 
     // Test empty name error
     fireEvent.change(input, { target: { value: '' } })
-    fireEvent.click(screen.getByText('Add Category'))
+    fireEvent.click(screen.getByText('Create Category'))
     expect(screen.getByText('Category name cannot be empty')).toBeInTheDocument()
 
     // Error should clear immediately when typing any non-empty value
@@ -163,8 +183,8 @@ describe('CategoryManager', () => {
     // Start editing
     fireEvent.click(screen.getByRole('button', { name: /edit category/i }))
     
-    const input = screen.getByPlaceholderText('Enter category name')
-    const select = screen.getByDisplayValue('💗 Bride')
+    const input = screen.getByLabelText('Category Name:')
+    const select = screen.getByLabelText('Which side is this guest group from?')
     
     fireEvent.change(input, { target: { value: 'Close Family' } })
     fireEvent.change(select, { target: { value: 'both' } })
@@ -212,7 +232,7 @@ describe('CategoryManager', () => {
     // Click cancel
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
     expect(screen.queryByText('Update Category')).not.toBeInTheDocument()
-    expect(screen.getByText('Add Category')).toBeInTheDocument()
+    expect(screen.getByText('+ New Category')).toBeInTheDocument()
   })
 
   it('updates category when form is submitted', async () => {
@@ -224,8 +244,8 @@ describe('CategoryManager', () => {
     expect(screen.getByText('Update Category')).toBeInTheDocument()
     
     // Update category name and side
-    fireEvent.change(screen.getByPlaceholderText(/enter category name/i), { target: { value: 'Updated Family' } })
-    fireEvent.change(screen.getByDisplayValue('💗 Bride'), { target: { value: 'groom' } })
+    fireEvent.change(screen.getByLabelText('Category Name:'), { target: { value: 'Updated Family' } })
+    fireEvent.change(screen.getByLabelText('Which side is this guest group from?'), { target: { value: 'groom' } })
     fireEvent.click(screen.getByRole('button', { name: /update category/i }))
     
     expect(mockOnEdit).toHaveBeenCalledWith('1', 'Updated Family', 'groom')
@@ -241,5 +261,16 @@ describe('CategoryManager', () => {
     expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this category?')
     expect(mockOnDelete).toHaveBeenCalledWith('1')
     mockConfirm.mockRestore();
+  })
+
+  it('cancels form creation when cancel button is clicked', () => {
+    renderComponent()
+    
+    fireEvent.click(screen.getByText('+ New Category'))
+    expect(screen.getByText('Create Category')).toBeInTheDocument()
+    
+    fireEvent.click(screen.getByText('Cancel'))
+    expect(screen.queryByText('Create Category')).not.toBeInTheDocument()
+    expect(screen.getByText('+ New Category')).toBeInTheDocument()
   })
 })
