@@ -1,19 +1,23 @@
 .importButton {
   padding: 8px 16px;
-  background-color: #2196F3;
-  color: white;
-  border: none;
+  background-color: transparent;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .importButton:hover {
-  background-color: #1976D2;
+  background-color: rgba(59, 130, 246, 0.05);
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
 .importButton:active {
-  background-color: #1565C0;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #1d4ed8;
+  color: #1d4ed8;
 } 

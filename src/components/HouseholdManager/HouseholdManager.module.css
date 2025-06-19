@@ -7,13 +7,13 @@
 .newHouseholdButton,
 .importButton {
   padding: 0.5rem 1rem;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 0.25rem;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -21,7 +21,9 @@
 
 .newHouseholdButton:hover,
 .importButton:hover {
-  background-color: var(--color-primary-dark);
+  background-color: rgba(59, 130, 246, 0.05);
+  border-color: var(--color-primary-dark);
+  color: var(--color-primary-dark);
 }
 
 .viewSwitcher {
