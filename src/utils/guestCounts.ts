@@ -1,5 +1,6 @@
 import type { Household, Category, Tier } from '../types';
 import type { Event } from '../types/event';
+import type { CategorySide } from '../types';
 
 /**
  * Calculate guest count for a specific category and tier combination
@@ -60,4 +61,46 @@ export function generateSummaryData(
       isIncluded: isIncludedInEvent(category.id, tier.id, eventSelections || null)
     }))
   }));
+}
+
+/**
+ * Calculate guest counts by side (bride, groom, both, unspecified)
+ */
+export interface SideBreakdown {
+  bride: number;
+  groom: number;
+  both: number;
+  unspecified: number;
+}
+
+export function calculateSideBreakdown(
+  households: Household[],
+  categories: Category[],
+  eventSelections?: Event['selections'] | null
+): SideBreakdown {
+  const breakdown: SideBreakdown = {
+    bride: 0,
+    groom: 0,
+    both: 0,
+    unspecified: 0
+  };
+
+  // Create a map of categoryId to side for quick lookup
+  const categoryIdToSide = new Map<string, CategorySide>();
+  categories.forEach(category => {
+    categoryIdToSide.set(category.id, category.side || 'unspecified');
+  });
+
+  households.forEach(household => {
+    const side = categoryIdToSide.get(household.categoryId) || 'unspecified';
+    
+    // Check if this household is included in the current event
+    const isIncluded = isIncludedInEvent(household.categoryId, household.tierId, eventSelections || null);
+    
+    if (isIncluded) {
+      breakdown[side] += household.guestCount;
+    }
+  });
+
+  return breakdown;
 } 

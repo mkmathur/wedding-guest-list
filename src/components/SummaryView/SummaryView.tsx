@@ -1,6 +1,7 @@
-import { generateSummaryData } from '../../utils/guestCounts';
+import { generateSummaryData, calculateSideBreakdown } from '../../utils/guestCounts';
 import type { Household, Category, Tier } from '../../types';
 import type { Event } from '../../types/event';
+import { BreakdownBar } from './BreakdownBar';
 import styles from './SummaryView.module.css';
 
 interface SummaryViewProps {
@@ -28,6 +29,13 @@ export function SummaryView({
     activeSelections
   );
 
+  // Calculate side breakdown for the breakdown bar
+  const sideBreakdown = calculateSideBreakdown(
+    households,
+    categories,
+    activeSelections
+  );
+
   // Check if event filtering is active (some cells are included, some are not)
   const isEventFilterActive = activeSelections && summaryData.some(row => 
     row.tierCounts.some(cell => cell.isIncluded) && 
@@ -45,6 +53,9 @@ export function SummaryView({
 
   return (
     <div className={styles.summaryView}>
+      {/* Add the breakdown bar above the grid */}
+      <BreakdownBar breakdown={sideBreakdown} />
+      
       <div className={`${styles.gridContainer} ${activeSelections ? styles.eventFilterActive : ''}`}>
         {/* Header row with tier names */}
         <div className={styles.gridHeader}>
