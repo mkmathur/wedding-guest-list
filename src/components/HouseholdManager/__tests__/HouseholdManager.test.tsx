@@ -40,22 +40,21 @@ describe('HouseholdManager', () => {
   const mockOnAddCategory = vi.fn();
   const mockOnAddCategories = vi.fn().mockResolvedValue(undefined);
 
-  const renderComponent = (
-    households = mockHouseholds,
-    categories = mockCategories,
-    tiers = mockTiers
-  ) => {
+  const renderComponent = (props = {}) => {
     return render(
       <HouseholdManager
-        households={households}
-        categories={categories}
-        tiers={tiers}
+        households={mockHouseholds}
+        categories={mockCategories}
+        tiers={mockTiers}
+        isSummaryMode={false}
+        onSummaryModeToggle={vi.fn()}
         onAdd={mockOnAdd}
         onAddMultiple={mockOnAddMultiple}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onAddCategory={mockOnAddCategory}
         onAddCategories={mockOnAddCategories}
+        {...props}
       />
     );
   };
@@ -235,6 +234,8 @@ describe('HouseholdManager', () => {
         households={mockHouseholds}
         categories={updatedCategories}
         tiers={mockTiers}
+        isSummaryMode={false}
+        onSummaryModeToggle={vi.fn()}
         onAdd={mockOnAdd}
         onAddMultiple={mockOnAddMultiple}
         onEdit={mockOnEdit}

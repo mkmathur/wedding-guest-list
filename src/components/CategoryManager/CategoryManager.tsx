@@ -19,12 +19,23 @@ const getSideEmoji = (side?: CategorySide): string => {
 
 interface CategoryManagerProps {
   categories: Category[];
+  selectedCategoryId?: string | null;
+  isSummaryMode?: boolean;
   onAdd: (name: string, side: CategorySide) => void;
   onEdit: (categoryId: string, name: string, side: CategorySide) => void;
   onDelete: (categoryId: string) => void;
+  onCategorySelect?: (categoryId: string) => void;
 }
 
-export function CategoryManager({ categories, onAdd, onEdit, onDelete }: CategoryManagerProps) {
+export function CategoryManager({ 
+  categories, 
+  selectedCategoryId,
+  isSummaryMode = false,
+  onAdd, 
+  onEdit, 
+  onDelete,
+  onCategorySelect
+}: CategoryManagerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
@@ -45,6 +56,13 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
 
   const startEditing = (category: Category) => {
     setEditingCategory(category);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    // Only allow selection in detailed view and if handler is provided
+    if (!isSummaryMode && onCategorySelect) {
+      onCategorySelect(categoryId);
+    }
   };
 
   return (
@@ -68,7 +86,15 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
       ) : (
         <div className={styles.list} data-testid="categories-list">
           {categories.map(category => (
-            <div key={category.id} className={styles.category}>
+            <div 
+              key={category.id} 
+              className={`${styles.category} ${
+                selectedCategoryId === category.id ? styles.selected : ''
+              } ${
+                !isSummaryMode ? styles.interactive : ''
+              }`}
+              onClick={() => handleCategoryClick(category.id)}
+            >
               <span className={styles.categoryName}>
                 <span className={styles.sideEmoji}>{getSideEmoji(category.side)}</span>
                 {category.name}
@@ -76,7 +102,10 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
               <div className={styles.actions}>
                 <button
                   className={styles.actionButton}
-                  onClick={() => startEditing(category)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent category selection when editing
+                    startEditing(category);
+                  }}
                   title="Edit category"
                   aria-label="Edit category"
                 >
@@ -84,7 +113,8 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
                 </button>
                 <button
                   className={styles.deleteButton}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent category selection when deleting
                     if (confirm('Are you sure you want to delete this category?')) {
                       onDelete(category.id);
                     }

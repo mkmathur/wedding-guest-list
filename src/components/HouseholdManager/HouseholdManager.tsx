@@ -31,6 +31,7 @@ interface HouseholdManagerProps {
   tiers: Tier[];
   selectedEvent?: Event;
   previewSelections?: Event['selections'] | null;
+  selectedCategoryId?: string | null;
   isSummaryMode: boolean;
   onSummaryModeToggle: (mode: boolean) => void;
   onAdd: (household: Omit<Household, 'id'>) => void;
@@ -163,6 +164,7 @@ export function HouseholdManager({
   tiers,
   selectedEvent,
   previewSelections,
+  selectedCategoryId,
   isSummaryMode,
   onSummaryModeToggle,
   onAdd,
@@ -322,7 +324,12 @@ export function HouseholdManager({
     : null;
 
   // Group households by category, then by tier within each category
-  const householdsByCategory = categories.map(category => {
+  // Apply category filter if a category is selected and we're in detailed view
+  const filteredCategories = !isSummaryMode && selectedCategoryId 
+    ? categories.filter(category => category.id === selectedCategoryId)
+    : categories;
+
+  const householdsByCategory = filteredCategories.map(category => {
     const categoryHouseholds = households.filter(h => h.categoryId === category.id);
     
     // Group households within this category by tier

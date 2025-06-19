@@ -1,4 +1,5 @@
-import type { Tier, Category, Household, Event, CategoryTierSelection } from '../types';
+import type { Tier, Category, Household } from '../types';
+import type { Event, CategoryTierSelection } from '../types/event';
 
 const STORAGE_KEYS = {
   TIERS: 'wedding-guest-list:tiers',

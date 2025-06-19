@@ -26,6 +26,9 @@ function App() {
   
   // Summary mode state
   const [isSummaryMode, setIsSummaryMode] = useState(false);
+  
+  // Category selection state for filtering
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   // Initial data load
   useEffect(() => {
@@ -206,6 +209,24 @@ function App() {
     setPreviewSelections(selections);
   };
 
+  // Category selection handler
+  const handleCategorySelect = (categoryId: string) => {
+    // Only allow category selection in detailed view
+    if (isSummaryMode) return;
+    
+    // Toggle selection: if same category is clicked, deselect it
+    setSelectedCategoryId(selectedCategoryId === categoryId ? null : categoryId);
+  };
+
+  // Summary mode toggle handler with category selection clearing
+  const handleSummaryModeToggle = (mode: boolean) => {
+    setIsSummaryMode(mode);
+    // Clear category selection when switching to summary mode
+    if (mode) {
+      setSelectedCategoryId(null);
+    }
+  };
+
   // Backup import handler
   const handleImportComplete = (
     importedHouseholds: Household[],
@@ -273,9 +294,12 @@ function App() {
                   <h2 className={styles.panelTitle}>Categories</h2>
                   <CategoryManager
                     categories={categories}
+                    selectedCategoryId={selectedCategoryId}
+                    isSummaryMode={isSummaryMode}
                     onAdd={handleAddCategory}
                     onEdit={handleEditCategory}
                     onDelete={handleDeleteCategory}
+                    onCategorySelect={handleCategorySelect}
                   />
                 </section>
                 <section>
@@ -302,8 +326,9 @@ function App() {
               tiers={tiers}
               selectedEvent={selectedEventId ? events.find(e => e.id === selectedEventId) : undefined}
               previewSelections={previewSelections}
+              selectedCategoryId={selectedCategoryId}
               isSummaryMode={isSummaryMode}
-              onSummaryModeToggle={setIsSummaryMode}
+              onSummaryModeToggle={handleSummaryModeToggle}
               onAdd={handleAddHousehold}
               onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
