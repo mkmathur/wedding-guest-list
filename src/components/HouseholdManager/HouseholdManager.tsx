@@ -25,6 +25,11 @@ interface HouseholdFormData {
   tierId: string;
 }
 
+interface InlineFormData {
+  name: string;
+  guestCount: string;
+}
+
 interface HouseholdManagerProps {
   households: Household[];
   categories: Category[];
@@ -107,19 +112,107 @@ function DraggableHouseholdCard({
   );
 }
 
+// Inline Household Form Component
+function InlineHouseholdForm({
+  onSubmit,
+  onCancel,
+  error
+}: {
+  categoryId: string;
+  tierId: string;
+  onSubmit: (data: InlineFormData) => void;
+  onCancel: () => void;
+  error?: string;
+}) {
+  const [formData, setFormData] = useState<InlineFormData>({
+    name: '',
+    guestCount: '1'
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent) => {
+    // Only cancel if both fields are empty and focus is leaving the form
+    if (!formData.name.trim() && formData.guestCount === '1') {
+      // Check if the new focus target is not within the form
+      const form = e.currentTarget.closest('form');
+      if (form && !form.contains(e.relatedTarget as Node)) {
+        onCancel();
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Auto-focus on name input when form opens
+    const nameInput = document.querySelector('[data-inline-form-name]') as HTMLInputElement;
+    if (nameInput) {
+      nameInput.focus();
+    }
+  }, []);
+
+  return (
+    <form onSubmit={handleSubmit} className={styles.inlineForm} onKeyDown={handleKeyDown}>
+      <div className={styles.inlineFormContent}>
+        <div className={styles.inlineFormInputs}>
+          <input
+            data-inline-form-name
+            type="text"
+            value={formData.name}
+            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            onBlur={handleBlur}
+            className={styles.inlineFormInput}
+            placeholder="Household name"
+          />
+          <input
+            type="number"
+            min="1"
+            value={formData.guestCount}
+            onChange={e => setFormData(prev => ({ ...prev, guestCount: e.target.value }))}
+            onBlur={handleBlur}
+            className={styles.inlineFormGuestCount}
+          />
+        </div>
+        {error && <div className={styles.inlineFormError}>{error}</div>}
+      </div>
+      <button type="submit" className={styles.inlineFormSubmit} title="Add household">
+        ✓
+      </button>
+    </form>
+  );
+}
+
 // Droppable Tier Column Component
 function DroppableTierColumn({ 
   tier, 
   categoryId, 
   households, 
   onEditHousehold,
-  isIncludedInSelectedEvent = true
+  isIncludedInSelectedEvent = true,
+  showInlineForm = false,
+  inlineFormError,
+  onShowInlineForm,
+  onHideInlineForm,
+  onSubmitInlineForm
 }: { 
   tier: Tier; 
   categoryId: string; 
   households: Household[]; 
   onEditHousehold: (household: Household) => void;
   isIncludedInSelectedEvent?: boolean;
+  showInlineForm?: boolean;
+  inlineFormError?: string;
+  onShowInlineForm?: () => void;
+  onHideInlineForm?: () => void;
+  onSubmitInlineForm?: (data: InlineFormData) => void;
 }) {
   const {
     setNodeRef,
@@ -133,6 +226,12 @@ function DroppableTierColumn({
     },
   });
 
+  const handleShowInlineForm = () => {
+    if (onShowInlineForm) {
+      onShowInlineForm();
+    }
+  };
+
   return (
     <div 
       ref={setNodeRef}
@@ -142,7 +241,7 @@ function DroppableTierColumn({
     >
       <h4 className={styles.tierColumnHeader}>{tier.name}</h4>
       <div className={styles.tierColumnContent}>
-        {households.length > 0 ? (
+        {households.length > 0 && (
           households.map(household => (
             <DraggableHouseholdCard
               key={household.id}
@@ -150,8 +249,26 @@ function DroppableTierColumn({
               onEdit={onEditHousehold}
             />
           ))
+        )}
+        
+        {showInlineForm ? (
+          <InlineHouseholdForm
+            categoryId={categoryId}
+            tierId={tier.id}
+            onSubmit={onSubmitInlineForm!}
+            onCancel={onHideInlineForm!}
+            error={inlineFormError}
+          />
         ) : (
-          <div className={styles.emptyColumnPlaceholder}>---</div>
+          <>
+            <button
+              className={styles.addHouseholdButton}
+              onClick={handleShowInlineForm}
+              type="button"
+            >
+              ➕ Add Household
+            </button>
+          </>
         )}
       </div>
     </div>
@@ -171,13 +288,14 @@ export function HouseholdManager({
   onAddMultiple,
   onEdit,
   onDelete,
-  onAddCategory,
   onAddCategories,
 }: HouseholdManagerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeInlineForm, setActiveInlineForm] = useState<{ categoryId: string, tierId: string } | null>(null);
+  const [inlineFormError, setInlineFormError] = useState('');
   const [formData, setFormData] = useState<HouseholdFormData>({
     name: '',
     guestCount: '1',
@@ -344,6 +462,52 @@ export function HouseholdManager({
     };
   });
 
+  const handleShowInlineForm = (categoryId: string, tierId: string) => {
+    setActiveInlineForm({ categoryId, tierId });
+    setInlineFormError('');
+  };
+
+  const handleHideInlineForm = () => {
+    setActiveInlineForm(null);
+    setInlineFormError('');
+  };
+
+  const handleSubmitInlineForm = (data: InlineFormData) => {
+    if (!activeInlineForm) return;
+
+    // Validate form
+    if (!data.name.trim()) {
+      setInlineFormError('Household name is required');
+      return;
+    }
+
+    const guestCount = parseInt(data.guestCount);
+    if (isNaN(guestCount) || guestCount < 1) {
+      setInlineFormError('Guest count must be at least 1');
+      return;
+    }
+
+    // Check for duplicate names
+    const isDuplicate = households.some(
+      h => h.name.toLowerCase().trim() === data.name.toLowerCase().trim()
+    );
+    if (isDuplicate) {
+      setInlineFormError('A household with this name already exists');
+      return;
+    }
+
+    // Submit the household
+    const householdData = {
+      name: data.name,
+      guestCount,
+      categoryId: activeInlineForm.categoryId,
+      tierId: activeInlineForm.tierId,
+    };
+
+    onAdd(householdData);
+    handleHideInlineForm();
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -490,6 +654,11 @@ export function HouseholdManager({
                       households={tierHouseholds}
                       onEditHousehold={setEditingHousehold}
                       isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
+                      showInlineForm={activeInlineForm?.categoryId === category.id && activeInlineForm?.tierId === tier.id}
+                      inlineFormError={inlineFormError}
+                      onShowInlineForm={() => handleShowInlineForm(category.id, tier.id)}
+                      onHideInlineForm={handleHideInlineForm}
+                      onSubmitInlineForm={handleSubmitInlineForm}
                     />
                   ))}
                 </div>
