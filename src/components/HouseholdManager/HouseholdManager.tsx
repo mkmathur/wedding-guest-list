@@ -519,20 +519,6 @@ export function HouseholdManager({
         <div className={styles.buttonGroup}>
           {!isCreating && (
             <>
-              <button
-                className={styles.newHouseholdButton}
-                onClick={() => setIsCreating(true)}
-              >
-                + New Household
-              </button>
-              <button
-                className={styles.importButton}
-                onClick={() => setIsImporting(true)}
-                title="Paste a text list of households from your notes or documents"
-              >
-                <FiClipboard className={styles.buttonIcon} />
-                Paste Guest List
-              </button>
               <div className={styles.viewSwitcher}>
                 <button 
                   className={`${styles.switcherButton} ${!isSummaryMode ? styles.active : ''}`}
@@ -551,6 +537,20 @@ export function HouseholdManager({
                   Summary View
                 </button>
               </div>
+              <button
+                className={styles.newHouseholdButton}
+                onClick={() => setIsCreating(true)}
+              >
+                + New Household
+              </button>
+              <button
+                className={styles.importButton}
+                onClick={() => setIsImporting(true)}
+                title="Paste a text list of households from your notes or documents"
+              >
+                <FiClipboard className={styles.buttonIcon} />
+                Paste Guest List
+              </button>
             </>
           )}
         </div>
