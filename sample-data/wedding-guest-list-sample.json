@@ -1,0 +1,306 @@
+{
+  "households": [
+    {
+      "id": "h1",
+      "name": "Smith Family",
+      "guestCount": 4,
+      "categoryId": "c1",
+      "tierId": "t1"
+    },
+    {
+      "id": "h2",
+      "name": "Johnson Family",
+      "guestCount": 3,
+      "categoryId": "c1",
+      "tierId": "t2"
+    },
+    {
+      "id": "h3",
+      "name": "Williams Family",
+      "guestCount": 2,
+      "categoryId": "c1",
+      "tierId": "t1"
+    },
+    {
+      "id": "h4",
+      "name": "Brown Family",
+      "guestCount": 3,
+      "categoryId": "c1",
+      "tierId": "t3"
+    },
+    {
+      "id": "h5",
+      "name": "Sarah Chen",
+      "guestCount": 1,
+      "categoryId": "c2",
+      "tierId": "t2"
+    },
+    {
+      "id": "h6",
+      "name": "Michael Rodriguez",
+      "guestCount": 2,
+      "categoryId": "c2",
+      "tierId": "t2"
+    },
+    {
+      "id": "h7",
+      "name": "Emily Davis",
+      "guestCount": 1,
+      "categoryId": "c2",
+      "tierId": "t3"
+    },
+    {
+      "id": "h8",
+      "name": "Jessica Wong & Partner",
+      "guestCount": 2,
+      "categoryId": "c2",
+      "tierId": "t1"
+    },
+    {
+      "id": "h9",
+      "name": "Patel Family",
+      "guestCount": 4,
+      "categoryId": "c3",
+      "tierId": "t1"
+    },
+    {
+      "id": "h10",
+      "name": "Kumar Family",
+      "guestCount": 3,
+      "categoryId": "c3",
+      "tierId": "t1"
+    },
+    {
+      "id": "h11",
+      "name": "Gupta Family",
+      "guestCount": 2,
+      "categoryId": "c3",
+      "tierId": "t2"
+    },
+    {
+      "id": "h12",
+      "name": "Sharma Family",
+      "guestCount": 4,
+      "categoryId": "c3",
+      "tierId": "t3"
+    },
+    {
+      "id": "h13",
+      "name": "David Kim",
+      "guestCount": 1,
+      "categoryId": "c4",
+      "tierId": "t2"
+    },
+    {
+      "id": "h14",
+      "name": "Alex Thompson",
+      "guestCount": 2,
+      "categoryId": "c4",
+      "tierId": "t3"
+    },
+    {
+      "id": "h15",
+      "name": "Ryan Miller & Guest",
+      "guestCount": 2,
+      "categoryId": "c4",
+      "tierId": "t1"
+    },
+    {
+      "id": "h16",
+      "name": "Jake Wilson",
+      "guestCount": 1,
+      "categoryId": "c4",
+      "tierId": "t2"
+    },
+    {
+      "id": "h17",
+      "name": "Anderson Family",
+      "guestCount": 3,
+      "categoryId": "c1",
+      "tierId": "t2"
+    },
+    {
+      "id": "h18",
+      "name": "Martinez Family",
+      "guestCount": 2,
+      "categoryId": "c1",
+      "tierId": "t3"
+    },
+    {
+      "id": "h19",
+      "name": "Taylor Family",
+      "guestCount": 4,
+      "categoryId": "c1",
+      "tierId": "t3"
+    },
+    {
+      "id": "h20",
+      "name": "Lisa Park & Guest",
+      "guestCount": 2,
+      "categoryId": "c2",
+      "tierId": "t2"
+    },
+    {
+      "id": "h21",
+      "name": "Amanda Foster",
+      "guestCount": 1,
+      "categoryId": "c2",
+      "tierId": "t3"
+    },
+    {
+      "id": "h22",
+      "name": "Rachel Green & Partner",
+      "guestCount": 2,
+      "categoryId": "c2",
+      "tierId": "t3"
+    },
+    {
+      "id": "h23",
+      "name": "Singh Family",
+      "guestCount": 3,
+      "categoryId": "c3",
+      "tierId": "t2"
+    },
+    {
+      "id": "h24",
+      "name": "Verma Family",
+      "guestCount": 2,
+      "categoryId": "c3",
+      "tierId": "t3"
+    },
+    {
+      "id": "h25",
+      "name": "Jain Family",
+      "guestCount": 4,
+      "categoryId": "c3",
+      "tierId": "t3"
+    },
+    {
+      "id": "h26",
+      "name": "Chris Martinez",
+      "guestCount": 1,
+      "categoryId": "c4",
+      "tierId": "t2"
+    },
+    {
+      "id": "h27",
+      "name": "Ben Cooper & Guest",
+      "guestCount": 2,
+      "categoryId": "c4",
+      "tierId": "t3"
+    },
+    {
+      "id": "h28",
+      "name": "Sam Johnson",
+      "guestCount": 1,
+      "categoryId": "c4",
+      "tierId": "t3"
+    }
+  ],
+  "categories": [
+    {
+      "id": "c1",
+      "name": "Bride's Family",
+      "side": "bride"
+    },
+    {
+      "id": "c2",
+      "name": "Bride's Friends",
+      "side": "bride"
+    },
+    {
+      "id": "c3",
+      "name": "Groom's Family",
+      "side": "groom"
+    },
+    {
+      "id": "c4",
+      "name": "Groom's Friends",
+      "side": "groom"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "t1",
+      "name": "T1"
+    },
+    {
+      "id": "t2",
+      "name": "T2"
+    },
+    {
+      "id": "t3",
+      "name": "T3"
+    }
+  ],
+  "events": [
+    {
+      "id": "e1",
+      "name": "Mehndi",
+      "selections": [
+        {
+          "categoryId": "c1",
+          "selectedTierIds": ["t1", "t2"]
+        },
+        {
+          "categoryId": "c2",
+          "selectedTierIds": ["t1"]
+        },
+        {
+          "categoryId": "c3",
+          "selectedTierIds": ["t1", "t2"]
+        },
+        {
+          "categoryId": "c4",
+          "selectedTierIds": ["t1"]
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "name": "Ceremony",
+      "selections": [
+        {
+          "categoryId": "c1",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        },
+        {
+          "categoryId": "c2",
+          "selectedTierIds": ["t1", "t2"]
+        },
+        {
+          "categoryId": "c3",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        },
+        {
+          "categoryId": "c4",
+          "selectedTierIds": ["t1", "t2"]
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "name": "Reception",
+      "selections": [
+        {
+          "categoryId": "c1",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        },
+        {
+          "categoryId": "c2",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        },
+        {
+          "categoryId": "c3",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        },
+        {
+          "categoryId": "c4",
+          "selectedTierIds": ["t1", "t2", "t3"]
+        }
+      ]
+    }
+  ],
+  "version": "1.0.0",
+  "exportedAt": "2024-01-15T10:30:00.000Z"
+} 
