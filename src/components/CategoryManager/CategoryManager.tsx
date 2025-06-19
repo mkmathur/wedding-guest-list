@@ -1,17 +1,31 @@
 import { useState } from 'react';
-import type { Category } from '../../types';
+import type { Category, CategorySide } from '../../types';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import styles from './CategoryManager.module.css';
 
+// Side options with emojis
+const SIDE_OPTIONS = [
+  { value: 'bride' as CategorySide, label: '💗 Bride', emoji: '💗' },
+  { value: 'groom' as CategorySide, label: '💙 Groom', emoji: '💙' },
+  { value: 'both' as CategorySide, label: '🤝 Both', emoji: '🤝' },
+  { value: 'unspecified' as CategorySide, label: '❓ Unspecified', emoji: '❓' },
+];
+
+const getSideEmoji = (side?: CategorySide): string => {
+  const option = SIDE_OPTIONS.find(opt => opt.value === side);
+  return option ? option.emoji : '❓';
+};
+
 interface CategoryManagerProps {
   categories: Category[];
-  onAdd: (name: string) => void;
-  onEdit: (categoryId: string, name: string) => void;
+  onAdd: (name: string, side: CategorySide) => void;
+  onEdit: (categoryId: string, name: string, side: CategorySide) => void;
   onDelete: (categoryId: string) => void;
 }
 
 export function CategoryManager({ categories, onAdd, onEdit, onDelete }: CategoryManagerProps) {
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategorySide, setNewCategorySide] = useState<CategorySide>('bride');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [error, setError] = useState('');
 
@@ -34,15 +48,17 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const name = editingCategory ? editingCategory.name : newCategoryName;
+    const side = editingCategory ? (editingCategory.side || 'unspecified') : newCategorySide;
     
     if (!validateCategoryName(name)) return;
 
     if (editingCategory) {
-      onEdit(editingCategory.id, name.trim());
+      onEdit(editingCategory.id, name.trim(), side);
       setEditingCategory(null);
     } else {
-      onAdd(newCategoryName.trim());
+      onAdd(newCategoryName.trim(), side);
       setNewCategoryName('');
+      setNewCategorySide('bride'); // Reset to default
     }
   };
 
@@ -78,6 +94,29 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
             }
           }}
         />
+        
+        <label className={styles.label}>
+          Which side is this guest group from?
+          <select
+            className={styles.select}
+            value={editingCategory ? (editingCategory.side || 'unspecified') : newCategorySide}
+            onChange={(e) => {
+              const side = e.target.value as CategorySide;
+              if (editingCategory) {
+                setEditingCategory({ ...editingCategory, side });
+              } else {
+                setNewCategorySide(side);
+              }
+            }}
+          >
+            {SIDE_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        
         {error && <div className={styles.error}>{error}</div>}
         <div className={styles.buttonGroup}>
           <button type="submit" className={styles.textButton}>
@@ -98,7 +137,10 @@ export function CategoryManager({ categories, onAdd, onEdit, onDelete }: Categor
       <div className={styles.list} data-testid="categories-list">
         {categories.map(category => (
           <div key={category.id} className={styles.category}>
-            <span className={styles.categoryName}>{category.name}</span>
+            <span className={styles.categoryName}>
+              <span className={styles.sideEmoji}>{getSideEmoji(category.side)}</span>
+              {category.name}
+            </span>
             <div className={styles.actions}>
               <button
                 className={styles.actionButton}

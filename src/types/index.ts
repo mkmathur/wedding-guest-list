@@ -3,9 +3,12 @@ export interface Tier {
   name: string;
 }
 
+export type CategorySide = "bride" | "groom" | "both" | "unspecified";
+
 export interface Category {
   id: string;
   name: string;
+  side?: CategorySide;
 }
 
 export interface Household {

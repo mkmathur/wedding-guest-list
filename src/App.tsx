@@ -7,7 +7,7 @@ import { EventManager } from './components/EventManager/EventManager'
 import { ExportBackupButton } from './components/ExportBackupButton/ExportBackupButton'
 import { ImportBackupButton } from './components/ImportBackupButton/ImportBackupButton'
 import { storage } from './utils/storage'
-import type { Category, Tier, Household } from './types'
+import type { Category, CategorySide, Tier, Household } from './types'
 import type { Event } from './types/event'
 
 function App() {
@@ -41,10 +41,11 @@ function App() {
   }, [households]);
 
   // Category handlers
-  const handleAddCategory = (name: string) => {
+  const handleAddCategory = (name: string, side: CategorySide) => {
     const newCategory: Category = {
       id: crypto.randomUUID(),
-      name: name.trim()
+      name: name.trim(),
+      side
     };
     const updatedCategories = [...categories, newCategory];
     setCategories(updatedCategories);
@@ -55,7 +56,8 @@ function App() {
     return new Promise((resolve) => {
       const newCategories: Category[] = names.map(name => ({
         id: crypto.randomUUID(),
-        name: name.trim()
+        name: name.trim(),
+        side: 'unspecified' as CategorySide
       }));
       const updatedCategories = [...categories, ...newCategories];
       setCategories(updatedCategories);
@@ -65,9 +67,9 @@ function App() {
     });
   };
 
-  const handleEditCategory = (categoryId: string, name: string) => {
+  const handleEditCategory = (categoryId: string, name: string, side: CategorySide) => {
     const updatedCategories = categories.map(cat =>
-      cat.id === categoryId ? { ...cat, name: name.trim() } : cat
+      cat.id === categoryId ? { ...cat, name: name.trim(), side } : cat
     );
     setCategories(updatedCategories);
     storage.setCategories(updatedCategories);
@@ -306,7 +308,7 @@ function App() {
               onAddMultiple={handleAddMultipleHouseholds}
               onEdit={handleEditHousehold}
               onDelete={handleDeleteHousehold}
-              onAddCategory={handleAddCategory}
+              onAddCategory={(name: string) => handleAddCategory(name, 'unspecified')}
               onAddCategories={handleAddCategories}
             />
           </div>

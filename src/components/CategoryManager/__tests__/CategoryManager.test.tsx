@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '../../../test/utils'
 import { CategoryManager } from '../CategoryManager'
-import type { Category } from '../../../types'
+import type { Category, CategorySide } from '../../../types'
 
 describe('CategoryManager', () => {
   const mockCategories: Category[] = []
@@ -29,16 +29,31 @@ describe('CategoryManager', () => {
     
     expect(screen.getByPlaceholderText('Enter category name')).toBeInTheDocument()
     expect(screen.getByText('Add Category')).toBeInTheDocument()
+    expect(screen.getByText('Which side is this guest group from?')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('💗 Bride')).toBeInTheDocument() // Default selection
   })
 
-  it('adds a new category', () => {
+  it('adds a new category with default side', () => {
     renderComponent()
     
     const input = screen.getByPlaceholderText('Enter category name')
     fireEvent.change(input, { target: { value: 'Family' } })
     fireEvent.click(screen.getByText('Add Category'))
 
-    expect(mockOnAdd).toHaveBeenCalledWith('Family')
+    expect(mockOnAdd).toHaveBeenCalledWith('Family', 'bride')
+  })
+
+  it('adds a new category with selected side', () => {
+    renderComponent()
+    
+    const input = screen.getByPlaceholderText('Enter category name')
+    const select = screen.getByDisplayValue('💗 Bride')
+    
+    fireEvent.change(input, { target: { value: 'Family' } })
+    fireEvent.change(select, { target: { value: 'groom' } })
+    fireEvent.click(screen.getByText('Add Category'))
+
+    expect(mockOnAdd).toHaveBeenCalledWith('Family', 'groom')
   })
 
   it('validates empty category name', () => {
@@ -54,7 +69,7 @@ describe('CategoryManager', () => {
 
   it('validates duplicate category name', () => {
     const existingCategories = [
-      { id: '1', name: 'Family' }
+      { id: '1', name: 'Family', side: 'bride' as CategorySide }
     ]
 
     renderComponent(existingCategories)
@@ -69,7 +84,7 @@ describe('CategoryManager', () => {
 
   it('validates duplicate category name with whitespace', () => {
     const existingCategories = [
-      { id: '1', name: 'Family' }
+      { id: '1', name: 'Family', side: 'bride' as CategorySide }
     ]
 
     renderComponent(existingCategories)
@@ -91,12 +106,12 @@ describe('CategoryManager', () => {
     // Should allow different name with whitespace
     fireEvent.change(input, { target: { value: '  New Family  ' } })
     fireEvent.click(screen.getByText('Add Category'))
-    expect(mockOnAdd).toHaveBeenCalledWith('New Family')
+    expect(mockOnAdd).toHaveBeenCalledWith('New Family', 'bride')
   })
 
   it('properly handles error message visibility', () => {
     const existingCategories = [
-      { id: '1', name: 'Family' }
+      { id: '1', name: 'Family', side: 'bride' as CategorySide }
     ]
 
     renderComponent(existingCategories)
@@ -122,9 +137,25 @@ describe('CategoryManager', () => {
     expect(screen.queryByText('Category name cannot be empty')).not.toBeInTheDocument()
   })
 
+  it('displays category with emoji based on side', () => {
+    const existingCategories = [
+      { id: '1', name: 'Bride Family', side: 'bride' as CategorySide },
+      { id: '2', name: 'Groom Family', side: 'groom' as CategorySide },
+      { id: '3', name: 'Both Families', side: 'both' as CategorySide },
+      { id: '4', name: 'Old Category' }, // No side property (backward compatibility)
+    ]
+
+    renderComponent(existingCategories)
+    
+    expect(screen.getByText('💗')).toBeInTheDocument() // Bride emoji
+    expect(screen.getByText('💙')).toBeInTheDocument() // Groom emoji
+    expect(screen.getByText('🤝')).toBeInTheDocument() // Both emoji
+    expect(screen.getByText('❓')).toBeInTheDocument() // Unspecified emoji for old category
+  })
+
   it('edits an existing category', () => {
     const existingCategories = [
-      { id: '1', name: 'Family' }
+      { id: '1', name: 'Family', side: 'bride' as CategorySide }
     ]
 
     renderComponent(existingCategories)
@@ -133,10 +164,13 @@ describe('CategoryManager', () => {
     fireEvent.click(screen.getByRole('button', { name: /edit category/i }))
     
     const input = screen.getByPlaceholderText('Enter category name')
+    const select = screen.getByDisplayValue('💗 Bride')
+    
     fireEvent.change(input, { target: { value: 'Close Family' } })
+    fireEvent.change(select, { target: { value: 'both' } })
     fireEvent.click(screen.getByText('Update Category'))
 
-    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Close Family')
+    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Close Family', 'both')
   })
 
   it('deletes a category after confirmation', () => {
@@ -144,7 +178,7 @@ describe('CategoryManager', () => {
     vi.stubGlobal('confirm', mockConfirm)
 
     const existingCategories = [
-      { id: '1', name: 'Family' }
+      { id: '1', name: 'Family', side: 'bride' as CategorySide }
     ]
 
     renderComponent(existingCategories)
@@ -157,7 +191,7 @@ describe('CategoryManager', () => {
 
   it('cancels category deletion when not confirmed', async () => {
     const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const existingCategories = [{ id: '1', name: 'Family' }];
+    const existingCategories = [{ id: '1', name: 'Family', side: 'bride' as CategorySide }];
     renderComponent(existingCategories)
     
     fireEvent.click(screen.getByRole('button', { name: /delete category/i }))
@@ -168,7 +202,7 @@ describe('CategoryManager', () => {
   })
 
   it('cancels editing when cancel button is clicked', async () => {
-    const existingCategories = [{ id: '1', name: 'Family' }];
+    const existingCategories = [{ id: '1', name: 'Family', side: 'bride' as CategorySide }];
     renderComponent(existingCategories)
     
     // Start editing
@@ -182,23 +216,24 @@ describe('CategoryManager', () => {
   })
 
   it('updates category when form is submitted', async () => {
-    const existingCategories = [{ id: '1', name: 'Family' }];
+    const existingCategories = [{ id: '1', name: 'Family', side: 'bride' as CategorySide }];
     renderComponent(existingCategories)
     
     // Start editing
     fireEvent.click(screen.getByRole('button', { name: /edit category/i }))
     expect(screen.getByText('Update Category')).toBeInTheDocument()
     
-    // Update category name
+    // Update category name and side
     fireEvent.change(screen.getByPlaceholderText(/enter category name/i), { target: { value: 'Updated Family' } })
+    fireEvent.change(screen.getByDisplayValue('💗 Bride'), { target: { value: 'groom' } })
     fireEvent.click(screen.getByRole('button', { name: /update category/i }))
     
-    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Updated Family')
+    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Updated Family', 'groom')
   })
 
   it('deletes category when confirmed', async () => {
     const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const existingCategories = [{ id: '1', name: 'Family' }];
+    const existingCategories = [{ id: '1', name: 'Family', side: 'bride' as CategorySide }];
     renderComponent(existingCategories)
     
     fireEvent.click(screen.getByRole('button', { name: /delete category/i }))
@@ -207,4 +242,4 @@ describe('CategoryManager', () => {
     expect(mockOnDelete).toHaveBeenCalledWith('1')
     mockConfirm.mockRestore();
   })
-}) 
+})
