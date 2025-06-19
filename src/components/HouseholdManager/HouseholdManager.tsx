@@ -12,7 +12,7 @@ import {
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { Household, Category, Tier } from '../../types';
 import type { Event } from '../../types/event';
-import { FiUpload, FiMenu, FiGrid, FiList } from 'react-icons/fi';
+import { FiClipboard, FiMenu, FiGrid, FiList } from 'react-icons/fi';
 import { BulkImportModal } from './BulkImportModal';
 import { HouseholdEditModal } from './HouseholdEditModal';
 import { SummaryView } from '../SummaryView/SummaryView';
@@ -528,10 +528,10 @@ export function HouseholdManager({
               <button
                 className={styles.importButton}
                 onClick={() => setIsImporting(true)}
-                title="Bulk import households"
+                title="Paste a text list of households from your notes or documents"
               >
-                <FiUpload className={styles.buttonIcon} />
-                Bulk Import
+                <FiClipboard className={styles.buttonIcon} />
+                Paste Guest List
               </button>
               <div className={styles.viewSwitcher}>
                 <button 

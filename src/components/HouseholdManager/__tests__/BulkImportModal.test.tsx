@@ -44,7 +44,7 @@ describe('BulkImportModal', () => {
 
   it('renders the import form when open', () => {
     renderComponent();
-    expect(screen.getByText('Bulk Import Households')).toBeInTheDocument();
+    expect(screen.getByText('Paste Guest List')).toBeInTheDocument();
     expect(screen.getByText('Paste your guest list below:')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Preview Import' })).toBeInTheDocument();

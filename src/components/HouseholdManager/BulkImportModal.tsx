@@ -160,7 +160,7 @@ export function BulkImportModal({
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <h2>Bulk Import Households</h2>
+          <h2>Paste Guest List</h2>
           <button onClick={handleClose} className={styles.closeButton}>&times;</button>
         </div>
 
