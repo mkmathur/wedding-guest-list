@@ -157,7 +157,7 @@ describe('CategoryManager', () => {
     expect(screen.queryByText('Category name cannot be empty')).not.toBeInTheDocument()
   })
 
-  it('displays category with emoji based on side', () => {
+  it('displays category with icon based on side', () => {
     const existingCategories = [
       { id: '1', name: 'Bride Family', side: 'bride' as CategorySide },
       { id: '2', name: 'Groom Family', side: 'groom' as CategorySide },
@@ -167,10 +167,11 @@ describe('CategoryManager', () => {
 
     renderComponent(existingCategories)
     
-    expect(screen.getByText('💗')).toBeInTheDocument() // Bride emoji
-    expect(screen.getByText('💙')).toBeInTheDocument() // Groom emoji
-    expect(screen.getByText('🤝')).toBeInTheDocument() // Both emoji
-    expect(screen.getByText('❓')).toBeInTheDocument() // Unspecified emoji for old category
+    // Check that icons are rendered with proper aria-labels
+    expect(screen.getByLabelText('Bride side')).toBeInTheDocument()
+    expect(screen.getByLabelText('Groom side')).toBeInTheDocument()
+    expect(screen.getByLabelText('Both sides')).toBeInTheDocument()
+    expect(screen.getByLabelText('Unspecified side')).toBeInTheDocument()
   })
 
   it('edits an existing category', () => {

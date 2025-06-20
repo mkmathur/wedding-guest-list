@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import type { Category, CategorySide } from '../../types';
+import { GuestSideIcon } from '../shared/GuestSideIcon';
 import styles from './CategoryForm.module.css';
 
-// Side options with emojis
+// Side options with icons
 const SIDE_OPTIONS = [
-  { value: 'bride' as CategorySide, label: '💗 Bride', emoji: '💗' },
-  { value: 'groom' as CategorySide, label: '💙 Groom', emoji: '💙' },
-  { value: 'both' as CategorySide, label: '🤝 Both', emoji: '🤝' },
-  { value: 'unspecified' as CategorySide, label: '❓ Unspecified', emoji: '❓' },
+  { value: 'bride' as CategorySide, label: 'Bride' },
+  { value: 'groom' as CategorySide, label: 'Groom' },
+  { value: 'both' as CategorySide, label: 'Both' },
+  { value: 'unspecified' as CategorySide, label: 'Unspecified' },
 ];
 
 interface CategoryFormProps {
@@ -95,6 +96,11 @@ export function CategoryForm({ categories, category, onSubmit, onCancel }: Categ
             </option>
           ))}
         </select>
+        
+        <div className={styles.sidePreview}>
+          <GuestSideIcon side={side} size="1rem" />
+          <span>{SIDE_OPTIONS.find(opt => opt.value === side)?.label}</span>
+        </div>
       </div>
 
       {error && <div className={styles.error}>{error}</div>}

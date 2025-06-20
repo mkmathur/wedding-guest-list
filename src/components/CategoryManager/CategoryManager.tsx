@@ -1,21 +1,9 @@
 import { useState } from 'react';
 import type { Category, CategorySide } from '../../types';
 import { CategoryForm } from './CategoryForm';
+import { GuestSideIcon } from '../shared/GuestSideIcon';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import styles from './CategoryManager.module.css';
-
-// Side options with emojis
-const SIDE_OPTIONS = [
-  { value: 'bride' as CategorySide, label: '💗 Bride', emoji: '💗' },
-  { value: 'groom' as CategorySide, label: '💙 Groom', emoji: '💙' },
-  { value: 'both' as CategorySide, label: '🤝 Both', emoji: '🤝' },
-  { value: 'unspecified' as CategorySide, label: '❓ Unspecified', emoji: '❓' },
-];
-
-const getSideEmoji = (side?: CategorySide): string => {
-  const option = SIDE_OPTIONS.find(opt => opt.value === side);
-  return option ? option.emoji : '❓';
-};
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -96,7 +84,9 @@ export function CategoryManager({
               onClick={() => handleCategoryClick(category.id)}
             >
               <span className={styles.categoryName}>
-                <span className={styles.sideEmoji}>{getSideEmoji(category.side)}</span>
+                <span className={styles.sideEmoji}>
+                  <GuestSideIcon side={category.side || 'unspecified'} size="1rem" />
+                </span>
                 {category.name}
               </span>
               <div className={styles.actions}>

@@ -1,4 +1,6 @@
 import type { SideBreakdown } from '../../utils/guestCounts';
+import type { CategorySide } from '../../types';
+import { GuestSideIcon } from '../shared/GuestSideIcon';
 import styles from './BreakdownBar.module.css';
 
 interface BreakdownBarProps {
@@ -8,15 +10,15 @@ interface BreakdownBarProps {
 interface SideInfo {
   key: keyof SideBreakdown;
   label: string;
-  emoji: string;
+  side: CategorySide;
   color: string;
 }
 
 const SIDE_INFO: SideInfo[] = [
-  { key: 'bride', label: 'Bride', emoji: '💗', color: 'var(--color-bride)' },
-  { key: 'groom', label: 'Groom', emoji: '💙', color: 'var(--color-groom)' },
-  { key: 'both', label: 'Both', emoji: '🤝', color: 'var(--color-accent)' },
-  { key: 'unspecified', label: 'Unspecified', emoji: '❓', color: 'var(--color-text-secondary)' }
+  { key: 'bride', label: 'Bride', side: 'bride', color: 'var(--color-bride)' },
+  { key: 'groom', label: 'Groom', side: 'groom', color: 'var(--color-groom)' },
+  { key: 'both', label: 'Both', side: 'both', color: 'var(--color-accent)' },
+  { key: 'unspecified', label: 'Unspecified', side: 'unspecified', color: 'var(--color-text-secondary)' }
 ];
 
 export function BreakdownBar({ breakdown }: BreakdownBarProps) {
@@ -67,7 +69,9 @@ export function BreakdownBar({ breakdown }: BreakdownBarProps) {
               className={styles.label}
               style={{ width: `${percentage}%` }}
             >
-              <span className={styles.emoji}>{side.emoji}</span>
+              <span className={styles.emoji}>
+                <GuestSideIcon side={side.side} size="1.125rem" />
+              </span>
               <span className={styles.labelText}>
                 {side.label}: {count} guest{count !== 1 ? 's' : ''} ({percentage}%)
               </span>
