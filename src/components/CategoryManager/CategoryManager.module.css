@@ -21,15 +21,15 @@
 }
 
 .category.interactive:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   border-color: var(--color-primary);
 }
 
 /* Selected state styling */
 .category.selected {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .categoryName {
@@ -91,7 +91,7 @@
 }
 
 .deleteButton:hover {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .actionButton svg,
@@ -118,7 +118,7 @@
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
   margin-top: 0.25rem;
 }
@@ -166,7 +166,7 @@
 }
 
 .newCategoryButton:hover {
-  background-color: rgba(59, 130, 246, 0.05);
-  border-color: var(--color-primary-dark);
-  color: var(--color-primary-dark);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 } 

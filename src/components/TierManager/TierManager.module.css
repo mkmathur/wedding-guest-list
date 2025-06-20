@@ -19,11 +19,11 @@
 .input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -113,7 +113,7 @@
 }
 
 .deleteButton:hover {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .orderButton svg,
@@ -174,7 +174,7 @@
 }
 
 .newTierButton:hover {
-  background-color: rgba(59, 130, 246, 0.05);
-  border-color: var(--color-primary-dark);
-  color: var(--color-primary-dark);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 } 

@@ -7,7 +7,7 @@
   height: 2rem;
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow);
   margin-bottom: 0.75rem;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .labelText {
-  color: #374151;
+  color: var(--color-text);
   font-weight: 500;
   line-height: 1.25;
   word-break: break-word;
@@ -58,10 +58,10 @@
   justify-content: center;
   align-items: center;
   height: 3rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-style: italic;
-  background-color: #f9fafb;
-  border: 1px dashed #d1d5db;
+  background-color: var(--color-background);
+  border: 1px dashed var(--color-border);
   border-radius: 0.5rem;
 }
 

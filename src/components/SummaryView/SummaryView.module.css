@@ -93,26 +93,26 @@
 
 /* Dimmed state for cells not included in selected event */
 .countCell.dimmed {
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #6b7280;
+  background-color: color-mix(in srgb, var(--color-background) 70%, var(--color-border));
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
   opacity: 0.6;
   transition: all 0.3s ease;
 }
 
 .countCell.dimmed:hover {
-  background-color: #f3f4f6;
+  background-color: color-mix(in srgb, var(--color-background) 70%, var(--color-border));
 }
 
-/* Green highlight for included cells ONLY when event filtering is active */
+/* Accent highlight for included cells ONLY when event filtering is active */
 .eventFilterActive .countCell:not(.dimmed) {
-  background-color: #f0fdf4;
-  color: #15803d;
+  background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
   font-weight: 600;
 }
 
 .eventFilterActive .countCell:not(.dimmed):hover {
-  background-color: #dcfce7;
+  background-color: color-mix(in srgb, var(--color-accent) 15%, var(--color-surface));
 }
 
 .emptyState {

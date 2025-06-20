@@ -21,9 +21,9 @@
 
 .newHouseholdButton:hover,
 .importButton:hover {
-  background-color: rgba(59, 130, 246, 0.05);
-  border-color: var(--color-primary-dark);
-  color: var(--color-primary-dark);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .viewSwitcher {
@@ -114,15 +114,15 @@
 .select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
   padding: 0.5rem;
-  background-color: #fee2e2;
-  border: 1px solid #dc2626;
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-surface));
+  border: 1px solid var(--color-error);
   border-radius: 0.25rem;
 }
 
@@ -240,7 +240,7 @@
 }
 
 .householdCard:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   border-color: var(--color-primary);
 }
 
@@ -342,13 +342,13 @@
 }
 
 .dropZoneActive {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
   border-color: var(--color-primary);
   border-style: dashed;
 }
 
 .dropZoneActive .tierColumnHeader {
-  background-color: rgba(59, 130, 246, 0.15);
+  background-color: color-mix(in srgb, var(--color-primary) 15%, var(--color-surface));
   color: var(--color-primary);
 }
 
@@ -376,34 +376,34 @@
 
 /* Dimmed state for tier columns not included in selected event */
 .dimmed {
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
+  background-color: color-mix(in srgb, var(--color-background) 70%, var(--color-border));
+  border-color: var(--color-border);
   opacity: 0.6;
   transition: all 0.3s ease;
 }
 
 .dimmed .tierColumnHeader {
-  background-color: #e5e7eb;
-  color: #6b7280;
+  background-color: var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .dimmed .householdCard {
-  background-color: #f9fafb;
-  border-color: #e5e7eb;
+  background-color: var(--color-background);
+  border-color: var(--color-border);
   opacity: 0.7;
 }
 
-/* Green highlight for included columns ONLY when event filtering is active */
+/* Accent highlight for included columns ONLY when event filtering is active */
 .eventFilterActive .tierColumn:not(.dimmed) {
-  border-color: #16a34a;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
-  background-color: #f0fdf4;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
 }
 
 .eventFilterActive .tierColumn:not(.dimmed) .tierColumnHeader {
-  background-color: #dcfce7;
-  border-color: #16a34a;
-  color: #15803d;
+  background-color: color-mix(in srgb, var(--color-accent) 15%, var(--color-surface));
+  border-color: var(--color-accent);
+  color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
   font-weight: 600;
 }
 
@@ -424,7 +424,7 @@
 .addHouseholdButton:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
 }
 
 .inlineForm {
@@ -462,7 +462,7 @@
 .inlineFormInput:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .inlineFormGuestCount {
@@ -477,11 +477,11 @@
 .inlineFormGuestCount:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .inlineFormError {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.75rem;
   margin-top: 0.25rem;
 }

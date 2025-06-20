@@ -100,16 +100,16 @@
 .select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 0.875rem;
   margin-top: 0.5rem;
   padding: 0.5rem;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  background-color: color-mix(in srgb, var(--color-error) 8%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-error) 25%, var(--color-surface));
   border-radius: 0.25rem;
 }
 
@@ -150,8 +150,8 @@
 }
 
 .saveButton:hover {
-  background-color: var(--color-primary-dark, #2563eb);
-  border-color: var(--color-primary-dark, #2563eb);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .cancelButton {
@@ -165,14 +165,14 @@
 }
 
 .deleteButton {
-  background-color: #dc2626;
+  background-color: var(--color-error);
   color: white;
-  border-color: #dc2626;
+  border-color: var(--color-error);
 }
 
 .deleteButton:hover {
-  background-color: #b91c1c;
-  border-color: #b91c1c;
+  background-color: color-mix(in srgb, var(--color-error) 90%, var(--color-text));
+  border-color: color-mix(in srgb, var(--color-error) 90%, var(--color-text));
 }
 
 .deleteIcon {

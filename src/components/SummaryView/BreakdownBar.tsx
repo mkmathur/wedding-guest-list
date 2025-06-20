@@ -13,10 +13,10 @@ interface SideInfo {
 }
 
 const SIDE_INFO: SideInfo[] = [
-  { key: 'bride', label: 'Bride', emoji: '💗', color: '#ec4899' },
-  { key: 'groom', label: 'Groom', emoji: '💙', color: '#3b82f6' },
-  { key: 'both', label: 'Both', emoji: '🤝', color: '#f59e0b' },
-  { key: 'unspecified', label: 'Unspecified', emoji: '❓', color: '#6b7280' }
+  { key: 'bride', label: 'Bride', emoji: '💗', color: 'var(--color-bride)' },
+  { key: 'groom', label: 'Groom', emoji: '💙', color: 'var(--color-groom)' },
+  { key: 'both', label: 'Both', emoji: '🤝', color: 'var(--color-accent)' },
+  { key: 'unspecified', label: 'Unspecified', emoji: '❓', color: 'var(--color-text-secondary)' }
 ];
 
 export function BreakdownBar({ breakdown }: BreakdownBarProps) {
