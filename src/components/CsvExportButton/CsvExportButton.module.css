@@ -1,0 +1,23 @@
+.exportButton {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.exportButton:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.exportButton:active {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}

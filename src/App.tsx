@@ -6,6 +6,7 @@ import { HouseholdManager } from './components/HouseholdManager/HouseholdManager
 import { EventManager } from './components/EventManager/EventManager'
 import { ExportBackupButton } from './components/ExportBackupButton/ExportBackupButton'
 import { ImportBackupButton } from './components/ImportBackupButton/ImportBackupButton'
+import { CsvExportButton } from './components/CsvExportButton/CsvExportButton'
 import { storage } from './utils/storage'
 import type { Category, CategorySide, Tier, Household } from './types'
 import type { Event } from './types/event'
@@ -249,6 +250,11 @@ function App() {
             Total Guests: {totalGuests}
           </div>
           <div className={styles.backupButtons}>
+            <CsvExportButton
+              households={households}
+              categories={categories}
+              tiers={tiers}
+            />
             <ExportBackupButton
               households={households}
               categories={categories}
