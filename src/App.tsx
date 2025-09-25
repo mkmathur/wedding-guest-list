@@ -254,6 +254,7 @@ function App() {
               households={households}
               categories={categories}
               tiers={tiers}
+              events={events}
             />
             <ExportBackupButton
               households={households}

@@ -1,4 +1,5 @@
 import type { Household, Category, Tier } from '../types';
+import type { Event } from '../types/event';
 
 // Escape CSV field values that contain commas, quotes, or newlines
 const escapeCsvField = (field: string): string => {
@@ -8,13 +9,36 @@ const escapeCsvField = (field: string): string => {
   return field;
 };
 
+// Check if a household is invited to a specific event
+const isHouseholdInvitedToEvent = (household: Household, event: Event): boolean => {
+  // Find the selection for this household's category
+  const categorySelection = event.selections.find(
+    selection => selection.categoryId === household.categoryId
+  );
+
+  // If no selection for this category, household is not invited
+  if (!categorySelection) {
+    return false;
+  }
+
+  // Check if the household's tier is in the selected tiers for this category
+  return categorySelection.selectedTierIds.includes(household.tierId);
+};
+
 export const exportHouseholdsToCSV = (
   households: Household[],
   categories: Category[],
-  tiers: Tier[]
+  tiers: Tier[],
+  events: Event[] = []
 ): string => {
-  // CSV header
+  // CSV header - base columns plus event columns
   const headers = ['Household Name', 'Guest Count', 'Category', 'Tier'];
+  
+  // Add event columns
+  events.forEach(event => {
+    headers.push(escapeCsvField(event.name));
+  });
+  
   const csvRows = [headers.join(',')];
 
   // Sort households by category order (array position), then by tier order
@@ -56,6 +80,12 @@ export const exportHouseholdsToCSV = (
       escapeCsvField(category?.name ?? 'Unknown'),
       escapeCsvField(tier?.name ?? 'Unknown')
     ];
+
+    // Add event invitation columns
+    events.forEach(event => {
+      const isInvited = isHouseholdInvitedToEvent(household, event);
+      row.push(isInvited ? 'Yes' : 'No');
+    });
 
     csvRows.push(row.join(','));
   });
