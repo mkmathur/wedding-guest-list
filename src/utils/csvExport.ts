@@ -17,8 +17,36 @@ export const exportHouseholdsToCSV = (
   const headers = ['Household Name', 'Guest Count', 'Category', 'Tier'];
   const csvRows = [headers.join(',')];
 
+  // Sort households by category order (array position), then by tier order
+  const sortedHouseholds = [...households].sort((a, b) => {
+    // First sort by category order (array position in categories array)
+    const categoryIndexA = categories.findIndex(cat => cat.id === a.categoryId);
+    const categoryIndexB = categories.findIndex(cat => cat.id === b.categoryId);
+    
+    // Put unknown categories at the end
+    if (categoryIndexA === -1 && categoryIndexB === -1) return 0;
+    if (categoryIndexA === -1) return 1;
+    if (categoryIndexB === -1) return -1;
+    
+    const categoryComparison = categoryIndexA - categoryIndexB;
+    if (categoryComparison !== 0) {
+      return categoryComparison;
+    }
+
+    // Then sort by tier order (array position in tiers array)
+    const tierIndexA = tiers.findIndex(t => t.id === a.tierId);
+    const tierIndexB = tiers.findIndex(t => t.id === b.tierId);
+    
+    // Put unknown tiers at the end
+    if (tierIndexA === -1 && tierIndexB === -1) return 0;
+    if (tierIndexA === -1) return 1;
+    if (tierIndexB === -1) return -1;
+    
+    return tierIndexA - tierIndexB;
+  });
+
   // Convert each household to CSV row
-  households.forEach(household => {
+  sortedHouseholds.forEach(household => {
     const category = categories.find(cat => cat.id === household.categoryId);
     const tier = tiers.find(t => t.id === household.tierId);
 
