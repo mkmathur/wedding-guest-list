@@ -199,6 +199,18 @@ function App() {
     }
   };
 
+  const handleReorderEvent = (eventId: string, newIndex: number) => {
+    const currentIndex = events.findIndex(e => e.id === eventId);
+    if (currentIndex === -1 || currentIndex === newIndex) return;
+
+    const updatedEvents = [...events];
+    const [movedEvent] = updatedEvents.splice(currentIndex, 1);
+    updatedEvents.splice(newIndex, 0, movedEvent);
+
+    setEvents(updatedEvents);
+    storage.setEvents(updatedEvents);
+  };
+
   // Event selection handler
   const handleSelectEvent = (eventId: string) => {
     // Toggle selection: if same event is clicked, deselect it
@@ -382,6 +394,7 @@ function App() {
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
                   onSelect={handleSelectEvent}
+                  onReorder={handleReorderEvent}
                   onPreviewChange={handleEventPreviewChange}
                 />
               </>

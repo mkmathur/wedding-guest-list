@@ -60,6 +60,7 @@ describe('EventManager', () => {
   const mockOnEdit = vi.fn();
   const mockOnDelete = vi.fn();
   const mockOnSelect = vi.fn();
+  const mockOnReorder = vi.fn();
 
   const renderComponent = (
     events = mockEvents,
@@ -79,6 +80,7 @@ describe('EventManager', () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onSelect={mockOnSelect}
+        onReorder={mockOnReorder}
       />
     );
   };

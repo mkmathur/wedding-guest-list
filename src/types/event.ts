@@ -37,5 +37,6 @@ export interface EventManagerProps {
   onEdit: (eventId: string, updates: Partial<Event>) => void;
   onDelete: (eventId: string) => void;
   onSelect: (eventId: string) => void;
+  onReorder: (eventId: string, newIndex: number) => void;
   onPreviewChange?: (selections: CategoryTierSelection[] | null) => void;
 } 
