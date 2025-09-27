@@ -23,6 +23,7 @@ export interface Household {
   categoryId: string;
   tierId: string;
   notes?: string;
+  rsvpProbability?: number;
 }
 
 // ... rest of the types ... 

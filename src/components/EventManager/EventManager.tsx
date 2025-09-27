@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { EventManagerProps, Event, CategoryTierSelection } from '../../types/event';
 import { EventForm } from './EventForm';
+import { calculateExpectedAttendance, calculateInvitedCount } from '../../utils/expectedAttendance';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import styles from './EventManager.module.css';
 
@@ -19,16 +20,6 @@ export function EventManager({
   const [isCreating, setIsCreating] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
-  // Calculate guest count for an event
-  const calculateGuestCount = (event: Event) => {
-    return event.selections.reduce((total: number, selection: CategoryTierSelection) => {
-      const categoryHouseholds = households.filter(
-        h => h.categoryId === selection.categoryId &&
-        selection.selectedTierIds.includes(h.tierId)
-      );
-      return total + categoryHouseholds.reduce((sum, h) => sum + h.guestCount, 0);
-    }, 0);
-  };
 
   const handleSubmit = (formData: Omit<Event, 'id'>) => {
     if (editingEvent) {
@@ -91,7 +82,7 @@ export function EventManager({
               <div className={styles.eventInfo}>
                 <h3 className={styles.eventName}>{event.name}</h3>
                 <span className={styles.guestCount}>
-                  {calculateGuestCount(event)} guests
+                  {calculateInvitedCount(households, event)} invited → {calculateExpectedAttendance(households, event)} expected
                 </span>
               </div>
               <div className={styles.actions}>

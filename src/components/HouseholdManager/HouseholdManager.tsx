@@ -95,9 +95,14 @@ function DraggableHouseholdCard({
       >
         <div className={styles.householdInfo}>
           <span className={styles.householdName}>{household.name}</span>
-          <span className={styles.guestCount}>
-            {household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'}
-          </span>
+          <div className={styles.householdMeta}>
+            <span className={styles.guestCount}>
+              {household.guestCount} {household.guestCount === 1 ? 'guest' : 'guests'}
+            </span>
+            <span className={styles.probabilityBadge}>
+              {household.rsvpProbability ?? 75}%
+            </span>
+          </div>
         </div>
       </div>
       <div 

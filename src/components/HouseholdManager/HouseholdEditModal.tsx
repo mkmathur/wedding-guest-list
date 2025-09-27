@@ -8,6 +8,7 @@ interface HouseholdFormData {
   guestCount: string;
   categoryId: string;
   tierId: string;
+  rsvpProbability: string;
 }
 
 interface HouseholdEditModalProps {
@@ -34,6 +35,7 @@ export function HouseholdEditModal({
     guestCount: '1',
     categoryId: '',
     tierId: '',
+    rsvpProbability: '75',
   });
   const [error, setError] = useState('');
 
@@ -44,6 +46,7 @@ export function HouseholdEditModal({
         guestCount: household.guestCount.toString(),
         categoryId: household.categoryId,
         tierId: household.tierId,
+        rsvpProbability: (household.rsvpProbability ?? 75).toString(),
       });
       setError('');
     }
@@ -79,7 +82,8 @@ export function HouseholdEditModal({
 
     const householdData = {
       ...formData,
-      guestCount: parseInt(formData.guestCount)
+      guestCount: parseInt(formData.guestCount),
+      rsvpProbability: parseInt(formData.rsvpProbability)
     };
 
     onSave(household.id, householdData);
@@ -185,6 +189,23 @@ export function HouseholdEditModal({
                   {tier.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="rsvpProbability">RSVP Probability:</label>
+            <select
+              id="rsvpProbability"
+              value={formData.rsvpProbability}
+              onChange={e => setFormData(prev => ({ ...prev, rsvpProbability: e.target.value }))}
+              className={styles.select}
+            >
+              <option value="0">0%</option>
+              <option value="25">25%</option>
+              <option value="50">50%</option>
+              <option value="75">75%</option>
+              <option value="90">90%</option>
+              <option value="100">100%</option>
             </select>
           </div>
 

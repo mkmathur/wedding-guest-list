@@ -283,8 +283,8 @@
 
 .householdInfo {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .householdName {
@@ -293,11 +293,27 @@
   line-height: 1.2;
 }
 
+.householdMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .guestCount {
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   line-height: 1.2;
   opacity: 0.8;
+}
+
+.probabilityBadge {
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  opacity: 0.7;
+  background-color: color-mix(in srgb, var(--color-text-secondary) 10%, transparent);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.1875rem;
 }
 
 .tierLabel {

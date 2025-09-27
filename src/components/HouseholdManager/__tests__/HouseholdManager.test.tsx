@@ -158,6 +158,7 @@ describe('HouseholdManager', () => {
       guestCount: 4,
       categoryId: 'cat1',
       tierId: 'tier1',
+      rsvpProbability: 75,
     });
   });
 

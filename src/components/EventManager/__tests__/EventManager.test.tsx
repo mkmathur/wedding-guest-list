@@ -94,9 +94,11 @@ describe('EventManager', () => {
     expect(screen.getByText('Intimate Wedding')).toBeInTheDocument();
     expect(screen.getByText('Full Reception')).toBeInTheDocument();
     
-    // Check if guest counts are displayed
-    expect(screen.getByText('4 guests')).toBeInTheDocument();
-    expect(screen.getByText('7 guests')).toBeInTheDocument();
+    // Check if guest counts are displayed (invited → expected format)
+    // Intimate Wedding: tier1 only = Smith Family (4 guests, 75% = 3 expected)
+    expect(screen.getByText('4 invited → 3 expected')).toBeInTheDocument();
+    // Full Reception: tier1 + tier2 = Smith + Johnson (7 guests, 75% each = 5.25 → 5 expected)
+    expect(screen.getByText('7 invited → 5 expected')).toBeInTheDocument();
   });
 
   it('shows new event button when not creating', () => {
@@ -141,11 +143,11 @@ describe('EventManager', () => {
   it('calculates guest counts correctly', () => {
     renderComponent();
     
-    // Intimate Wedding (tier1 only) = 4 guests
-    expect(screen.getByText('4 guests')).toBeInTheDocument();
+    // Intimate Wedding (tier1 only) = 4 invited → 3 expected (4 * 75%)
+    expect(screen.getByText('4 invited → 3 expected')).toBeInTheDocument();
     
-    // Full Reception (tier1 + tier2) = 7 guests
-    expect(screen.getByText('7 guests')).toBeInTheDocument();
+    // Full Reception (tier1 + tier2) = 7 invited → 5 expected (7 * 75% = 5.25 → 5)
+    expect(screen.getByText('7 invited → 5 expected')).toBeInTheDocument();
   });
 
   it('handles empty events list', () => {

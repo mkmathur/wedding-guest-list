@@ -32,7 +32,7 @@ export const exportHouseholdsToCSV = (
   events: Event[] = []
 ): string => {
   // CSV header - base columns plus event columns
-  const headers = ['Household Name', 'Guest Count', 'Category', 'Tier'];
+  const headers = ['Household Name', 'Guest Count', 'Category', 'Tier', 'RSVP Probability'];
   
   // Add event columns
   events.forEach(event => {
@@ -78,7 +78,8 @@ export const exportHouseholdsToCSV = (
       escapeCsvField(household.name),
       household.guestCount.toString(),
       escapeCsvField(category?.name ?? 'Unknown'),
-      escapeCsvField(tier?.name ?? 'Unknown')
+      escapeCsvField(tier?.name ?? 'Unknown'),
+      `${household.rsvpProbability ?? 75}%`
     ];
 
     // Add event invitation columns
