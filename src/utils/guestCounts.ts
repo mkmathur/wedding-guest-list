@@ -71,6 +71,10 @@ export interface SideBreakdown {
   groom: number;
   both: number;
   unspecified: number;
+  brideExpected: number;
+  groomExpected: number;
+  bothExpected: number;
+  unspecifiedExpected: number;
 }
 
 export function calculateSideBreakdown(
@@ -82,7 +86,11 @@ export function calculateSideBreakdown(
     bride: 0,
     groom: 0,
     both: 0,
-    unspecified: 0
+    unspecified: 0,
+    brideExpected: 0,
+    groomExpected: 0,
+    bothExpected: 0,
+    unspecifiedExpected: 0
   };
 
   // Create a map of categoryId to side for quick lookup
@@ -98,7 +106,16 @@ export function calculateSideBreakdown(
     const isIncluded = isIncludedInEvent(household.categoryId, household.tierId, eventSelections || null);
     
     if (isIncluded) {
-      breakdown[side] += household.guestCount;
+      const invitedCount = household.guestCount;
+      const probability = household.rsvpProbability ?? 75;
+      const expectedCount = Math.round(invitedCount * (probability / 100));
+      
+      // Add to invited count
+      breakdown[side] += invitedCount;
+      
+      // Add to expected count
+      const expectedKey = `${side}Expected` as keyof SideBreakdown;
+      breakdown[expectedKey] += expectedCount;
     }
   });
 

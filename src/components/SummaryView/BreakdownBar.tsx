@@ -22,7 +22,8 @@ const SIDE_INFO: SideInfo[] = [
 ];
 
 export function BreakdownBar({ breakdown }: BreakdownBarProps) {
-  const totalGuests = Object.values(breakdown).reduce((sum, count) => sum + count, 0);
+  // Calculate total invited guests (not including expected counts)
+  const totalGuests = breakdown.bride + breakdown.groom + breakdown.both + breakdown.unspecified;
   
   // If no guests, show empty state
   if (totalGuests === 0) {
@@ -42,26 +43,44 @@ export function BreakdownBar({ breakdown }: BreakdownBarProps) {
     <div className={styles.breakdownBar}>
       <div className={styles.barContainer}>
         {activeSides.map(side => {
-          const count = breakdown[side.key];
-          const percentage = Math.round((count / totalGuests) * 100);
+          const invitedCount = breakdown[side.key];
+          const expectedCount = breakdown[`${side.key}Expected` as keyof typeof breakdown];
+          const percentage = Math.round((invitedCount / totalGuests) * 100);
+          const expectedPercentage = (expectedCount / invitedCount) * 100;
           
           return (
             <div
               key={side.key}
               className={styles.segment}
-              style={{
-                width: `${percentage}%`,
-                backgroundColor: side.color
-              }}
-            />
+              style={{ width: `${percentage}%` }}
+            >
+              {/* Expected portion (full color) */}
+              <div
+                className={styles.expectedPortion}
+                style={{
+                  width: `${expectedPercentage}%`,
+                  backgroundColor: side.color
+                }}
+              />
+              {/* Uncertain portion (lighter color) */}
+              <div
+                className={styles.uncertainPortion}
+                style={{
+                  width: `${100 - expectedPercentage}%`,
+                  backgroundColor: side.color,
+                  opacity: 0.3
+                }}
+              />
+            </div>
           );
         })}
       </div>
       
       <div className={styles.labelsContainer}>
         {activeSides.map(side => {
-          const count = breakdown[side.key];
-          const percentage = Math.round((count / totalGuests) * 100);
+          const invitedCount = breakdown[side.key];
+          const expectedCount = breakdown[`${side.key}Expected` as keyof typeof breakdown];
+          const percentage = Math.round((invitedCount / totalGuests) * 100);
           
           return (
             <div
@@ -73,7 +92,7 @@ export function BreakdownBar({ breakdown }: BreakdownBarProps) {
                 <GuestSideIcon side={side.side} size="1.125rem" />
               </span>
               <span className={styles.labelText}>
-                {side.label}: {count} guest{count !== 1 ? 's' : ''} ({percentage}%)
+                {side.label}: {invitedCount} invited → {expectedCount} expected
               </span>
             </div>
           );
