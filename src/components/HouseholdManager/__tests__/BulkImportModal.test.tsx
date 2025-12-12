@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BulkImportModal } from '../BulkImportModal';
 import type { Category, Tier } from '../../../types';
@@ -64,8 +64,8 @@ describe('BulkImportModal', () => {
     // Should show category dialog
     expect(screen.getByText(/categories detected/i)).toBeInTheDocument();
     // Use regex to match category names regardless of case or splitting
-    expect(screen.getByText((content, node) => /family/i.test(content))).toBeInTheDocument();
-    expect(screen.getByText((content, node) => /friends/i.test(content))).toBeInTheDocument();
+    expect(screen.getByText((content) => /family/i.test(content))).toBeInTheDocument();
+    expect(screen.getByText((content) => /friends/i.test(content))).toBeInTheDocument();
   });
 
   it('creates selected categories and moves to review step', async () => {

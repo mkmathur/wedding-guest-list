@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import type { Category } from '../../types';
 import styles from './ImportForm.module.css';
-
-interface ParsedHousehold {
-  name: string;
-  guestCount: number;
-  categoryName: string;
-}
 
 interface ImportFormProps {
   onSubmit: (text: string) => void;

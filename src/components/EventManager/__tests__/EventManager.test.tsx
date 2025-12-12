@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EventManager } from '../EventManager';
-import type { Event, CategoryTierSelection } from '../../../types/event';
+import type { Event } from '../../../types/event';
 
 // Mock data
 const mockCategories = [

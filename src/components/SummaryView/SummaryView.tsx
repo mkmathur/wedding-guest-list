@@ -37,10 +37,10 @@ export function SummaryView({
   );
 
   // Check if event filtering is active (some cells are included, some are not)
-  const isEventFilterActive = activeSelections && summaryData.some(row => 
-    row.tierCounts.some(cell => cell.isIncluded) && 
-    row.tierCounts.some(cell => !cell.isIncluded)
-  );
+  // const isEventFilterActive = activeSelections && summaryData.some(row => 
+  //   row.tierCounts.some(cell => cell.isIncluded) && 
+  //   row.tierCounts.some(cell => !cell.isIncluded)
+  // );
 
   // If no data, show empty state
   if (categories.length === 0 || tiers.length === 0) {

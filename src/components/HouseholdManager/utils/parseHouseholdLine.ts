@@ -22,7 +22,7 @@ function normalizeCapitalization(name: string): string {
           
           // Handle words with parentheses
           if (word.includes('(') && word.includes(')')) {
-            return word.replace(/\(([^)]+)\)/g, (match, inner) => {
+            return word.replace(/\(([^)]+)\)/g, (_, inner) => {
               return `(${inner.charAt(0).toUpperCase() + inner.slice(1).toLowerCase()})`;
             });
           }
