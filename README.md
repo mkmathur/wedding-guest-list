@@ -2,6 +2,8 @@
 
 A React application for managing wedding guest lists, including household management, guest categorization, and tiered invitations.
 
+## 🚀 [**Live Demo**](https://wedding-guest-list-xi.vercel.app)
+
 ## Features
 
 - Household management with guest counts
