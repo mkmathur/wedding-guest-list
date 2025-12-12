@@ -4,6 +4,8 @@ A React application for managing wedding guest lists, including household manage
 
 ## 🚀 [**Live Demo**](https://wedding-guest-list-xi.vercel.app)
 
+> **Note:** This is currently a single-user application. All data is stored locally in your browser and will be lost if you clear browser data or switch devices.
+
 ## Features
 
 - Household management with guest counts
@@ -57,6 +59,23 @@ For manual testing procedures and checklists, see [Testing Documentation](docs/T
 - [Development Phases](docs/PHASES.md)
 - [Task List](docs/TASKS.md)
 - [Testing Guide](docs/TESTING.md)
+
+## Current Limitations
+
+- **No Authentication**: Single-user application, no login system
+- **Local Storage Only**: Data stored in browser localStorage, not synced across devices
+- **No Real-time Collaboration**: Cannot share guest lists between multiple users
+- **No Cloud Backup**: Data loss if browser data is cleared
+- **Device Specific**: Data doesn't transfer between different browsers/devices
+
+## Planned Enhancements
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for future roadmap including:
+- User authentication (Auth0/Supabase)
+- Cloud database integration
+- Multi-user support and collaboration
+- Real-time synchronization
+- Email invitation features
 
 ## Built With
 

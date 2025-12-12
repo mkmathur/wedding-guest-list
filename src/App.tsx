@@ -257,6 +257,9 @@ function App() {
     <div className={styles.app}>
       <header className={styles.header}>
         <h1>Wedding Guest List</h1>
+        <div className={styles.demoNotice}>
+          📝 Demo App - Data stored locally in browser only
+        </div>
         <div className={styles.headerActions}>
           <div className={styles.totalGuests}>
             Total Guests: {totalGuests}

@@ -19,6 +19,16 @@
   font-weight: 600;
 }
 
+.demoNotice {
+  background-color: var(--color-warning-background, #fff3cd);
+  color: var(--color-warning-text, #856404);
+  border: 1px solid var(--color-warning-border, #ffeaa7);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+}
+
 .headerActions {
   display: flex;
   align-items: center;
