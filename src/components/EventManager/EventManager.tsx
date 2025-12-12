@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { EventManagerProps, Event, CategoryTierSelection } from '../../types/event';
 import { EventForm } from './EventForm';
 import { calculateExpectedAttendance, calculateInvitedCount } from '../../utils/expectedAttendance';
-import { FiEdit2, FiTrash2, FiMove } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiMenu } from 'react-icons/fi';
 import {
   DndContext,
   PointerSensor,
@@ -200,7 +200,7 @@ function SortableEventCard({
         className={styles.dragHandle}
         title="Drag to reorder"
       >
-        <FiMove />
+        <FiMenu />
       </div>
       <div 
         className={styles.eventContent}
@@ -252,7 +252,7 @@ function EventCardOverlay({ event, households }: EventCardOverlayProps) {
   return (
     <div className={`${styles.eventCard} ${styles.dragOverlay}`}>
       <div className={styles.dragHandle}>
-        <FiMove />
+        <FiMenu />
       </div>
       <div className={styles.eventContent}>
         <div className={styles.eventInfo}>
