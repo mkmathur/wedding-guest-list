@@ -84,26 +84,10 @@ Groom's Friends (18 guests):
 - T2: 80% 
 - T3: 60%
 
-## Technical Implementation
-
-### State Management
-```typescript
-interface DemoState {
-  isDemoMode: boolean;
-  tourStep: number | null; // null = tour not active
-  tourCompleted: boolean;
-}
-```
-
-### Data Persistence
-- Demo data exists only during tour
-- localStorage flag: `wedding-guest-list:demo-completed`
-- Once tour completed, normal auto-initialization applies
-
-### Tour Implementation
-- Highlight specific UI elements with overlays/tooltips
-- Allow skipping at any step
-- Keep implementation simple while maintaining polished appearance
+## Technical Requirements
+- Demo data should be isolated from real user data
+- Tour completion state should persist across browser sessions
+- Implementation should be simple while maintaining polished appearance
 
 ## User Experience Requirements
 
@@ -164,6 +148,6 @@ interface DemoState {
 - [ ] Transition from demo to real planning feels natural
 ### Technical Requirements
 - [ ] Demo state is properly isolated from real data
-- [ ] localStorage correctly tracks tour completion
-- [ ] No memory leaks or performance issues
-- [ ] Tour implementation integrates cleanly with existing components
+- [ ] Tour completion state persists across sessions
+- [ ] No performance impact on app loading
+- [ ] Tour integrates cleanly with existing components
