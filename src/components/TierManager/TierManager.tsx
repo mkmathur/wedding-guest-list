@@ -41,14 +41,6 @@ export function TierManager({
 
   return (
     <div className={styles.tierManager}>
-      <button
-        className={styles.newTierButton}
-        onClick={onAdd}
-        title="Add new tier"
-      >
-        <FiPlus /> Add Tier
-      </button>
-
       <div className={styles.list}>
         {tiers.length === 0 ? (
           <div className={styles.emptyState}>
@@ -58,7 +50,7 @@ export function TierManager({
           tiers.map((tier) => (
             <div key={tier.id} className={styles.tier}>
               <span className={styles.tierName}>{tier.name}</span>
-              <div className={styles.actions}>
+              {tier === tiers[tiers.length - 1] && (
                 <button
                   className={styles.deleteButton}
                   onClick={() => {
@@ -72,11 +64,19 @@ export function TierManager({
                 >
                   <FiTrash2 />
                 </button>
-              </div>
+              )}
             </div>
           ))
         )}
       </div>
+      
+      <button
+        className={styles.addTierLink}
+        onClick={onAdd}
+        title="Add new tier"
+      >
+        <FiPlus /> Add tier
+      </button>
     </div>
   );
 } 
