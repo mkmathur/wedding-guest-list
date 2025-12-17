@@ -150,14 +150,14 @@ describe('App', () => {
     expect(storage.setCategories).not.toHaveBeenCalled();
   });
 
-  it('maintains correct tier order when moving tiers', async () => {
+  it('auto-numbers new tiers correctly', async () => {
     const user = userEvent.setup()
     
-    // Mock initial tiers - order is determined by array position
+    // Mock initial tiers (T1, T2, T3)
     vi.mocked(storage.getTiers).mockReturnValue([
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
+      { id: '1', name: 'T1' },
+      { id: '2', name: 'T2' },
+      { id: '3', name: 'T3' }
     ])
 
     render(<App />)
@@ -166,44 +166,22 @@ describe('App', () => {
     const tiersSection = screen.getByText('Tiers').closest('section')
     expect(tiersSection).not.toBeNull()
 
-    // Verify initial order
-    const initialTiers = within(tiersSection!).getAllByText(/Tier \d/)
-    expect(initialTiers[0]).toHaveTextContent('Tier 1')
-    expect(initialTiers[1]).toHaveTextContent('Tier 2')
-    expect(initialTiers[2]).toHaveTextContent('Tier 3')
+    // Verify initial tiers are numbered correctly
+    expect(within(tiersSection!).getByText('T1')).toBeInTheDocument()
+    expect(within(tiersSection!).getByText('T2')).toBeInTheDocument()
+    expect(within(tiersSection!).getByText('T3')).toBeInTheDocument()
 
-    // Move Tier 2 up
-    const moveUpButtons = within(tiersSection!).getAllByTitle('Move Up')
-    await user.click(moveUpButtons[1])
+    // Add a new tier
+    const addTierButton = within(tiersSection!).getByText('Add tier')
+    await user.click(addTierButton)
 
-    // Wait for the UI to update and verify order
-    const tiersAfterUp = await within(tiersSection!).findAllByText(/Tier \d/)
-    expect(tiersAfterUp[0]).toHaveTextContent('Tier 2')
-    expect(tiersAfterUp[1]).toHaveTextContent('Tier 1')
-    expect(tiersAfterUp[2]).toHaveTextContent('Tier 3')
-
-    // Verify storage was updated with correct order (array position determines order)
+    // Verify that the new tier would be added as T4 (check the call to storage)
+    // Since tiers.length is 3, new tier should be numbered as T4
     expect(storage.setTiers).toHaveBeenCalledWith([
-      { id: '2', name: 'Tier 2' },
-      { id: '1', name: 'Tier 1' },
-      { id: '3', name: 'Tier 3' }
-    ])
-
-    // Move Tier 2 back down
-    const moveDownButtons = within(tiersSection!).getAllByTitle('Move Down')
-    await user.click(moveDownButtons[0])
-
-    // Wait for the UI to update and verify order
-    const tiersAfterDown = await within(tiersSection!).findAllByText(/Tier \d/)
-    expect(tiersAfterDown[0]).toHaveTextContent('Tier 1')
-    expect(tiersAfterDown[1]).toHaveTextContent('Tier 2')
-    expect(tiersAfterDown[2]).toHaveTextContent('Tier 3')
-
-    // Verify storage was updated with correct order (array position determines order)
-    expect(storage.setTiers).toHaveBeenCalledWith([
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
+      { id: '1', name: 'T1' },
+      { id: '2', name: 'T2' },
+      { id: '3', name: 'T3' },
+      expect.objectContaining({ name: 'T4' })
     ])
   })
 }); 

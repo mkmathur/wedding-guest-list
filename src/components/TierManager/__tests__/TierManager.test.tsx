@@ -1,25 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '../../../test/utils'
 import { TierManager } from '../TierManager'
-import type { Tier } from '../../../types'
+import type { Tier, Household } from '../../../types'
 
 describe('TierManager', () => {
-  const mockTiers: Tier[] = []
+  const mockTiers: Tier[] = [
+    { id: '1', name: 'T1' },
+    { id: '2', name: 'T2' },
+    { id: '3', name: 'T3' }
+  ]
+  const mockHouseholds: Household[] = []
   const mockOnAdd = vi.fn()
-  const mockOnEdit = vi.fn()
   const mockOnDelete = vi.fn()
-  const mockOnMoveUp = vi.fn()
-  const mockOnMoveDown = vi.fn()
 
-  const renderComponent = (tiers = mockTiers) => {
+  const renderComponent = (tiers = mockTiers, households = mockHouseholds) => {
     return render(
       <TierManager
         tiers={tiers}
+        households={households}
         onAdd={mockOnAdd}
-        onEdit={mockOnEdit}
         onDelete={mockOnDelete}
-        onMoveUp={mockOnMoveUp}
-        onMoveDown={mockOnMoveDown}
       />
     )
   }
@@ -28,275 +28,113 @@ describe('TierManager', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the new tier button initially', () => {
+  it('renders tiers with numbered names', () => {
     renderComponent()
     
-    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
+    expect(screen.getByText('T1')).toBeInTheDocument()
+    expect(screen.getByText('T2')).toBeInTheDocument()
+    expect(screen.getByText('T3')).toBeInTheDocument()
   })
 
-  it('shows tier form when new tier button is clicked', () => {
+  it('renders the add tier button', () => {
     renderComponent()
     
-    fireEvent.click(screen.getByText('+ New Tier'))
-    
-    expect(screen.getByText('Tier Name:')).toBeInTheDocument()
-    expect(screen.getByText('Create Tier')).toBeInTheDocument()
-    expect(screen.getByText('Cancel')).toBeInTheDocument()
+    expect(screen.getByText('Add tier')).toBeInTheDocument()
   })
 
-  it('adds a new tier', () => {
+  it('shows empty state when no tiers exist', () => {
+    renderComponent([], [])
+    
+    expect(screen.getByText(/No invitation tiers yet/)).toBeInTheDocument()
+  })
+
+  it('calls onAdd when add tier button is clicked', () => {
     renderComponent()
     
-    fireEvent.click(screen.getByText('+ New Tier'))
+    fireEvent.click(screen.getByText('Add tier'))
     
-    const input = screen.getByLabelText('Tier Name:')
-    fireEvent.change(input, { target: { value: 'Must Invite' } })
-    fireEvent.click(screen.getByText('Create Tier'))
-
-    expect(mockOnAdd).toHaveBeenCalledWith('Must Invite')
+    expect(mockOnAdd).toHaveBeenCalledTimes(1)
   })
 
-  it('validates empty tier name', () => {
+  it('shows delete button only for last tier', () => {
     renderComponent()
     
-    fireEvent.click(screen.getByText('+ New Tier'))
-    
-    const input = screen.getByLabelText('Tier Name:')
-    fireEvent.change(input, { target: { value: '   ' } })
-    fireEvent.click(screen.getByText('Create Tier'))
-
-    expect(screen.getByText('Tier name cannot be empty')).toBeInTheDocument()
-    expect(mockOnAdd).not.toHaveBeenCalled()
+    // Should only find one delete button (for the last tier T3)
+    const deleteButtons = screen.getAllByLabelText(/Delete T/)
+    expect(deleteButtons).toHaveLength(1)
+    expect(deleteButtons[0]).toHaveAttribute('aria-label', 'Delete T3')
   })
 
-  it('validates duplicate tier name', () => {
-    const existingTiers = [
-      { id: '1', name: 'Must Invite' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    fireEvent.click(screen.getByText('+ New Tier'))
-    
-    const input = screen.getByLabelText('Tier Name:')
-    fireEvent.change(input, { target: { value: 'Must Invite' } })
-    fireEvent.click(screen.getByText('Create Tier'))
-
-    expect(screen.getByText('Tier name must be unique')).toBeInTheDocument()
-    expect(mockOnAdd).not.toHaveBeenCalled()
-  })
-
-  it('edits an existing tier', () => {
-    const existingTiers = [
-      { id: '1', name: 'Must Invite' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    // Start editing using role and index
-    fireEvent.click(screen.getAllByRole('button', { name: 'Edit tier' })[0])
-    
-    const input = screen.getByLabelText('Tier Name:')
-    fireEvent.change(input, { target: { value: 'Must Invite - VIP' } })
-    fireEvent.click(screen.getByText('Update Tier'))
-
-    expect(mockOnEdit).toHaveBeenCalledWith('1', 'Must Invite - VIP')
-  })
-
-  it('deletes a tier after confirmation', () => {
+  it('deletes last tier when confirmed', () => {
     const mockConfirm = vi.fn(() => true)
     vi.stubGlobal('confirm', mockConfirm)
 
-    const existingTiers = [
-      { id: '1', name: 'Must Invite' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    // Click delete button using role and index
-    fireEvent.click(screen.getAllByRole('button', { name: 'Delete tier' })[0])
-
-    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this tier?')
-    expect(mockOnDelete).toHaveBeenCalledWith('1')
-  })
-
-  it('moves a tier up', () => {
-    const existingTiers = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    // Verify initial render
-    const tierElements = screen.getAllByText(/Tier \d/)
-    expect(tierElements[0]).toHaveTextContent('Tier 1')
-    expect(tierElements[1]).toHaveTextContent('Tier 2')
-    expect(tierElements[2]).toHaveTextContent('Tier 3')
-
-    // Verify initial button states
-    const moveUpButtons = screen.getAllByTitle('Move Up')
-    expect(moveUpButtons[0]).toBeDisabled() // Top tier can't move up
-    expect(moveUpButtons[1]).not.toBeDisabled() // Middle tier can move up
-    expect(moveUpButtons[2]).not.toBeDisabled() // Bottom tier can move up
-
-    // Move middle tier up
-    fireEvent.click(moveUpButtons[1])
-
-    // Verify onMoveUp was called
-    expect(mockOnMoveUp).toHaveBeenCalledWith('2')
-  })
-
-  it('moves a tier down', () => {
-    const existingTiers = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    // Verify initial render
-    const tierElements = screen.getAllByText(/Tier \d/)
-    expect(tierElements[0]).toHaveTextContent('Tier 1')
-    expect(tierElements[1]).toHaveTextContent('Tier 2')
-    expect(tierElements[2]).toHaveTextContent('Tier 3')
-
-    // Verify initial button states
-    const moveDownButtons = screen.getAllByTitle('Move Down')
-    expect(moveDownButtons[0]).not.toBeDisabled() // Top tier can move down
-    expect(moveDownButtons[1]).not.toBeDisabled() // Middle tier can move down
-    expect(moveDownButtons[2]).toBeDisabled() // Bottom tier can't move down
-
-    // Move middle tier down
-    fireEvent.click(moveDownButtons[1])
-
-    // Verify onMoveDown was called
-    expect(mockOnMoveDown).toHaveBeenCalledWith('2')
-  })
-
-  it('maintains correct order after multiple moves', () => {
-    const existingTiers = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
-    ]
-
-    const { rerender } = renderComponent(existingTiers)
-    
-    // Get initial tier elements
-    const tierElements = screen.getAllByText(/Tier \d/)
-    expect(tierElements[0]).toHaveTextContent('Tier 1')
-    expect(tierElements[1]).toHaveTextContent('Tier 2')
-    expect(tierElements[2]).toHaveTextContent('Tier 3')
-    
-    // Move middle tier up
-    const moveUpButtons = screen.getAllByTitle('Move Up')
-    fireEvent.click(moveUpButtons[1]) // Move Tier 2 up
-
-    // Verify first move
-    expect(mockOnMoveUp).toHaveBeenCalledWith('2')
-
-    // Simulate the state update after first move
-    const tiersAfterUp = [
-      { id: '2', name: 'Tier 2' },
-      { id: '1', name: 'Tier 1' },
-      { id: '3', name: 'Tier 3' }
-    ]
-    rerender(
-      <TierManager
-        tiers={tiersAfterUp}
-        onAdd={mockOnAdd}
-        onEdit={mockOnEdit}
-        onDelete={mockOnDelete}
-        onMoveUp={mockOnMoveUp}
-        onMoveDown={mockOnMoveDown}
-      />
-    )
-
-    // Move top tier (Tier 2) down
-    const moveDownButtons = screen.getAllByTitle('Move Down')
-    fireEvent.click(moveDownButtons[0]) // Move Tier 2 down
-
-    // Verify second move
-    expect(mockOnMoveDown).toHaveBeenCalledWith('2')
-
-    // Simulate the state update after second move
-    const tiersAfterDown = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' },
-      { id: '3', name: 'Tier 3' }
-    ]
-    rerender(
-      <TierManager
-        tiers={tiersAfterDown}
-        onAdd={mockOnAdd}
-        onEdit={mockOnEdit}
-        onDelete={mockOnDelete}
-        onMoveUp={mockOnMoveUp}
-        onMoveDown={mockOnMoveDown}
-      />
-    )
-
-    // Verify final UI state
-    const finalTierElements = screen.getAllByText(/Tier \d/)
-    expect(finalTierElements[0]).toHaveTextContent('Tier 1')
-    expect(finalTierElements[1]).toHaveTextContent('Tier 2')
-    expect(finalTierElements[2]).toHaveTextContent('Tier 3')
-  })
-
-  it('disables up button for first tier', () => {
-    const existingTiers = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    const moveUpButtons = screen.getAllByTitle('Move Up')
-    expect(moveUpButtons[0]).toBeDisabled() // First tier's up button
-    expect(moveUpButtons[1]).not.toBeDisabled() // Second tier's up button
-  })
-
-  it('disables down button for last tier', () => {
-    const existingTiers = [
-      { id: '1', name: 'Tier 1' },
-      { id: '2', name: 'Tier 2' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    const moveDownButtons = screen.getAllByTitle('Move Down')
-    expect(moveDownButtons[0]).not.toBeDisabled() // First tier's down button
-    expect(moveDownButtons[1]).toBeDisabled() // Last tier's down button
-  })
-
-  it('cancels editing when cancel button is clicked', () => {
-    const existingTiers = [
-      { id: '1', name: 'Must Invite' }
-    ]
-
-    renderComponent(existingTiers)
-    
-    // Start editing using role and index
-    fireEvent.click(screen.getAllByRole('button', { name: 'Edit tier' })[0])
-    
-    // Click cancel
-    fireEvent.click(screen.getByText('Cancel'))
-
-    // Verify we're back in list mode
-    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
-  })
-
-  it('cancels form creation when cancel button is clicked', () => {
     renderComponent()
     
-    fireEvent.click(screen.getByText('+ New Tier'))
-    expect(screen.getByText('Create Tier')).toBeInTheDocument()
-    
-    fireEvent.click(screen.getByText('Cancel'))
-    expect(screen.queryByText('Create Tier')).not.toBeInTheDocument()
-    expect(screen.getByText('+ New Tier')).toBeInTheDocument()
+    fireEvent.click(screen.getByLabelText('Delete T3'))
+
+    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete T3?')
+    expect(mockOnDelete).toHaveBeenCalledWith('3')
   })
-}) 
+
+  it('does not delete when confirmation is canceled', () => {
+    const mockConfirm = vi.fn(() => false)
+    vi.stubGlobal('confirm', mockConfirm)
+
+    renderComponent()
+    
+    fireEvent.click(screen.getByLabelText('Delete T3'))
+
+    expect(mockConfirm).toHaveBeenCalled()
+    expect(mockOnDelete).not.toHaveBeenCalled()
+  })
+
+  it('disables delete button when households are assigned to last tier', () => {
+    const householdsWithT3 = [
+      { id: '1', name: 'Smith Family', guestCount: 4, categoryId: 'cat1', tierId: '3' }
+    ]
+
+    renderComponent(mockTiers, householdsWithT3)
+    
+    const deleteButton = screen.getByLabelText('Delete T3')
+    expect(deleteButton).toBeDisabled()
+  })
+
+  it('enables delete button when no households are assigned to last tier', () => {
+    const householdsWithT2 = [
+      { id: '1', name: 'Smith Family', guestCount: 4, categoryId: 'cat1', tierId: '2' }
+    ]
+
+    renderComponent(mockTiers, householdsWithT2)
+    
+    const deleteButton = screen.getByLabelText('Delete T3')
+    expect(deleteButton).not.toBeDisabled()
+  })
+
+  it('shows correct tooltip when delete is disabled due to households', () => {
+    const householdsWithT3 = [
+      { id: '1', name: 'Smith Family', guestCount: 4, categoryId: 'cat1', tierId: '3' }
+    ]
+
+    renderComponent(mockTiers, householdsWithT3)
+    
+    const deleteButton = screen.getByLabelText('Delete T3')
+    expect(deleteButton).toHaveAttribute('title', 'Cannot delete - households are assigned to this tier')
+  })
+
+  it('shows correct tooltip when delete is enabled', () => {
+    renderComponent()
+    
+    const deleteButton = screen.getByLabelText('Delete T3')
+    expect(deleteButton).toHaveAttribute('title', 'Delete tier')
+  })
+
+  it('does not show delete button for non-last tiers even with single tier', () => {
+    const singleTier = [{ id: '1', name: 'T1' }]
+    
+    renderComponent(singleTier)
+    
+    // Should find the delete button for T1 (which is the last/only tier)
+    expect(screen.getByLabelText('Delete T1')).toBeInTheDocument()
+  })
+})
