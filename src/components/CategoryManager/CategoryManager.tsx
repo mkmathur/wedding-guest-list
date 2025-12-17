@@ -73,7 +73,12 @@ export function CategoryManager({
         />
       ) : (
         <div className={styles.list} data-testid="categories-list">
-          {categories.map(category => (
+          {categories.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>No categories yet. Create your first category to organize your guest list by family, friends, or other groups.</p>
+            </div>
+          ) : (
+            categories.map(category => (
             <div 
               key={category.id} 
               className={`${styles.category} ${
@@ -116,7 +121,8 @@ export function CategoryManager({
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       )}
     </div>

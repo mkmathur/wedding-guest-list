@@ -124,7 +124,13 @@
 - [ ] Add User Experience Features
   - [x] Confirmation dialogs for deletions
   - [x] Form validation feedback
-  - [ ] Success/error notifications
+  - [x] Empty state messaging with helpful guidance
+    - [x] Categories: Guide new users to create organization categories
+    - [x] Tiers: Explain invitation priority system 
+    - [x] Events: Explain event-based guest list filtering
+    - [x] Households: Guide through prerequisite setup and first guest addition
+    - [x] Consistent styling with muted italic text
+  - [ ] Success/error notifications (toast notifications)
   - [ ] Loading states
   - [ ] Undo/redo functionality
   - [ ] Drag-and-drop tier reordering

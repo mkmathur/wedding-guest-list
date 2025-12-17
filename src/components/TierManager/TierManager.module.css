@@ -177,4 +177,16 @@
   background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.emptyState p {
+  margin: 0;
+  line-height: 1.5;
 } 

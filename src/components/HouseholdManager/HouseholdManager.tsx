@@ -647,28 +647,38 @@ export function HouseholdManager({
           />
         ) : (
           <div className={styles.householdList}>
-            {householdsByCategory.map(({ category, tierGroups }) => (
-              <div key={category.id} className={styles.categoryGroup}>
-                <h3 className={styles.categoryTitle}>{category.name}</h3>
-                <div className={`${styles.kanbanBoard} ${(selectedEvent || previewSelections) ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
-                  {tierGroups.map(({ tier, households: tierHouseholds }) => (
-                    <DroppableTierColumn
-                      key={tier.id}
-                      tier={tier}
-                      categoryId={category.id}
-                      households={tierHouseholds}
-                      onEditHousehold={setEditingHousehold}
-                      isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
-                      showInlineForm={activeInlineForm?.categoryId === category.id && activeInlineForm?.tierId === tier.id}
-                      inlineFormError={inlineFormError}
-                      onShowInlineForm={() => handleShowInlineForm(category.id, tier.id)}
-                      onHideInlineForm={handleHideInlineForm}
-                      onSubmitInlineForm={handleSubmitInlineForm}
-                    />
-                  ))}
-                </div>
+            {categories.length === 0 || tiers.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p>Before adding households, you need to create at least one category and one tier using the panels on the left.</p>
               </div>
-            ))}
+            ) : households.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p>No households added yet. Start by adding your first guest household using the "+ New Household" button above.</p>
+              </div>
+            ) : (
+              householdsByCategory.map(({ category, tierGroups }) => (
+                <div key={category.id} className={styles.categoryGroup}>
+                  <h3 className={styles.categoryTitle}>{category.name}</h3>
+                  <div className={`${styles.kanbanBoard} ${(selectedEvent || previewSelections) ? styles.eventFilterActive : ''}`} data-category-id={category.id}>
+                    {tierGroups.map(({ tier, households: tierHouseholds }) => (
+                      <DroppableTierColumn
+                        key={tier.id}
+                        tier={tier}
+                        categoryId={category.id}
+                        households={tierHouseholds}
+                        onEditHousehold={setEditingHousehold}
+                        isIncludedInSelectedEvent={isIncludedInEvent(category.id, tier.id)}
+                        showInlineForm={activeInlineForm?.categoryId === category.id && activeInlineForm?.tierId === tier.id}
+                        inlineFormError={inlineFormError}
+                        onShowInlineForm={() => handleShowInlineForm(category.id, tier.id)}
+                        onHideInlineForm={handleHideInlineForm}
+                        onSubmitInlineForm={handleSubmitInlineForm}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 

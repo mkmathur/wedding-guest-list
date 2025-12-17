@@ -63,7 +63,12 @@ export function TierManager({
         />
       ) : (
         <div className={styles.list}>
-          {tiers.map((tier, index) => (
+          {tiers.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>No invitation tiers yet. Create tiers to prioritize your invitations by importance.</p>
+            </div>
+          ) : (
+            tiers.map((tier, index) => (
             <div key={tier.id} className={styles.tier}>
               <span className={styles.tierName}>{tier.name}</span>
               <div className={styles.actions}>
@@ -107,7 +112,8 @@ export function TierManager({
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       )}
     </div>

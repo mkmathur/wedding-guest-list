@@ -523,4 +523,16 @@
 
 .inlineFormSubmit:active {
   background-color: var(--color-primary);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.emptyState p {
+  margin: 0;
+  line-height: 1.5;
 } 

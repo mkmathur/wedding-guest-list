@@ -128,7 +128,12 @@ export function EventManager({
             strategy={verticalListSortingStrategy}
           >
             <div className={styles.eventList}>
-              {events.map(event => (
+              {events.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <p>No events created yet. Create events to manage different invitation lists for your occasion.</p>
+                </div>
+              ) : (
+                events.map(event => (
                 <SortableEventCard
                   key={event.id}
                   event={event}
@@ -138,7 +143,8 @@ export function EventManager({
                   onEdit={setEditingEvent}
                   onDelete={onDelete}
                 />
-              ))}
+                ))
+              )}
             </div>
           </SortableContext>
           <DragOverlay>
