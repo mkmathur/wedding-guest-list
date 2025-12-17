@@ -26,7 +26,7 @@ New users face two key barriers:
 **Step 1: "Smart Organization"**
 - **Focus area**: Main kanban board
 - **Message**: "Organize guests by category AND priority - see how the visual layout beats spreadsheet rows"
-- **Demo data visible**: ~80 households distributed across categories/tiers
+- **Demo data visible**: ~80 guests distributed across categories/tiers
 
 **Step 2: "Multi-Event Planning"**
 - **Focus area**: Events panel + filtered household view
@@ -36,11 +36,11 @@ New users face two key barriers:
 **Step 3: "Planning Insights"**
 - **Focus area**: Summary view + guest counts
 - **Message**: "Get real wedding planning insights - bride vs groom breakdown, expected attendance across multiple events"
-- **Interaction**: Switch to summary view, highlight RSVP probabilities and totals
+- **Interaction**: Switch to summary view, demonstrate existing RSVP probability feature showing invited vs expected attendance calculations
 
 ### Tour Completion
 - Final message: "Ready to plan your wedding?"
-- **[Start Planning]** button → Clears households, keeps categories/tiers, removes demo mode
+- **[Start Planning]** button → Clears all demo data, app auto-initializes with default categories/tiers, removes demo mode
 
 ## Demo Data Strategy
 
@@ -80,29 +80,45 @@ Groom's Friends (18 guests):
 - **"Reception"**: All tiers
 
 ### RSVP Probabilities
-- T1: 90%
-- T2: 80% 
-- T3: 60%
+Demo households should include varied RSVP probabilities to demonstrate realistic planning:
+- Close family: 90-100%
+- Extended family: 75-90%
+- Close friends: 75-90%
+- Acquaintances: 50-75%
+- Distant connections: 25-50%
+- Uncertain invites: 0-25%
 
 ## Technical Requirements
-- Demo data should be isolated from real user data
-- Tour completion state should persist across browser sessions
-- Implementation should be simple while maintaining polished appearance
+
+### Data Isolation
+- **Demo data must never mix with user data**: Demo households, categories, and events should be completely separate from any real wedding planning data to prevent confusion and data corruption
+- **Clean transition**: When tour completes, user should start with a fresh slate - no residual demo data should appear in their real planning workflow
+- **No accidental persistence**: Demo data should never be saved permanently, ensuring users don't mistakenly build on sample data
+
+### State Persistence  
+- **Tour completion tracking**: Remember if user has completed or skipped the tour to avoid showing welcome modal repeatedly
+- **Temporary demo state**: Demo data should only exist during the active tour session
+- **Performance requirement**: Tour system should not impact app loading speed for returning users who have already completed the tour
+
+### Future Compatibility
+- **Database migration readiness**: Demo system should work independently of current localStorage approach to support planned database migration without requiring tour redesign
 
 ## User Experience Requirements
 
 ### Welcome Modal
-- **Trigger**: First app visit OR localStorage demo flag is false
+- **Trigger**: User has never completed the tour (localStorage 'tourCompleted' flag is not 'true')
 - **Behavior**: Modal overlay, cannot be dismissed by clicking outside
 - **Design**: Clean, welcoming, single clear CTA
 
 ### Tour Behavior
 - **Skippable**: "Skip Tour" option always visible
-- **Navigation**: Previous/Next buttons for user control
+- **Navigation**: "Next" button progression with option to upgrade to bidirectional navigation in future iterations
 - **Performance**: No impact on app loading for returning users
+- **Visual focus**: Text-based guidance for MVP, with potential for visual highlighting enhancements in future iterations
 
 ### Demo Mode Indicator
 - Subtle banner: "📝 Demo Mode - Exploring with sample data"
+- **Placement**: Top header bar above all three panels
 - Not intrusive but clearly indicates current state
 - Removed immediately when tour completes
 
@@ -114,7 +130,6 @@ Groom's Friends (18 guests):
 ## Design Principles
 - **Keep it simple**: Prioritize simplicity over advanced features for initial implementation
 - **Polished appearance**: Tour should feel professional and well-designed
-- **No mobile complexity**: Focus on desktop experience for now
 
 ## Edge Cases
 
@@ -146,6 +161,7 @@ Groom's Friends (18 guests):
 - [ ] Demo data feels realistic and relevant
 - [ ] Value propositions are clearly communicated
 - [ ] Transition from demo to real planning feels natural
+
 ### Technical Requirements
 - [ ] Demo state is properly isolated from real data
 - [ ] Tour completion state persists across sessions
