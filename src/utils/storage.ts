@@ -58,10 +58,24 @@ export const storage = {
   },
 
   getCategories: (): Category[] => {
-    return safelyParseJSON<Category[]>(
+    const categories = safelyParseJSON<Category[]>(
       localStorage.getItem(STORAGE_KEYS.CATEGORIES),
       []
     );
+    
+    // Auto-initialize default categories if none exist
+    if (categories.length === 0) {
+      const defaultCategories: Category[] = [
+        { id: crypto.randomUUID(), name: "Bride's family", side: "bride" },
+        { id: crypto.randomUUID(), name: "Bride's friends", side: "bride" },
+        { id: crypto.randomUUID(), name: "Groom's family", side: "groom" },
+        { id: crypto.randomUUID(), name: "Groom's friends", side: "groom" }
+      ];
+      storage.setCategories(defaultCategories);
+      return defaultCategories;
+    }
+    
+    return categories;
   },
 
   setCategories: (categories: Category[]): void => {

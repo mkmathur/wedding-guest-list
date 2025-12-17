@@ -647,11 +647,7 @@ export function HouseholdManager({
           />
         ) : (
           <div className={styles.householdList}>
-            {categories.length === 0 || tiers.length === 0 ? (
-              <div className={styles.emptyState}>
-                <p>Before adding households, you need to create at least one category and one tier using the panels on the left.</p>
-              </div>
-            ) : households.length === 0 ? (
+            {households.length === 0 ? (
               <div className={styles.emptyState}>
                 <p>No households added yet. Start by adding your first guest household using the "+ New Household" button above.</p>
               </div>

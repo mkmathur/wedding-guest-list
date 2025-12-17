@@ -44,7 +44,7 @@ export function TierManager({
       <div className={styles.list}>
         {tiers.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>Tiers are automatically created (T1, T2, T3). Add more tiers as needed for your invitation priority levels.</p>
+            <p>No invitation tiers yet. Create tiers to prioritize your invitations by importance.</p>
           </div>
         ) : (
           tiers.map((tier) => (
