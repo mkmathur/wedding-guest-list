@@ -74,10 +74,10 @@ Groom's Friends (18 guests):
 ```
 
 ### Events
-- **"Haldi"**: T1 + Groom's T2 friends/family (45 guests)
-- **"Mehndi"**: T1 + Bride's T2 friends/family (50 guests)  
-- **"Ceremony"**: T1 + T2 (60 guests)
-- **"Reception"**: All tiers (80 guests)
+- **"Haldi"**: T1 + Groom's T2 friends/family
+- **"Mehndi"**: T1 + Bride's T2 friends/family  
+- **"Ceremony"**: T1 + T2
+- **"Reception"**: All tiers
 
 ### RSVP Probabilities
 - T1: 90%
