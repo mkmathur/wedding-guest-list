@@ -34,10 +34,23 @@ const safelyStoreJSON = <T>(key: StorageKey, data: T): void => {
 
 export const storage = {
   getTiers: (): Tier[] => {
-    return safelyParseJSON<Tier[]>(
+    const tiers = safelyParseJSON<Tier[]>(
       localStorage.getItem(STORAGE_KEYS.TIERS),
       []
     );
+    
+    // Auto-initialize T1, T2, T3 if no tiers exist
+    if (tiers.length === 0) {
+      const defaultTiers: Tier[] = [
+        { id: crypto.randomUUID(), name: 'T1' },
+        { id: crypto.randomUUID(), name: 'T2' },
+        { id: crypto.randomUUID(), name: 'T3' }
+      ];
+      storage.setTiers(defaultTiers);
+      return defaultTiers;
+    }
+    
+    return tiers;
   },
 
   setTiers: (tiers: Tier[]): void => {

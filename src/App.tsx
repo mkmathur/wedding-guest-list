@@ -90,45 +90,36 @@ function App() {
   };
 
   // Tier handlers
-  const handleAddTier = (name: string) => {
+  const handleAddTier = () => {
+    const newTierNumber = tiers.length + 1;
     const newTier: Tier = {
       id: crypto.randomUUID(),
-      name: name.trim()
+      name: `T${newTierNumber}`
     };
     const updatedTiers = [...tiers, newTier];
     setTiers(updatedTiers);
     storage.setTiers(updatedTiers);
   };
 
-  const handleEditTier = (tierId: string, name: string) => {
-    const updatedTiers = tiers.map(tier =>
-      tier.id === tierId ? { ...tier, name: name.trim() } : tier
-    );
-    setTiers(updatedTiers);
-    storage.setTiers(updatedTiers);
-  };
-
   const handleDeleteTier = (tierId: string) => {
-    if (households.some(h => h.tierId === tierId)) {
-      alert('Cannot delete tier that has households assigned to it');
+    // Find the tier being deleted
+    const tierToDelete = tiers.find(t => t.id === tierId);
+    if (!tierToDelete) return;
+
+    // Check if it's the last tier
+    const isLastTier = tierToDelete === tiers[tiers.length - 1];
+    if (!isLastTier) {
+      alert('Can only delete the last tier');
       return;
     }
+
+    // Check if households are assigned to this tier
+    if (households.some(h => h.tierId === tierId)) {
+      alert(`Cannot delete ${tierToDelete.name} - households are assigned to this tier`);
+      return;
+    }
+
     const updatedTiers = tiers.filter(tier => tier.id !== tierId);
-    setTiers(updatedTiers);
-    storage.setTiers(updatedTiers);
-  };
-
-  const handleMoveTier = (tierId: string, direction: 'up' | 'down') => {
-    const currentIndex = tiers.findIndex(t => t.id === tierId);
-    if (currentIndex === -1) return;
-
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    if (newIndex < 0 || newIndex >= tiers.length) return;
-
-    const updatedTiers = [...tiers];
-    [updatedTiers[currentIndex], updatedTiers[newIndex]] = 
-      [updatedTiers[newIndex], updatedTiers[currentIndex]];
-
     setTiers(updatedTiers);
     storage.setTiers(updatedTiers);
   };
@@ -328,11 +319,9 @@ function App() {
                   <h2 className={styles.panelTitle}>Tiers</h2>
                   <TierManager
                     tiers={tiers}
+                    households={households}
                     onAdd={handleAddTier}
-                    onEdit={handleEditTier}
                     onDelete={handleDeleteTier}
-                    onMoveUp={(tierId) => handleMoveTier(tierId, 'up')}
-                    onMoveDown={(tierId) => handleMoveTier(tierId, 'down')}
                   />
                 </section>
               </>
