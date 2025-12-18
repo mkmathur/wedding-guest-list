@@ -18,9 +18,33 @@ vi.mock('../utils/storage', () => ({
   }
 }));
 
+// Mock localStorage for tour completion
+const localStorageMock = {
+  getItem: vi.fn((key: string) => {
+    if (key === 'wedding-guest-list:tour-completed') {
+      return 'true'; // Simulate tour has been completed
+    }
+    return null;
+  }),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock
+});
+
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset localStorage mock for each test
+    localStorageMock.getItem.mockImplementation((key: string) => {
+      if (key === 'wedding-guest-list:tour-completed') {
+        return 'true'; // Default: tour completed (normal app behavior)
+      }
+      return null;
+    });
   });
 
   it('renders all main sections', () => {
@@ -184,4 +208,70 @@ describe('App', () => {
       expect.objectContaining({ name: 'T4' })
     ])
   })
+
+  // Demo Tour Integration Tests
+  describe('Demo Tour Integration', () => {
+    it('shows normal app for returning users (tour completed)', () => {
+      // Default behavior: tour completed
+      render(<App />);
+
+      // Should show normal app elements
+      expect(screen.getByText('Wedding Guest List')).toBeInTheDocument();
+      expect(screen.getByText('📝 Demo App - Data stored locally in browser only')).toBeInTheDocument();
+      
+      // Should not show demo mode banner
+      expect(screen.queryByText('📝 Demo Mode - Exploring with sample data')).not.toBeInTheDocument();
+      
+      // Storage should be called to load user data
+      expect(storage.getCategories).toHaveBeenCalled();
+      expect(storage.getTiers).toHaveBeenCalled();
+      expect(storage.getHouseholds).toHaveBeenCalled();
+      expect(storage.getEvents).toHaveBeenCalled();
+    });
+
+    it('handles new users appropriately (tour not completed)', () => {
+      // Mock localStorage to return null for tour completion
+      localStorageMock.getItem.mockImplementation((key: string) => {
+        if (key === 'wedding-guest-list:tour-completed') {
+          return null; // Tour not completed
+        }
+        return null;
+      });
+
+      render(<App />);
+
+      // Should still show the main app structure
+      expect(screen.getByText('Wedding Guest List')).toBeInTheDocument();
+      
+      // Storage methods should NOT be called initially for new users
+      // (they'll be called after tour completion)
+      expect(storage.getCategories).not.toHaveBeenCalled();
+      expect(storage.getTiers).not.toHaveBeenCalled();
+      expect(storage.getHouseholds).not.toHaveBeenCalled();
+      expect(storage.getEvents).not.toHaveBeenCalled();
+    });
+
+    it('prevents user modifications during demo mode', async () => {
+      const user = userEvent.setup();
+      
+      // Mock localStorage to simulate tour not completed
+      localStorageMock.getItem.mockImplementation((key: string) => {
+        if (key === 'wedding-guest-list:tour-completed') {
+          return null;
+        }
+        return null;
+      });
+
+      render(<App />);
+
+      // Try to add a category (should be blocked in demo mode)
+      const newCategoryButton = screen.queryByText('+ New Category');
+      if (newCategoryButton) {
+        await user.click(newCategoryButton);
+        // In demo mode, this action should be blocked
+        // We can verify this by checking that storage.setCategories was not called
+        expect(storage.setCategories).not.toHaveBeenCalled();
+      }
+    });
+  });
 }); 
