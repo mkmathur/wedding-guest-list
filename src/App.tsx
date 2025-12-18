@@ -49,10 +49,14 @@ function App() {
     
     if (!tourCompleted) {
       setTourState({
-        isActive: false,
+        isActive: true,  // Load demo data immediately
         showWelcome: true
       });
-      // Don't load regular data yet - wait for tour to start or complete
+      // Load demo data immediately for new users
+      setCategories(demoData.categories);
+      setTiers(demoData.tiers);
+      setHouseholds(demoData.households);
+      setEvents(demoData.events);
       return;
     }
 
@@ -66,15 +70,6 @@ function App() {
   // Handle tour state changes
   const handleTourStateChange = (newTourState: TourState) => {
     setTourState(newTourState);
-    
-    // If tour just started, load demo data
-    if (newTourState.isActive && !tourState.isActive) {
-      // Don't save demo data to localStorage - it exists only in React state
-      setCategories(demoData.categories);
-      setTiers(demoData.tiers);
-      setHouseholds(demoData.households);
-      setEvents(demoData.events);
-    }
     
     // If tour just ended, load real data
     if (!newTourState.isActive && (tourState.isActive || tourState.showWelcome)) {
