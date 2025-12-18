@@ -199,6 +199,7 @@ function SortableEventCard({
       ref={setNodeRef}
       className={`${styles.eventCard} ${isSelected ? styles.selected : ''} ${isDragging ? styles.dragging : ''}`}
       style={style}
+      data-event-id={event.id}
     >
       <div
         {...attributes}

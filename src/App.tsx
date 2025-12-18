@@ -318,6 +318,7 @@ function App() {
         onTourStateChange={handleTourStateChange}
         onSummaryModeToggle={handleSummaryModeToggle}
         isSummaryMode={isSummaryMode}
+        selectedEventId={selectedEventId}
       />
       
       {/* Demo Mode Banner */}

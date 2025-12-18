@@ -11,6 +11,7 @@ interface DemoTourProps {
   onTourStateChange: (state: TourState) => void;
   onSummaryModeToggle: (enabled: boolean) => void;
   isSummaryMode: boolean;
+  selectedEventId?: string | null;
 }
 
 const TOUR_COMPLETED_KEY = 'wedding-guest-list:tour-completed';
@@ -19,7 +20,8 @@ const DemoTour: React.FC<DemoTourProps> = ({
   tourState,
   onTourStateChange,
   onSummaryModeToggle,
-  isSummaryMode
+  isSummaryMode,
+  selectedEventId
 }) => {
   const [stepIndex, setStepIndex] = useState(0);
 
@@ -46,9 +48,12 @@ const DemoTour: React.FC<DemoTourProps> = ({
       placement: 'top'
     },
     {
-      target: '.right-panel, [data-testid="right-panel"]',
-      content: 'Plan multiple wedding events with different guest lists - perfect for multi-day Indian weddings',
-      placement: 'left'
+      target: '[data-event-id="demo-ceremony"]',
+      content: 'Click "Ceremony" to see event-specific guest filtering - different events, different guest lists!',
+      placement: 'left',
+      disableBeacon: false,
+      hideFooter: true,
+      spotlightClicks: true
     },
     {
       target: 'button[title="Switch to summary view"]',
@@ -62,6 +67,26 @@ const DemoTour: React.FC<DemoTourProps> = ({
       target: '[data-testid="breakdown-bar"]',
       content: 'Perfect! Now you can see bride vs groom breakdown and expected attendance across all events - real insights that help with planning!',
       placement: 'bottom'
+    },
+    {
+      target: 'body',
+      content: (
+        <div>
+          <h2>🎉 Tour Complete!</h2>
+          <p>You're ready to plan like a pro!</p>
+          <h3>Next steps:</h3>
+          <ul>
+            <li>Add your own guest households</li>
+            <li>Create your first wedding event</li>
+            <li>Explore the summary insights</li>
+          </ul>
+        </div>
+      ),
+      placement: 'center',
+      hideCloseButton: true,
+      locale: {
+        last: 'Start Planning'
+      }
     }
   ];
 
@@ -106,6 +131,15 @@ const DemoTour: React.FC<DemoTourProps> = ({
     }
   }, [tourState.isActive]);
 
+  // Auto-advance from step 3 to step 4 when user selects an event
+  useEffect(() => {
+    if (stepIndex === 2 && selectedEventId === 'demo-ceremony' && tourState.isActive) {
+      // Small delay to let the filtering take effect
+      const timer = setTimeout(() => setStepIndex(3), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [stepIndex, selectedEventId, tourState.isActive]);
+
   // Auto-advance to final step when user enables summary mode  
   useEffect(() => {
     if (stepIndex === 3 && isSummaryMode && tourState.isActive) {
@@ -130,11 +164,6 @@ const DemoTour: React.FC<DemoTourProps> = ({
       showSkipButton
       scrollToFirstStep
       disableOverlayClose
-      options={{
-        arrowColor: '#ffffff',
-        backgroundColor: '#ffffff',
-        primaryColor: '#4f46e5',
-      }}
       styles={{
         options: {
           primaryColor: '#4f46e5',
