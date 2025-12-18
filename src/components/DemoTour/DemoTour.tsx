@@ -39,7 +39,7 @@ const DemoTour: React.FC<DemoTourProps> = ({
       }
     },
     {
-      target: '.middle-panel, [data-testid="middle-panel"]',
+      target: '[data-category-id="demo-bride-family"]',
       content: 'Organize guests by category AND priority - see how the visual layout beats spreadsheet rows',
       placement: 'top'
     },
