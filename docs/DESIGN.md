@@ -38,7 +38,9 @@ A simple, client-side web application for managing a wedding guest list. The app
 1. **Tiers**
    - Represents priority levels for guests
    - Properties: name, order
-   - Example: "Must Invite", "Want to Invite", "If Space Permits"
+   - **Naming Convention**: Uses numbered tiers (T1, T2, T3, etc.)
+   - **Design Decision**: Moved from descriptive names to numbered tiers to avoid imposing specific semantics on users. Users can mentally assign their own meaning (e.g., T1 = "Must Have", T2 = "Should Invite", T3 = "Nice to Have") while keeping the interface simple and flexible
+   - Example: "T1", "T2", "T3"
 
 2. **Categories**
    - Groups of guests (e.g., family, friends)

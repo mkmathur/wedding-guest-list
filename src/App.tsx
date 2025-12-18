@@ -7,9 +7,14 @@ import { EventManager } from './components/EventManager/EventManager'
 import { ExportBackupButton } from './components/ExportBackupButton/ExportBackupButton'
 import { ImportBackupButton } from './components/ImportBackupButton/ImportBackupButton'
 import { CsvExportButton } from './components/CsvExportButton/CsvExportButton'
+import DemoTour, { type TourState } from './components/DemoTour/DemoTour'
+import demoBannerStyles from './components/DemoTour/DemoTour.module.css'
+import { demoData } from './components/DemoTour/demoData'
 import { storage } from './utils/storage'
 import type { Category, CategorySide, Tier, Household } from './types'
 import type { Event } from './types/event'
+
+const TOUR_COMPLETED_KEY = 'wedding-guest-list:tour-completed';
 
 function App() {
   // State
@@ -31,21 +36,71 @@ function App() {
   // Category selection state for filtering
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
-  // Initial data load
+  // Tour state
+  const [tourState, setTourState] = useState<TourState>({
+    isActive: false,
+    showWelcome: false
+  });
+
+  // Initial data load and tour check
   useEffect(() => {
+    // Check if user has completed the tour
+    const tourCompleted = localStorage.getItem(TOUR_COMPLETED_KEY) === 'true';
+    
+    if (!tourCompleted) {
+      setTourState({
+        isActive: false,
+        showWelcome: true
+      });
+      // Don't load regular data yet - wait for tour to start or complete
+      return;
+    }
+
+    // Load normal data for returning users
     setCategories(storage.getCategories());
     setTiers(storage.getTiers());
     setHouseholds(storage.getHouseholds());
     setEvents(storage.getEvents());
   }, []);
 
-  // Update total guests whenever households change
+  // Handle tour state changes
+  const handleTourStateChange = (newTourState: TourState) => {
+    setTourState(newTourState);
+    
+    // If tour just started, load demo data
+    if (newTourState.isActive && !tourState.isActive) {
+      // Don't save demo data to localStorage - it exists only in React state
+      setCategories(demoData.categories);
+      setTiers(demoData.tiers);
+      setHouseholds(demoData.households);
+      setEvents(demoData.events);
+    }
+    
+    // If tour just ended, load real data
+    if (!newTourState.isActive && (tourState.isActive || tourState.showWelcome)) {
+      setCategories(storage.getCategories());
+      setTiers(storage.getTiers());
+      setHouseholds(storage.getHouseholds());
+      setEvents(storage.getEvents());
+    }
+  };
+
+  // Get active data based on tour state
+  const activeCategories = tourState.isActive ? demoData.categories : categories;
+  const activeTiers = tourState.isActive ? demoData.tiers : tiers;
+  const activeHouseholds = tourState.isActive ? demoData.households : households;
+  const activeEvents = tourState.isActive ? demoData.events : events;
+
+  // Update total guests whenever active households change
   useEffect(() => {
-    setTotalGuests(households.reduce((sum, h) => sum + h.guestCount, 0));
-  }, [households]);
+    setTotalGuests(activeHouseholds.reduce((sum, h) => sum + h.guestCount, 0));
+  }, [activeHouseholds]);
 
   // Category handlers
   const handleAddCategory = (name: string, side: CategorySide) => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return;
+
     const newCategory: Category = {
       id: crypto.randomUUID(),
       name: name.trim(),
@@ -57,6 +112,9 @@ function App() {
   };
 
   const handleAddCategories = (names: string[]): Promise<Category[]> => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return Promise.resolve([]);
+
     return new Promise((resolve) => {
       const newCategories: Category[] = names.map(name => ({
         id: crypto.randomUUID(),
@@ -72,6 +130,9 @@ function App() {
   };
 
   const handleEditCategory = (categoryId: string, name: string, side: CategorySide) => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return;
+
     const updatedCategories = categories.map(cat =>
       cat.id === categoryId ? { ...cat, name: name.trim(), side } : cat
     );
@@ -80,6 +141,9 @@ function App() {
   };
 
   const handleDeleteCategory = (categoryId: string) => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return;
+
     if (households.some(h => h.categoryId === categoryId)) {
       alert('Cannot delete category that has households assigned to it');
       return;
@@ -91,6 +155,9 @@ function App() {
 
   // Tier handlers
   const handleAddTier = () => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return;
+
     const newTierNumber = tiers.length + 1;
     const newTier: Tier = {
       id: crypto.randomUUID(),
@@ -126,6 +193,9 @@ function App() {
 
   // Household handlers
   const handleAddHousehold = (household: Omit<Household, 'id'>) => {
+    // Prevent modifications during tour
+    if (tourState.isActive) return;
+
     const newHousehold: Household = {
       id: crypto.randomUUID(),
       ...household
@@ -231,6 +301,7 @@ function App() {
     }
   };
 
+
   // Backup import handler
   const handleImportComplete = (
     importedHouseholds: Household[],
@@ -246,31 +317,49 @@ function App() {
 
   return (
     <div className={styles.app}>
+      {/* Demo Tour */}
+      <DemoTour
+        tourState={tourState}
+        onTourStateChange={handleTourStateChange}
+        onSummaryModeToggle={handleSummaryModeToggle}
+      />
+      
+      {/* Demo Mode Banner */}
+      {tourState.isActive && (
+        <div className={demoBannerStyles.demoBanner}>
+          📝 Demo Mode - Exploring with sample data
+        </div>
+      )}
+
       <header className={styles.header}>
         <h1>Wedding Guest List</h1>
-        <div className={styles.demoNotice}>
-          📝 Demo App - Data stored locally in browser only
-        </div>
+        {!tourState.isActive && (
+          <div className={styles.demoNotice}>
+            📝 Demo App - Data stored locally in browser only
+          </div>
+        )}
         <div className={styles.headerActions}>
           <div className={styles.totalGuests}>
             Total Guests: {totalGuests}
           </div>
           <div className={styles.backupButtons}>
             <CsvExportButton
-              households={households}
-              categories={categories}
-              tiers={tiers}
-              events={events}
+              households={activeHouseholds}
+              categories={activeCategories}
+              tiers={activeTiers}
+              events={activeEvents}
             />
             <ExportBackupButton
-              households={households}
-              categories={categories}
-              tiers={tiers}
-              events={events}
+              households={activeHouseholds}
+              categories={activeCategories}
+              tiers={activeTiers}
+              events={activeEvents}
             />
-            <ImportBackupButton
-              onImportComplete={handleImportComplete}
-            />
+            {!tourState.isActive && (
+              <ImportBackupButton
+                onImportComplete={handleImportComplete}
+              />
+            )}
           </div>
         </div>
       </header>
@@ -306,7 +395,7 @@ function App() {
                 <section>
                   <h2 className={styles.panelTitle}>Categories</h2>
                   <CategoryManager
-                    categories={categories}
+                    categories={activeCategories}
                     selectedCategoryId={selectedCategoryId}
                     isSummaryMode={isSummaryMode}
                     onAdd={handleAddCategory}
@@ -318,8 +407,8 @@ function App() {
                 <section>
                   <h2 className={styles.panelTitle}>Tiers</h2>
                   <TierManager
-                    tiers={tiers}
-                    households={households}
+                    tiers={activeTiers}
+                    households={activeHouseholds}
                     onAdd={handleAddTier}
                     onDelete={handleDeleteTier}
                   />
@@ -329,13 +418,13 @@ function App() {
           </div>
 
           {/* Middle Panel - Household List */}
-          <div className={styles.middlePanel}>
+          <div className={`${styles.middlePanel} middle-panel`} data-testid="middle-panel">
             <h2 className={styles.panelTitle}>Households</h2>
             <HouseholdManager
-              households={households}
-              categories={categories}
-              tiers={tiers}
-              selectedEvent={selectedEventId ? events.find(e => e.id === selectedEventId) : undefined}
+              households={activeHouseholds}
+              categories={activeCategories}
+              tiers={activeTiers}
+              selectedEvent={selectedEventId ? activeEvents.find(e => e.id === selectedEventId) : undefined}
               previewSelections={previewSelections}
               selectedCategoryId={selectedCategoryId}
               isSummaryMode={isSummaryMode}
@@ -350,7 +439,7 @@ function App() {
           </div>
 
           {/* Right Panel - Events */}
-          <div className={styles.rightPanel}>
+          <div className={`${styles.rightPanel} right-panel`} data-testid="right-panel">
             {isRightPanelCollapsed ? (
               <div className={styles.collapsedPanel}>
                 <button 
@@ -377,10 +466,10 @@ function App() {
                 </div>
                 <h2 className={styles.panelTitle}>Events</h2>
                 <EventManager
-                  events={events}
-                  categories={categories}
-                  tiers={tiers}
-                  households={households}
+                  events={activeEvents}
+                  categories={activeCategories}
+                  tiers={activeTiers}
+                  households={activeHouseholds}
                   selectedEventId={selectedEventId}
                   onAdd={handleAddEvent}
                   onEdit={handleEditEvent}

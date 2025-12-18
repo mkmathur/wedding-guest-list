@@ -1,0 +1,39 @@
+.demoBanner {
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary-700);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.demoBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    var(--color-primary-100) 50%, 
+    transparent 100%
+  );
+  opacity: 0.3;
+  border-radius: 6px;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
