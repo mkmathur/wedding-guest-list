@@ -646,7 +646,7 @@ export function HouseholdManager({
             previewSelections={previewSelections}
           />
         ) : (
-          <div className={styles.householdList}>
+          <div className={styles.householdList} data-tour-target="organization-overview">
             {households.length === 0 ? (
               <div className={styles.emptyState}>
                 <p>No households added yet. Start by adding your first guest household using the "+ New Household" button above.</p>
