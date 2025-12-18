@@ -80,13 +80,7 @@ Groom's Friends (18 guests):
 - **"Reception"**: All tiers
 
 ### RSVP Probabilities
-Demo households should include varied RSVP probabilities to demonstrate realistic planning:
-- Close family: 90-100%
-- Extended family: 75-90%
-- Close friends: 75-90%
-- Acquaintances: 50-75%
-- Distant connections: 25-50%
-- Uncertain invites: 0-25%
+Demo households should include varied RSVP probabilities to demonstrate realistic planning.
 
 ## Technical Requirements
 
