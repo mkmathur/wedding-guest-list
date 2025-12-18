@@ -40,7 +40,7 @@ export function BreakdownBar({ breakdown }: BreakdownBarProps) {
   const activeSides = SIDE_INFO.filter(side => breakdown[side.key] > 0);
   
   return (
-    <div className={styles.breakdownBar}>
+    <div className={styles.breakdownBar} data-testid="breakdown-bar">
       <div className={styles.barContainer}>
         {activeSides.map(side => {
           const invitedCount = breakdown[side.key];

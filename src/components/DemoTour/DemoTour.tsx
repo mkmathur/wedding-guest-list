@@ -10,6 +10,7 @@ interface DemoTourProps {
   tourState: TourState;
   onTourStateChange: (state: TourState) => void;
   onSummaryModeToggle: (enabled: boolean) => void;
+  isSummaryMode: boolean;
 }
 
 const TOUR_COMPLETED_KEY = 'wedding-guest-list:tour-completed';
@@ -17,7 +18,8 @@ const TOUR_COMPLETED_KEY = 'wedding-guest-list:tour-completed';
 const DemoTour: React.FC<DemoTourProps> = ({
   tourState,
   onTourStateChange,
-  onSummaryModeToggle
+  onSummaryModeToggle,
+  isSummaryMode
 }) => {
   const [stepIndex, setStepIndex] = useState(0);
 
@@ -49,8 +51,16 @@ const DemoTour: React.FC<DemoTourProps> = ({
       placement: 'left'
     },
     {
-      target: '[data-testid="summary-mode-toggle"], .summary-toggle',
-      content: 'Get real wedding planning insights - bride vs groom breakdown, expected attendance across multiple events',
+      target: 'button[title="Switch to summary view"]',
+      content: 'Click "Summary View" to unlock planning insights!',
+      placement: 'bottom',
+      disableBeacon: false,
+      hideFooter: true,
+      spotlightClicks: true
+    },
+    {
+      target: '[data-testid="breakdown-bar"]',
+      content: 'Perfect! Now you can see bride vs groom breakdown and expected attendance across all events - real insights that help with planning!',
       placement: 'bottom'
     }
   ];
@@ -83,16 +93,8 @@ const DemoTour: React.FC<DemoTourProps> = ({
         return;
       }
 
-      // When moving to step 3 (Planning Insights), auto-enable summary mode
-      if (index === 2) {
-        onSummaryModeToggle(true);
-      }
       setStepIndex(index + 1);
     } else if (type === 'step:after' && action === 'prev') {
-      // When going back from step 3, disable summary mode  
-      if (index === 3) {
-        onSummaryModeToggle(false);
-      }
       setStepIndex(index - 1);
     }
   }, [completeTour, onSummaryModeToggle, onTourStateChange]);
@@ -103,6 +105,15 @@ const DemoTour: React.FC<DemoTourProps> = ({
       setStepIndex(0);
     }
   }, [tourState.isActive]);
+
+  // Auto-advance to final step when user enables summary mode  
+  useEffect(() => {
+    if (stepIndex === 3 && isSummaryMode && tourState.isActive) {
+      // Small delay to let React finish rendering the summary view
+      const timer = setTimeout(() => setStepIndex(4), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [stepIndex, isSummaryMode, tourState.isActive]);
 
   if (!tourState.showWelcome && !tourState.isActive) {
     return null;
@@ -119,6 +130,11 @@ const DemoTour: React.FC<DemoTourProps> = ({
       showSkipButton
       scrollToFirstStep
       disableOverlayClose
+      options={{
+        arrowColor: '#ffffff',
+        backgroundColor: '#ffffff',
+        primaryColor: '#4f46e5',
+      }}
       styles={{
         options: {
           primaryColor: '#4f46e5',

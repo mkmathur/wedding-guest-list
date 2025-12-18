@@ -317,6 +317,7 @@ function App() {
         tourState={tourState}
         onTourStateChange={handleTourStateChange}
         onSummaryModeToggle={handleSummaryModeToggle}
+        isSummaryMode={isSummaryMode}
       />
       
       {/* Demo Mode Banner */}
