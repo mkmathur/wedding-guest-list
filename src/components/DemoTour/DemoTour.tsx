@@ -4,6 +4,7 @@ import Joyride, { type CallBackProps, STATUS, type Step } from 'react-joyride';
 export interface TourState {
   isActive: boolean;
   showWelcome: boolean;
+  isDemoMode: boolean;
 }
 
 interface DemoTourProps {
@@ -24,6 +25,26 @@ const DemoTour: React.FC<DemoTourProps> = ({
   selectedEventId
 }) => {
   const [stepIndex, setStepIndex] = useState(0);
+
+  const completeTour = useCallback(() => {
+    localStorage.setItem(TOUR_COMPLETED_KEY, 'true');
+    onSummaryModeToggle(false);
+    onTourStateChange({
+      isActive: false,
+      showWelcome: false,
+      isDemoMode: false
+    });
+  }, [onTourStateChange, onSummaryModeToggle]);
+
+  const handleKeepExploring = useCallback(() => {
+    // Close the tour but stay in demo mode for exploration
+    onSummaryModeToggle(false);
+    onTourStateChange({
+      isActive: false,
+      showWelcome: false,
+      isDemoMode: true
+    });
+  }, [onTourStateChange, onSummaryModeToggle]);
 
   const steps: Step[] = [
     {
@@ -88,7 +109,10 @@ const DemoTour: React.FC<DemoTourProps> = ({
             <button style={{ padding: '8px 16px', backgroundColor: 'white', color: '#4f46e5', border: '1px solid #4f46e5', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}>
               Log In
             </button>
-            <button style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}>
+            <button 
+              style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}
+              onClick={handleKeepExploring}
+            >
               Keep Exploring Demo
             </button>
           </div>
@@ -99,15 +123,6 @@ const DemoTour: React.FC<DemoTourProps> = ({
       hideFooter: true
     }
   ];
-
-  const completeTour = useCallback(() => {
-    localStorage.setItem(TOUR_COMPLETED_KEY, 'true');
-    onSummaryModeToggle(false);
-    onTourStateChange({
-      isActive: false,
-      showWelcome: false
-    });
-  }, [onTourStateChange, onSummaryModeToggle]);
 
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
     const { status, index, action, type } = data;
@@ -122,7 +137,8 @@ const DemoTour: React.FC<DemoTourProps> = ({
       if (index === 0) {
         onTourStateChange({
           isActive: true,
-          showWelcome: false
+          showWelcome: false,
+          isDemoMode: true
         });
         setStepIndex(1);
         return;

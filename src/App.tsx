@@ -39,7 +39,8 @@ function App() {
   // Tour state
   const [tourState, setTourState] = useState<TourState>({
     isActive: false,
-    showWelcome: false
+    showWelcome: false,
+    isDemoMode: false
   });
 
   // Initial data load and tour check
@@ -50,7 +51,8 @@ function App() {
     if (!tourCompleted) {
       setTourState({
         isActive: true,  // Load demo data immediately
-        showWelcome: true
+        showWelcome: true,
+        isDemoMode: true
       });
       // Load demo data immediately for new users
       setCategories(demoData.categories);
@@ -71,12 +73,21 @@ function App() {
   const handleTourStateChange = (newTourState: TourState) => {
     setTourState(newTourState);
     
-    // If tour just ended, load real data
+    // If tour just ended
     if (!newTourState.isActive && (tourState.isActive || tourState.showWelcome)) {
-      setCategories(storage.getCategories());
-      setTiers(storage.getTiers());
-      setHouseholds(storage.getHouseholds());
-      setEvents(storage.getEvents());
+      if (newTourState.isDemoMode) {
+        // User chose "Keep Exploring Demo" - load demo data into local state for editing
+        setCategories([...demoData.categories]);
+        setTiers([...demoData.tiers]);
+        setHouseholds([...demoData.households]);
+        setEvents([...demoData.events]);
+      } else {
+        // User completed tour - load real data
+        setCategories(storage.getCategories());
+        setTiers(storage.getTiers());
+        setHouseholds(storage.getHouseholds());
+        setEvents(storage.getEvents());
+      }
     }
   };
 
@@ -93,7 +104,7 @@ function App() {
 
   // Category handlers
   const handleAddCategory = (name: string, side: CategorySide) => {
-    // Prevent modifications during tour
+    // Prevent modifications during active tour (but allow during demo exploration)
     if (tourState.isActive) return;
 
     const newCategory: Category = {
@@ -107,7 +118,7 @@ function App() {
   };
 
   const handleAddCategories = (names: string[]): Promise<Category[]> => {
-    // Prevent modifications during tour
+    // Prevent modifications during active tour (but allow during demo exploration)
     if (tourState.isActive) return Promise.resolve([]);
 
     return new Promise((resolve) => {
@@ -322,7 +333,7 @@ function App() {
       />
       
       {/* Demo Mode Banner */}
-      {tourState.isActive && (
+      {(tourState.isActive || tourState.isDemoMode) && (
         <div className={demoBannerStyles.demoBanner}>
           📝 Demo Mode - Exploring with sample data
         </div>
