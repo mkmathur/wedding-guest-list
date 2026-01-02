@@ -30,34 +30,39 @@ const DemoTour: React.FC<DemoTourProps> = ({
       target: 'body',
       content: (
         <div>
-          <h2>Welcome to Wedding Guest List Manager!</h2>
-          <p>See how smart wedding planning works with our quick tour.</p>
+          <h2>Deciding on your guest list?</h2>
+          <p>We help you visualize your options and make confident decisions. Take a quick tour to see how it works with sample data.</p>
         </div>
       ),
       placement: 'center',
       disableBeacon: true,
       hideCloseButton: true,
       locale: {
-        next: 'Take a Tour',
+        next: 'Start Tour (Step 1 of 7)',
         skip: 'Skip Tour'
       }
     },
     {
       target: '[data-tour-target="organization-overview"]',
-      content: 'Organize guests by category AND priority - see how the visual layout beats spreadsheet rows',
+      content: 'Start by organizing guests by category and how close you are to them. This helps you decide who to invite to each event.',
       placement: 'top'
     },
     {
       target: '[data-event-id="demo-ceremony"]',
-      content: 'Click "Ceremony" to see event-specific guest filtering - different events, different guest lists!',
+      content: 'Each event can have a different mix of guests. Click "Ceremony" to see which guests are invited.',
       placement: 'left',
       disableBeacon: false,
       hideFooter: true,
       spotlightClicks: true
     },
     {
+      target: '[data-tour-target="organization-overview"]',
+      content: 'You can see at a glance who\'s invited to each event.',
+      placement: 'top'
+    },
+    {
       target: 'button[title="Switch to summary view"]',
-      content: 'Click "Summary View" to unlock planning insights!',
+      content: 'Want the big picture? Click "Summary View" to see bride vs groom balance and expected attendance.',
       placement: 'bottom',
       disableBeacon: false,
       hideFooter: true,
@@ -65,7 +70,7 @@ const DemoTour: React.FC<DemoTourProps> = ({
     },
     {
       target: '[data-testid="breakdown-bar"]',
-      content: 'Perfect! Now you can see bride vs groom breakdown and expected attendance across all events - real insights that help with planning!',
+      content: 'Expected attendance is based on likelihood each guest will attend. This helps you plan for realistic headcount.',
       placement: 'bottom'
     },
     {
@@ -73,20 +78,24 @@ const DemoTour: React.FC<DemoTourProps> = ({
       content: (
         <div>
           <h2>🎉 Tour Complete!</h2>
-          <p>You're ready to plan like a pro!</p>
-          <h3>Next steps:</h3>
-          <ul>
-            <li>Add your own guest households</li>
-            <li>Create your first wedding event</li>
-            <li>Explore the summary insights</li>
-          </ul>
+          <p>You've seen how to organize guests, assign them to events, and visualize your guest list.</p>
+          <p><strong>Ready to plan your wedding?</strong></p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '16px' }}>
+            <button style={{ padding: '8px 16px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}>
+              Sign Up
+            </button>
+            <button style={{ padding: '8px 16px', backgroundColor: 'white', color: '#4f46e5', border: '1px solid #4f46e5', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}>
+              Log In
+            </button>
+            <button style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', fontSize: '14px', cursor: 'pointer' }}>
+              Keep Exploring Demo
+            </button>
+          </div>
         </div>
       ),
       placement: 'center',
       hideCloseButton: true,
-      locale: {
-        last: 'Start Planning'
-      }
+      hideFooter: true
     }
   ];
 
@@ -131,20 +140,21 @@ const DemoTour: React.FC<DemoTourProps> = ({
     }
   }, [tourState.isActive]);
 
-  // Auto-advance from step 3 to step 4 when user selects an event
+  // Auto-advance from step 2 to step 3 when user selects an event
   useEffect(() => {
     if (stepIndex === 2 && selectedEventId === 'demo-ceremony' && tourState.isActive) {
-      // Small delay to let the filtering take effect
-      const timer = setTimeout(() => setStepIndex(3), 500);
+      // Scroll to top to ensure targets are visible, then advance
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const timer = setTimeout(() => setStepIndex(3), 800);
       return () => clearTimeout(timer);
     }
   }, [stepIndex, selectedEventId, tourState.isActive]);
 
-  // Auto-advance to final step when user enables summary mode  
+  // Auto-advance to summary insights step when user enables summary mode  
   useEffect(() => {
-    if (stepIndex === 3 && isSummaryMode && tourState.isActive) {
+    if (stepIndex === 4 && isSummaryMode && tourState.isActive) {
       // Small delay to let React finish rendering the summary view
-      const timer = setTimeout(() => setStepIndex(4), 300);
+      const timer = setTimeout(() => setStepIndex(5), 300);
       return () => clearTimeout(timer);
     }
   }, [stepIndex, isSummaryMode, tourState.isActive]);
