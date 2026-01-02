@@ -30,8 +30,9 @@ const DemoTour: React.FC<DemoTourProps> = ({
       target: 'body',
       content: (
         <div>
-          <h2>Deciding on your guest list?</h2>
-          <p>We help you visualize your options and make confident decisions. Take a quick tour to see how it works with sample data.</p>
+          <h2>Welcome to Wedding Guest List Planner</h2>
+          <p>Deciding on your guest list? We help you visualize your options and make confident decisions.</p>
+          <p>See how it works with sample data.</p>
         </div>
       ),
       placement: 'center',
